@@ -19,13 +19,13 @@ export default function Home() {
     <div>
       <Navbar />
       <Hero />
+      <Info1 />
+      <Info2 />
       <TutorialSection1 />
       <TutorialSection2 />
       <TutorialSection3 />
-      <Info1 />
-      <FAQPage/>
-      <Info2 />
       <QRGeneratorSection />
+      <FAQPage/>
       <BlogSection />
       <Info3/>
       <Footer />

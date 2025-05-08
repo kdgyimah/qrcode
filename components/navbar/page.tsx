@@ -12,21 +12,21 @@ export default function Navbar() {
 
         {/* Middle Nav Items */}
         <div className="hidden md:flex space-x-6 text-gray-700 font-medium">
-          <Link href="#" className="hover:text-blue-600 transition">Home</Link>
+          <Link href="./" className="hover:text-blue-600 transition">Home</Link>
           <div className="flex items-center gap-1 hover:text-blue-600 transition cursor-pointer">
-            Services <FiChevronDown className="text-sm" />
+            Products <FiChevronDown className="text-sm" />
           </div>
           <div className="flex items-center gap-1 hover:text-blue-600 transition cursor-pointer">
-            Solutions <FiChevronDown className="text-sm" />
+            Resources <FiChevronDown className="text-sm" />
           </div>
-          <Link href="#" className="hover:text-blue-600 transition">Contact</Link>
+          <Link href="/pricing" className="hover:text-blue-600 transition">Pricing</Link>
         </div>
 
         {/* Right Side: Auth Buttons */}
         <div className="hidden md:flex space-x-4">
           <Link
             href="/login"
-            className="px-4 py-2 rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50 transition"
+            className="px-4 py-2 rounded-md  text-gray-950 hover:bg-blue-300 transition"
           >
             Login
           </Link>
