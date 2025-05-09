@@ -26,7 +26,7 @@ export default function Hero() {
             <Link href='/signup' className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition">
               Get Started
             </Link>
-            <Link href='signup' className="border border-blue-600 text-blue-600 px-6 py-3 rounded-md hover:bg-blue-100 transition">
+            <Link href='/about' className="border border-blue-600 text-blue-600 px-6 py-3 rounded-md hover:bg-blue-100 transition">
               Learn More
             </Link>
           </div>
