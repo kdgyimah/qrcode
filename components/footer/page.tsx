@@ -14,7 +14,7 @@ export default function Footer() {
       <div className="flex flex-col md:flex-row justify-between gap-10 mb-10">
         {/* Left Side: Logo + Newsletter */}
         <div className="w-full md:w-1/3">
-          <div className="text-2xl font-bold text-white mb-2">QRGen</div>
+          <img src="/logos/qrlogo.svg" alt="QRGen Logo" className="h-8 mb-2 filter brightness-0 invert" />
           <h3 className="text-white mb-4">
             We make QR Code generation easy and fast.
           </h3>
@@ -37,10 +37,26 @@ export default function Footer() {
           <div className="w-full md:w-1/3 mb-6 md:mb-0">
             <h2 className="text-lg text-center font-semibold mb-4">Product</h2>
             <ul className="text-center space-y-4 list-none text-sm">
-              <li><a href="#" className="hover:text-blue-600">Home</a></li>
-              <li><a href="#" className="hover:text-blue-600">Pricing</a></li>
-              <li><a href="#" className="hover:text-blue-600">FAQs</a></li>
-              <li><a href="#" className="hover:text-blue-600">Contact Us</a></li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Pricing
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  FAQs
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Contact Us
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -48,10 +64,26 @@ export default function Footer() {
           <div className="w-full md:w-1/3 mb-6 md:mb-0">
             <h2 className="text-center text-lg font-semibold mb-4">Support</h2>
             <ul className="text-center space-y-4 list-none text-sm">
-              <li><a href="#" className="hover:text-blue-600">Help Center</a></li>
-              <li><a href="#" className="hover:text-blue-600">Report an Issue</a></li>
-              <li><a href="#" className="hover:text-blue-600">Articles</a></li>
-              <li><a href="#" className="hover:text-blue-600">Blog</a></li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Help Center
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Report an Issue
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Articles
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Blog
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -59,10 +91,26 @@ export default function Footer() {
           <div className="w-full md:w-1/3">
             <h2 className="text-lg text-center font-semibold mb-4">Support</h2>
             <ul className="text-center space-y-4 list-none text-sm">
-              <li><a href="#" className="hover:text-blue-600">Career</a></li>
-              <li><a href="#" className="hover:text-blue-600">Privacy</a></li>
-              <li><a href="#" className="hover:text-blue-600">Term</a></li>
-              <li><a href="#" className="hover:text-blue-600">Cookies</a></li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Career
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Privacy
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Term
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-600">
+                  Cookies
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -77,10 +125,30 @@ export default function Footer() {
           &copy; {new Date().getFullYear()} QR Gen .
         </p>
         <div className="flex space-x-4 text-white">
-          <a href="#" className="bg-gray-600 text-white p-2 rounded-full hover:bg-blue-600 hover:text-white transition"><FaFacebookF /></a>
-          <a href="#" className="bg-gray-600 text-white  p-2 rounded-full hover:bg-blue-600 hover:text-white transition"><FaTwitter /></a>
-          <a href="#" className="bg-gray-600 text-white  p-2 rounded-full hover:bg-blue-600 hover:text-white transition"><FaInstagram /></a>
-          <a href="#" className="bg-gray-600 text-white  p-2 rounded-full hover:bg-blue-600 hover:text-white transition"><FaLinkedinIn /></a>
+          <a
+            href="#"
+            className="bg-gray-600 text-white p-2 rounded-full hover:bg-blue-600 hover:text-white transition"
+          >
+            <FaFacebookF />
+          </a>
+          <a
+            href="#"
+            className="bg-gray-600 text-white  p-2 rounded-full hover:bg-blue-600 hover:text-white transition"
+          >
+            <FaTwitter />
+          </a>
+          <a
+            href="#"
+            className="bg-gray-600 text-white  p-2 rounded-full hover:bg-blue-600 hover:text-white transition"
+          >
+            <FaInstagram />
+          </a>
+          <a
+            href="#"
+            className="bg-gray-600 text-white  p-2 rounded-full hover:bg-blue-600 hover:text-white transition"
+          >
+            <FaLinkedinIn />
+          </a>
         </div>
       </div>
     </footer>
