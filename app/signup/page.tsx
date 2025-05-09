@@ -4,15 +4,23 @@ import { FaGoogle } from 'react-icons/fa';
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8 space-y-6">
-        {/* Logo & Name */}
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-blue-600">QRGen</h1>
-        </div>
+    <div className="relative min-h-screen flex flex-col items-center justify-center px-4">
+      {/* Blurred Gradient Background */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-200 via-white to-blue-300 opacity-90 backdrop-blur-md" />
 
+      {/* Logo on Top */}
+      <div className="mb-6">
+        <img
+          src="/logos/qrlogo.svg"
+          alt="QRGen Logo"
+          className="h-8 w-auto"
+        />
+      </div>
+
+      {/* Sign Up Card */}
+      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 md:p-8 space-y-1.5">
         {/* Heading */}
-        <h2 className="text-xl font-semibold text-gray-800">Create Account</h2>
+        <h2 className="text-xl font-semibold text-gray-800 text-left">Sign Up</h2>
 
         {/* Sign up with Google */}
         <button className="w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-md hover:bg-gray-50 transition">
@@ -28,7 +36,7 @@ export default function SignUpPage() {
         </div>
 
         {/* Form Inputs */}
-        <form className="space-y-4">
+        <form className="space-y-4 text-sm">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
             <input
