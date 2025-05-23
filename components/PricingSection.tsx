@@ -78,37 +78,38 @@ const pricingData = {
 };
 
 export default function PricingSection() {
-    const [isYearly, setIsYearly] = useState(false);
-    const plans = isYearly ? pricingData.yearly : pricingData.monthly;
-  
-    return (
-      <section className="px-4 py-16 bg-white text-gray-900">
-        <div className="text-center mb-10">
-          <div className="flex justify-center items-center gap-4">
-            <span className="font-semibold text-lg">Monthly</span>
-            <ToggleSwitch enabled={isYearly} setEnabled={setIsYearly} />
-            <span className="font-semibold text-lg relative">
-              Yearly
-              <span className="absolute top-8 left-1/12 transform -translate-x-1/2 text-pink-600 text-sm font-semibold">
-                Save 65%
-                 
-              </span>
+  const [isYearly, setIsYearly] = useState(false);
+  const plans = isYearly ? pricingData.yearly : pricingData.monthly;
+
+  return (
+    <section className="px-4 sm:px-6 md:px-12 py-16 bg-white text-gray-900">
+      {/* Toggle */}
+      <div className="text-center mb-12">
+        <div className="inline-flex items-center gap-4">
+          <span className="font-semibold text-lg">Monthly</span>
+          <ToggleSwitch enabled={isYearly} setEnabled={setIsYearly} />
+          <span className="font-semibold text-lg relative">
+            Yearly
+            <span className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-pink-600 text-white text-xs font-semibold px-2 rounded-full shadow-md">
+              Save 65%
             </span>
-          </div>
+          </span>
         </div>
-  
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map((plan, index) => (
-            <PricingCard
-              key={index}
-              title={plan.title}
-              subtitle={plan.subtitle}
-              price={plan.price}
-              features={plan.features}
-              additional={plan.additional}
-            />
-          ))}
-        </div>
-      </section>
-    );
-  }
+      </div>
+
+      {/* Pricing Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {plans.map((plan, index) => (
+          <PricingCard
+            key={index}
+            title={plan.title}
+            subtitle={plan.subtitle}
+            price={plan.price}
+            features={plan.features}
+            additional={plan.additional}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}

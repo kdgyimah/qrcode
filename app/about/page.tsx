@@ -8,15 +8,26 @@ import FAQPage from '@/components/pages/faqpage/page';
 
 export default function AboutPage() {
   return (
-    <main className='pt-18'>
+    <main className="pt-18">
       <Navbar />
-      {/* Hero Section */}
-      <AboutHeroSection />
-      <WhatWeStandFor />
-      <AboutThirdSection />
-      {/* Other sections to follow */}
-      <FAQPage />
-      <BlogSection />
+
+      <div className="flex flex-col space-y-12 overflow-hidden">
+        {/* Hero Section */}
+        <AboutHeroSection />
+
+        {/* Our Values */}
+        <WhatWeStandFor />
+
+        {/* Additional Info */}
+        <AboutThirdSection />
+
+        {/* FAQs */}
+        <FAQPage />
+
+        {/* Blog Section */}
+        <BlogSection />
+      </div>
+
       <Footer />
     </main>
   );

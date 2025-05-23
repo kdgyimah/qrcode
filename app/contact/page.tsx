@@ -10,14 +10,20 @@ export default function ContactPage() {
       <Navbar />
       <ContactHeader />
 
-      <div className="flex flex-col md:flex-row justify-center items-stretch gap-6 mt-12 px-4">
-        <div className="w-full md:w-1/2 h-[650px]">
-          <ContactMap />
+      {/* Responsive section */}
+      <div className="flex flex-col md:flex-row justify-center items-start gap-8 mt-12 px-4 max-w-7xl mx-auto">
+        <div className="w-full md:w-1/2">
+          <div className="h-[400px] md:h-[650px]">
+            <ContactMap />
+          </div>
         </div>
-        <div className="w-full md:w-1/2 h-[650px]">
-          <ContactForm />
+        <div className="w-full md:w-1/2">
+          <div className="h-auto md:h-[650px]">
+            <ContactForm />
+          </div>
         </div>
       </div>
+
       <Footer />
     </div>
   );
