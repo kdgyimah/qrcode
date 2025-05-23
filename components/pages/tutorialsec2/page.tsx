@@ -2,7 +2,7 @@
 
 const TutorialSection2 = () => {
   return (
-    <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
       {/* Two-column layout - reversed order */}
       <div className="flex flex-col lg:flex-row-reverse items-center gap-8 sm:gap-12">
         {/* Right side - Text content (now on the right) */}

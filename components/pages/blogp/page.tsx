@@ -26,7 +26,7 @@ const BlogSection = () => {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
       {/* Section Header */}
       <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 sm:mb-12">Our Blog</h2>
       
@@ -55,8 +55,8 @@ const BlogSection = () => {
               <h4 className="text-sm sm:text-base text-gray-600 mb-6">{post.excerpt}</h4>
               
               {/* Learn More Link */}
-              <a href="#" className="text-blue-600 hover:text-blue-800 text-sm sm:text-base font-medium underline underline-offset-4">
-                Learn more
+              <a href="#" className="text-black hover:text-blue-800 text-sm sm:text-base font-medium underline underline-offset-4">
+                Learn More
               </a>
             </div>
           </div>
@@ -64,11 +64,11 @@ const BlogSection = () => {
       </div>
       
       {/* View More Link */}
-      <div className="mt-10 sm:mt-12 text-center">
-        <a href="#" className="inline-flex items-center text-blue-600 hover:text-blue-800 text-base sm:text-lg font-medium underline underline-offset-4">
+      <div className="mt-10 sm:mt-12 text-left">
+        <a href="#" className="inline-flex items-center text-gray-500 hover:text-blue-800 text-base sm:text-lg font-medium underline underline-offset-4">
           View More Blogs
           <svg 
-            className="w-5 h-5 ml-2" 
+            className="w-[17px] h-5 ml-2" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24" 

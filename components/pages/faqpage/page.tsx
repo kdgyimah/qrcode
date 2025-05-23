@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 type FAQItem = {
@@ -217,9 +218,9 @@ const FAQPage = () => {
             Our team is here to help you with any questions you might have
           </h4>
 
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 sm:py-2 sm:px-6 rounded-lg transition-colors duration-200 text-sm sm:text-base">
+          <Link href={"/contact"} className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 sm:py-2 sm:px-6 rounded-lg transition-colors duration-200 text-sm sm:text-base">
             Get in touch
-          </button>
+          </Link>
         </div>
       </div>
     </div>

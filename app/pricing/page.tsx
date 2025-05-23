@@ -8,15 +8,15 @@ import AddOnsSection from "@/components/AddOnsSection";
 
 export default function PricingPage() {
   return (
-    <>
+    <div className="pt-18">
       <Navbar />
-
       <PricingHeroSec />
       <PricingSection />
       <AddOnsSection />
       <FAQPage />
       <Info3 />
       <Footer />
-    </>
+    </div>
+  
   );
 }
