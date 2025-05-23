@@ -191,24 +191,29 @@ const FAQPage = () => {
         {/* New "Still have questions?" section */}
         <div className="bg-white rounded-xl shadow-md mt-6 p-6 w-full mx-auto text-center">
           <div className="flex justify-center items-center mb-4 sm:mb-6">
-            <div className="flex -space-x-2">
-              <img
-                src="/images/img1.jpg"
-                alt="User"
-                className="w-8 h-8 sm:w-11 sm:h-10 mt-3 sm:mt-4 rounded-full border-2 border-white absolute left-1/2 transform -translate-x-16 sm:-translate-x-20"
-              />
-              <img
-                src="/images/img2.jpg"
-                alt="User"
-                className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-2 border-white relative z-20 shadow-sm"
-              />
-              <img
-                src="/images/img3.jpg"
-                alt="User"
-                className="w-8 h-8 sm:w-11 sm:h-10 mt-3 sm:mt-4 rounded-full border-2 border-white absolute right-1/2 transform translate-x-16 sm:translate-x-20"
-              />
-            </div>
-          </div>
+  <div className="relative w-28 sm:w-36 h-16 sm:h-20">
+    {/* Left image */}
+    <img
+      src="/images/img1.jpg"
+      alt="User"
+      className="w-8 h-8 sm:w-11 sm:h-10 rounded-full border-2 border-white absolute left-0 top-4 sm:top-5 z-0"
+    />
+    {/* Middle image */}
+    <img
+      src="/images/img2.jpg"
+      alt="User"
+      className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-2 border-white absolute left-1/2 top-0 transform -translate-x-1/2 z-10 shadow-md"
+    />
+
+    {/* Right image */}
+    <img
+      src="/images/img3.jpg"
+      alt="User"
+      className="w-8 h-8 sm:w-11 sm:h-10 rounded-full border-2 border-white absolute right-0 top-4 sm:top-5 z-0"
+    />
+  </div>
+</div>
+
 
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
             Still have questions?
