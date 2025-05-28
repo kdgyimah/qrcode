@@ -1,7 +1,7 @@
 "use client";
 
 import { RiTeamFill, RiBox3Line, RiColorFilterLine } from "react-icons/ri";
-import { PiFolderFill, PiFolder } from "react-icons/pi";
+import { PiFolder } from "react-icons/pi";
 import { TbScan } from "react-icons/tb";
 import { IoFlashOutline } from "react-icons/io5";
 
@@ -47,7 +47,7 @@ const cards = [
 export default function FeatureInfoSection() {
   return (
     <section
-      className="bg-white flex justify-center mt-12 mb-0 w-full"
+      className="bg-white flex justify-center mt-12  mb-0 w-full"
       style={{ minHeight: 600, maxWidth: "100vw" }}
     >
       <div className="flex flex-col w-full items-center">
@@ -60,38 +60,62 @@ export default function FeatureInfoSection() {
 
         {/* Cards Container */}
         <div
-          className="
-            grid grid-cols-1
-            sm:grid-cols-2
-            lg:grid-cols-3
-            gap-y-14 gap-x-6
-            w-full
-            max-w-screen-xl
-            px-2 sm:px-4 md:px-8
-          "
+          className="relative mx-auto"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 360px)",
+            gridTemplateRows: "repeat(2, 300px)",
+            gap: 64,
+            width: 1148,
+            height: 980,
+            maxWidth: "98vw",
+          }}
         >
           {cards.map((card, i) => (
             <div
               key={card.title}
-              className="
-                relative bg-white rounded-lg shadow-2xl shadow-gray-300
-                p-6 md:p-8 flex flex-col items-start text-left
-                min-h-[260px] md:min-h-[280px]
-                max-w-full
-                transition-transform hover:scale-[1.02]
-              "
+              className="relative bg-white rounded-lg shadow-2xl shadow-gray-300 p-8 flex flex-col items-start text-left transition-transform hover:scale-[1.02]"
+              style={{
+                width: 360,
+                height: 300,
+                minWidth: 0,
+                minHeight: 0,
+              }}
             >
               <div
-                className={`absolute -top-8 self-center text-white rounded-full p-4 shadow-md ${card.iconBg}`}
+                className={`absolute -top-8 left-1/2 -translate-x-1/2 text-white rounded-full p-4 shadow-md ${card.iconBg}`}
               >
                 {card.icon}
               </div>
-              <h2 className="text-lg md:text-xl font-semibold mt-12 mb-2 md:mb-3">{card.title}</h2>
-              <p className="text-gray-600 text-sm md:text-base">{card.desc}</p>
+              <h2 className="text-xl font-semibold mt-12 mb-3">{card.title}</h2>
+              <p className="text-gray-600">{card.desc}</p>
             </div>
           ))}
         </div>
       </div>
+      {/* Responsive override for mobile */}
+      <style jsx>{`
+        @media (max-width: 1200px) {
+          .cards-grid {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(3, 300px);
+            width: 100vw !important;
+            height: auto !important;
+            gap: 40px !important;
+          }
+        }
+        @media (max-width: 800px) {
+          .cards-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(6, 300px);
+            width: 100vw !important;
+            height: auto !important;
+            gap: 28px !important;
+            padding-left: 8px;
+            padding-right: 8px;
+          }
+        }
+      `}</style>
     </section>
   );
 }
