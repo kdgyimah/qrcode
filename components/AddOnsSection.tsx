@@ -35,18 +35,15 @@ export default function AddOnsSection() {
   return (
     <section
       className="relative py-16 px-6 text-white"
-      style={{ backgroundColor: "rgba(16, 10, 85, 1)" }}
     >
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/images/enter.jpg" // Ensure this image exists in public folder
+          src="/images/adonimg.jpg" // Ensure this image exists in public folder
           alt="Add-Ons Background"
           fill
           className="object-cover"
         />
-        {/* Optional overlay for contrast */}
-        <div className="absolute inset-0 bg-black bg-opacity-50" />
       </div>
 
       {/* Section Heading */}

@@ -5,7 +5,7 @@ export default function PricingHeroSec() {
     <section className="relative w-full h-[50vh] overflow-hidden">
       {/* Background Image */}
       <Image
-        src="/images/prichero.jpg" // Replace with your image path
+        src="/images/priceheroimg.jpg" // Replace with your image path
         alt="Pricing Background"
         fill
         style={{ objectFit: "cover" }}
