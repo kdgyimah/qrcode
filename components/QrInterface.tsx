@@ -1,29 +1,122 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import CategorySelector from '@/components/CategorySelector';
-import QrFormRenderer from '@/components/QrFormRenderer';
-import QrPreview from '@/components/QrPreview';
-import QRDesignPanel from './QRDesignPanel';
+import { useState, useEffect } from "react";
+import CategorySelector from "@/components/CategorySelector";
+import QrFormRenderer from "@/components/QrFormRenderer";
+import QrPreview from "@/components/QrPreview";
+import QRDesignPanel from "./QRDesignPanel";
+
+const initialFormData: Record<string, any> = {
+  link: { url: "" },
+  sms: { smsPhone: "", smsBody: "" },
+  whatsapp: { waPhone: "", waBody: "" },
+  mail: { email: "" },
+  call: { phone: "" },
+  wifi: { ssid: "", password: "", encryption: "WPA" },
+  image: { imageUrl: "" },
+  video: { videoUrl: "" },
+  bulkqr: { bulkList: "" },
+  app: { appUrl: "" },
+  social: { socialUrl: "" },
+  event: { eventTitle: "", eventStart: "", eventEnd: "", eventLocation: "", eventDesc: "" },
+  barcode2d: { barcodeValue: "" },
+  contact: { name: "", phone: "", email: "" },
+  pdf: { pdfUrl: "" }
+};
+
+const initialDesign = {
+  frame: "Frame 1",
+  color: "#000000",
+  logo: null as File | null
+};
 
 export default function QrInterface() {
-  const [category, setCategory] = useState<string>('link');
-  const [formData, setFormData] = useState<any>({});
+  const [category, setCategory] = useState<string>("link");
+  const [formData, setFormData] = useState<any>(initialFormData["link"]);
+  const [formReady, setFormReady] = useState<boolean>(false);
+
+  const [design, setDesign] = useState(initialDesign);
+
+  useEffect(() => {
+    setFormData(initialFormData[category] || {});
+  }, [category]);
+
+  useEffect(() => {
+    let ready = false;
+    switch (category) {
+      case "link":
+        ready = !!formData.url && formData.url.startsWith("http");
+        break;
+      case "sms":
+        ready = !!formData.smsPhone;
+        break;
+      case "whatsapp":
+        ready = !!formData.waPhone && !!formData.waBody;
+        break;
+      case "mail":
+        ready = !!formData.email;
+        break;
+      case "call":
+        ready = !!formData.phone;
+        break;
+      case "wifi":
+        ready = !!formData.ssid && !!formData.password && !!formData.encryption;
+        break;
+      case "image":
+        ready = !!formData.imageUrl;
+        break;
+      case "video":
+        ready = !!formData.videoUrl;
+        break;
+      case "bulkqr":
+        ready = !!formData.bulkList && formData.bulkList.trim().length > 0;
+        break;
+      case "app":
+        ready = !!formData.appUrl;
+        break;
+      case "social":
+        ready = !!formData.socialUrl;
+        break;
+      case "event":
+        ready = !!formData.eventTitle && !!formData.eventStart;
+        break;
+      case "barcode2d":
+        ready = !!formData.barcodeValue;
+        break;
+      case "contact":
+        ready = !!formData.name && !!formData.phone;
+        break;
+      case "pdf":
+        ready = !!formData.pdfUrl;
+        break;
+      default:
+        ready = false;
+    }
+    setFormReady(ready);
+  }, [category, formData]);
 
   return (
-    <div className=" max-w-5xl  mx-auto py-12 px-4 md:px-8 bg-white">
-      <h2 className="text-3xl font-bold text-center mb-8">Generate Your QR Code</h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Left: Category + Form */}
-        <div>
+    <div className="bg-blue-100 px-4 md:px-8">
+      <div className="flex flex-col md:flex-row h-full">
+        {/* Left: Main Panel */}
+        <div className="w-full md:w-4/5 shadow-md p-6 md:ml-12 my-10 bg-gray-50">
           <CategorySelector selected={category} onSelect={setCategory} />
-          <QrFormRenderer category={category} formData={formData} setFormData={setFormData} />
-          <QRDesignPanel />
+          <QrFormRenderer
+            category={category}
+            formData={formData}
+            setFormData={setFormData}
+          />
+          <QRDesignPanel design={design} setDesign={setDesign} />
         </div>
-
-        {/* Right: Preview + Button */}
-        <QrPreview formData={formData} category={category} />
+        {/* Right: Preview Panel */}
+        <div className="w-full md:w-1/4 bg-white mx-4 my-10 md:mr-24 shadow-sm">
+          <QrPreview
+            category={category}
+            formData={formData}
+            ready={formReady}
+            design={design}
+          />
+        </div>
       </div>
     </div>
   );
