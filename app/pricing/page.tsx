@@ -11,13 +11,13 @@ export default function PricingPage() {
     <div className="pt-16 md:pt-18 min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
         <PricingHeroSec />
         <PricingSection />
         <AddOnsSection />
         <FAQPage />
         <Info3 />
-      </main>
+      
       
       <Footer />
     </div>
