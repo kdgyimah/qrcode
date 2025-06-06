@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 export default function Info2() {
   return (
@@ -6,24 +6,26 @@ export default function Info2() {
       {/* Image Side */}
       <div className="w-full md:w-1/2 p-4 flex justify-center">
         <img
-          src="./images/info2.jpg"
+          src="./images/info2leftimg.jpg"
           alt="Info Image"
-            className="w-80 h-auto rounded-lg shadow-lg"
-            loading="lazy"
+          className="w-[80%] h-[500px] rounded-lg shadow-lg"
+          loading="lazy"
         />
       </div>
 
       {/* Text Side */}
       <div className="w-full md:w-1/2 text-center md:text-left">
         <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
-          <span className="block text-black">Explore Endless</span>
-          <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-green-900">
-            Possibilities
+          Empowering
+          <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-emerald-400 to-green-500">
+            Seamless QR Code
           </span>
-          <span className="block text-black">With Our Platform</span>
+          Solutions.
         </h1>
         <h3 className="text-lg md:text-xl text-gray-600 mb-6">
-          Empowering your ideas with cutting-edge solutions.
+          We make QR code creation effortless, fast, and <br /> customizable. Whether
+          for business, events, or personal <br /> use, our platform ensures seamless
+          integration, high-quality design, and powerful analytics.
         </h3>
         <button className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition">
           Get Started
