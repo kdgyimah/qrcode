@@ -4,15 +4,13 @@ import FolderSearch from "@/components/myqrcodes/FolderSearch";
 import QrSearch from "@/components/myqrcodes/QrSearch";
 import QrTabs from "@/components/myqrcodes/QrTabs";
 import QrTable from "@/components/myqrcodes/QrCodeTable";
-
-// Import your DateSelector
 import DateSelector from "@/components/myqrcodes/DateSelector";
 import FilterDropdown from "@/components/myqrcodes/FilterDropdown";
+import { QrData } from "@/app/dashboard/page";
 
-export default function MyQrCodesPage() {
+export default function MyQrCodesPage({ onShowDetail }: { onShowDetail: (qr: QrData) => void }) {
   return (
     <div className="space-y-6">
-      {/* Top Bar: Create Button + Folder Manager */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold">My QR Codes</h1>
@@ -20,13 +18,10 @@ export default function MyQrCodesPage() {
         </div>
         <CreateQrButton />
       </div>
-      {/* Search Area: Folder Search */}
       <FolderSearch />
       <div>
         <FolderManager />
       </div>
-
-      {/* Tabs + Search + Date Selector */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <QrTabs />
         <div className="flex items-end gap-2">
@@ -35,9 +30,8 @@ export default function MyQrCodesPage() {
           <FilterDropdown />
         </div>
       </div>
-
-      {/* QR Code Table */}
-      <QrTable />
+      {/* Pass the handler! */}
+      <QrTable onRowClick={onShowDetail} />
     </div>
   );
 }
