@@ -1,12 +1,20 @@
-// app/dashboard/components/QrTable.tsx
+import React, { useState } from "react";
+import { MoreHorizontal, X, Trash, Download, Eye, Copy } from "lucide-react";
+// import type for OriginalQrData instead of value
+import type { OriginalQrData } from "@/app/dashboard/page";
+import PaginationBar from "@/components/PaginationBar";
 
-"use client";
+// Extend QrData to include qrImage
+export type QrData = OriginalQrData & {
+  qrImage: string;
+  link: string;
+  category: "link" | "email" | "pdf"; // Define categories for links
+};
 
-import { MoreHorizontal } from "lucide-react";
-
-const qrData = [
-  // Add more entries as needed
+// Sample data - replace with your actual QR data source
+const qrData: QrData[] = [
   {
+    id: "1",
     name: "Product Launch",
     type: "Dynamic",
     folder: "Marketing",
@@ -14,42 +22,121 @@ const qrData = [
     scans: 152,
     lastScan: "2025-05-20",
     status: "Active",
+    description: "This QR promotes our product launch.",
+    qrImage: "/images/sample-qr.png",
+    link: "https://productlaunch.example.com",
+    category: "link",
+    tags: ["launch", "marketing"],
+    visits: 152,
+    lastModified: "2025-05-20",
   },
   {
-    name: "Product Launch",
+    id: "2",
+    name: "Event Invite",
     type: "Dynamic",
-    folder: "Marketing",
-    created: "2025-05-01",
-    scans: 152,
-    lastScan: "2025-05-20",
+    folder: "Events",
+    created: "2025-05-10",
+    scans: 98,
+    lastScan: "2025-05-22",
     status: "Active",
+    description: "Invite attendees to your upcoming event.",
+    qrImage: "/images/sample-qr.png",
+    link: "mailto:event@company.com",
+    category: "email",
+    tags: ["event", "invite"],
+    visits: 98,
+    lastModified: "2025-05-22",
   },
   {
-    name: "Product Launch",
-    type: "Dynamic",
-    folder: "Marketing",
-    created: "2025-05-01",
-    scans: 152,
-    lastScan: "2025-05-20",
-    status: "Active",
-  },
-  {
-    name: "Product Launch",
+    id: "3",
+    name: "Feedback Form",
     type: "Static",
-    folder: "Marketing",
-    created: "2025-05-01",
-    scans: 152,
-    lastScan: "2025-05-20",
+    folder: "Surveys",
+    created: "2025-04-15",
+    scans: 76,
+    lastScan: "2025-05-19",
     status: "Inactive",
+    description: "Collect valuable feedback from customers.",
+    qrImage: "/images/sample-qr.png",
+    link: "https://feedback.example.com",
+    category: "link",
+    tags: ["feedback", "survey"],
+    visits: 76,
+    lastModified: "2025-05-19",
+  },
+  {
+    id: "4",
+    name: "Promo QR",
+    type: "Dynamic",
+    folder: "Marketing",
+    created: "2025-05-03",
+    scans: 201,
+    lastScan: "2025-05-21",
+    status: "Active",
+    description: "Special promo for the latest campaign.",
+    qrImage: "/images/sample-qr.png",
+    link: "/files/promo.pdf",
+    category: "pdf",
+    tags: ["promo", "marketing"],
+    visits: 201,
+    lastModified: "2025-05-21",
   },
 ];
 
-export default function QrTable() {
+function getCategoryLabel(qr: QrData) {
+  switch (qr.category) {
+    case "email":
+      return <span className="text-xs text-blue-600">{qr.link}</span>;
+    case "pdf":
+      return (
+        <a href={qr.link} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 underline">
+          PDF
+        </a>
+      );
+    case "link":
+    default:
+      return (
+        <a href={qr.link} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 underline">
+          {qr.link}
+        </a>
+      );
+  }
+}
+
+export default function QrTable({ onRowClick }: { onRowClick: (qr: QrData) => void }) {
+  const [selected, setSelected] = useState<string[]>([]);
+
+  const handleSelect = (id: string) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((sel) => sel !== id) : [...prev, id]
+    );
+  };
+
+  const allSelected = selected.length === qrData.length;
+
+  // For pagination UI
+  const total = 20;
+  const perPage = 8;
+  const showingStart = 1;
+  const showingEnd = Math.min(perPage, total);
+
   return (
-    <div className="overflow-x-auto">
+    <div className="relative overflow-x-auto">
       <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden">
         <thead className="bg-white text-sm text-gray-600">
           <tr>
+            <th className="p-3">
+              <input
+                type="checkbox"
+                checked={allSelected}
+                onChange={() =>
+                  setSelected(allSelected ? [] : qrData.map((qr) => qr.id))
+                }
+                aria-label="Select all"
+                className="accent-blue-600 w-4 h-4 rounded"
+              />
+            </th>
+            <th className="text-left p-3">QR Code</th>
             <th className="text-left p-3">QR Code Name</th>
             <th className="text-left p-3">Type</th>
             <th className="text-left p-3">Folder</th>
@@ -61,12 +148,34 @@ export default function QrTable() {
           </tr>
         </thead>
         <tbody>
-          {qrData.map((qr, index) => (
+          {qrData.map((qr) => (
             <tr
-              key={index}
-              className="border-t text-sm bg-white transition"
+              key={qr.id}
+              className={`border-t text-sm bg-white transition cursor-pointer hover:bg-blue-50 ${
+                selected.includes(qr.id) ? "bg-blue-50" : ""
+              }`}
+              onClick={() => onRowClick(qr)}
             >
-              <td className="p-3 py-4 font-medium text-gray-800">{qr.name}</td>
+              <td className="p-3 py-4" onClick={e => e.stopPropagation()}>
+                <input
+                  type="checkbox"
+                  checked={selected.includes(qr.id)}
+                  onChange={() => handleSelect(qr.id)}
+                  aria-label={`Select ${qr.name}`}
+                  className="accent-blue-600 w-4 h-4 rounded"
+                />
+              </td>
+              <td className="p-3 py-4">
+                <img
+                  src={qr.qrImage}
+                  alt={qr.name}
+                  className="w-12 h-12 rounded shadow border border-gray-100"
+                />
+              </td>
+              <td className="p-3 py-4 font-medium text-gray-800">
+                {qr.name}
+                <div className="mt-1">{getCategoryLabel(qr)}</div>
+              </td>
               <td className="p-3 py-4 text-gray-700">{qr.type}</td>
               <td className="p-3 py-4 text-gray-700">{qr.folder}</td>
               <td className="p-3 py-4 text-gray-700">{qr.created}</td>
@@ -83,7 +192,7 @@ export default function QrTable() {
                   {qr.status}
                 </span>
               </td>
-              <td className="p-3 text-right">
+              <td className="p-3 text-right" onClick={e => e.stopPropagation()}>
                 <button className="text-gray-600 hover:text-gray-900">
                   <MoreHorizontal size={18} />
                 </button>
@@ -92,6 +201,29 @@ export default function QrTable() {
           ))}
         </tbody>
       </table>
+      {/* Floating vertical action bar when any are selected */}
+      {selected.length > 0 && (
+        <div className="fixed right-4 top-1/4 z-50 flex flex-col gap-2 rounded-xl shadow-lg bg-white border border-gray-200 p-2 transition-all">
+          <button className="p-2 hover:bg-blue-50 rounded">
+            <X size={20} className="text-blue-600" />
+          </button>
+          <button className="p-2 hover:bg-blue-50 rounded">
+            <Trash size={20} className="text-blue-600" />
+          </button>
+          <button className="p-2 hover:bg-blue-50 rounded">
+            <Download size={20} className="text-blue-600" />
+          </button>
+          <button className="p-2 hover:bg-blue-50 rounded">
+            <Eye size={20} className="text-blue-600" />
+          </button>
+          <button className="p-2 hover:bg-blue-50 rounded">
+            <Copy size={20} className="text-blue-600" />
+          </button>
+          <span className="mx-auto mt-2 text-blue-600 font-semibold">{selected.length}</span>
+        </div>
+      )}
+      {/* Pagination and showing info below the table */}
+      <PaginationBar showingStart={showingStart} showingEnd={showingEnd} total={total} page={1} />
     </div>
   );
 }
