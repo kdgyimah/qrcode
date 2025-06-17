@@ -38,12 +38,13 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`
-        fixed top-0 w-full bg-white px-6 md:px-16 py-4 z-50 shadow transition-transform duration-300
-        ${showNavbar ? "translate-y-0" : "-translate-y-full"}
-      `}
-      style={{ willChange: "transform" }}
-    >
+   className={`
+    fixed top-0 w-full px-6 md:px-16 py-4 z-50 transition-all duration-300
+    ${showNavbar ? "translate-y-0" : "-translate-y-full"}
+    ${lastScrollY > 10 ? "bg-white shadow-md" : "bg-transparent"}
+  `}
+  style={{ willChange: "transform" }}
+>
       <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
         {/* Logo */}
         <div>

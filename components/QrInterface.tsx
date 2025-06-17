@@ -96,7 +96,7 @@ export default function QrInterface() {
   }, [category, formData]);
 
   return (
-    <div className="bg-blue-100 px-4 md:px-8">
+    <div id="qr-interface" className="bg-blue-100 px-4 md:px-8 scroll-mt-20">
       <div className="flex flex-col md:flex-row h-full">
         {/* Left: Main Panel */}
         <div className="w-full md:w-4/5 shadow-md p-6 md:ml-12 my-10 bg-gray-50">

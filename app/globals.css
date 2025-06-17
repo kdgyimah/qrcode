@@ -1,3 +1,8 @@
+/* styles/globals.css */
+:target {
+  scroll-margin-top: 100px; /* Adjust to match navbar height */
+}
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
