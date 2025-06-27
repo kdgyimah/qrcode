@@ -17,7 +17,7 @@ export default function Info2() {
         <img
           src="./images/info2leftimg.jpg"
           alt="Info Image"
-          className="w-[80%] h-[500px] rounded-lg shadow-lg"
+          className="w-[80%] rounded-lg shadow-lg"
           loading="lazy"
         />
       </motion.div>

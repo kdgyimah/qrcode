@@ -1,28 +1,31 @@
 "use client";
+
 import { motion } from "framer-motion";
 
 export default function ExperienceSection() {
   return (
     <section className="relative bg-white py-16 overflow-hidden">
-      {/* Background layer */}
-      <div className="absolute bottom-0 left-0 w-full h-[70%] bg-gray-100 z-0"></div>
+      {/* Background layer remains covering bottom 70% */}
+      <div className="absolute bottom-0 left-0 w-full h-[80%] bg-gray-100 z-0"></div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center md:items-start gap-12">
-        {/* Left Text */}
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row gap-8">
+        {/* Left Text (centered vertically) */}
         <motion.div
-          className="w-full md:w-1/2 text-center md:text-left space-y-5"
+          className="w-full md:w-1/2 flex items-center justify-center md:items-center md:justify-center text-center md:text-left"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800">
-            Experiences Shared by Our Clients
-          </h1>
-          <p className="text-base sm:text-lg text-gray-600">
-            The team at QR GEN provided unparalleled support throughout our project.
-            Their expertise and dedication were evident from day one.
-          </p>
+          <div className="space-y-5">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800">
+              Experiences Shared by Our Clients
+            </h1>
+            <p className="text-base sm:text-lg text-gray-600">
+              The team at QR GEN provided unparalleled support throughout our project.
+              Their expertise and dedication were evident from day one.
+            </p>
+          </div>
         </motion.div>
 
         {/* Right Content */}
@@ -41,14 +44,11 @@ export default function ExperienceSection() {
           />
 
           {/* Testimonial */}
-          <motion.p
-            className="text-gray-800 text-sm sm:text-base leading-relaxed bg-white rounded-xl p-4 shadow-md transition hover:shadow-lg"
-            whileHover={{ y: -2 }}
-          >
+          <div className="text-gray-800 text-sm sm:text-base leading-relaxed p-2">
             QR GEN is a tool that revolutionized our marketing campaigns. The real-time
-            tracking is a game-changer, and managing event check-ins has never been easier
-            with dynamic QR codes that are incredibly efficient.
-          </motion.p>
+            tracking is a game-changer, and managing event check-ins has never been
+            easier with dynamic QR codes that are incredibly efficient.
+          </div>
 
           {/* Profile */}
           <div className="flex items-center space-x-4">
