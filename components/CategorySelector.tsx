@@ -14,6 +14,7 @@ import {
   AppWindow,
   CalendarDays,
   Barcode,
+  ImageIcon,
 } from "lucide-react";
 import type { ReactElement } from "react";
 
@@ -24,8 +25,8 @@ interface Category {
 }
 
 interface CategorySelectorProps {
-  selected: string;
-  onSelect: (categoryId: string) => void;
+  selected: Category;
+  onSelect: (categoryId: Category) => void;
 }
 
 export default function CategorySelector({
@@ -39,7 +40,7 @@ export default function CategorySelector({
     { id: "sms", name: "SMS", icon: <MessageSquareText size={28} /> },
     { id: "whatsapp", name: "WhatsApp", icon: <MessageCircle size={28} /> },
     { id: "wifi", name: "WiFi", icon: <Wifi size={28} /> },
-    { id: "image", name: "Image", icon: <Image size={28} /> },
+    { id: "image", name: "Image", icon: <ImageIcon size={28} /> },
     { id: "video", name: "Video", icon: <Video size={28} /> },
     { id: "bulkqr", name: "Bulk QR", icon: <QrCode size={28} /> },
     { id: "app", name: "App", icon: <AppWindow size={28} /> },
@@ -53,15 +54,15 @@ export default function CategorySelector({
   return (
     <div className="bg-white shadow-lg p-4 rounded-sm">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-  {categoryList.map(({ id, name, icon }) => {
-    const isSelected = selected === id;
+  {categoryList.map((category) => {
+    const isSelected = selected.id === category.id;
     return (
       <button
-        key={id}
+        key={category.id}
         type="button"
         aria-pressed={isSelected}
-        aria-label={name}
-        onClick={() => onSelect(id)}
+        aria-label={category.name}
+        onClick={() => onSelect(category)}
         className={`w-full rounded-md p-3 flex items-center justify-center gap-2
           transition-all duration-200 ease-in-out transform hover:scale-105
           ${isSelected 
@@ -70,10 +71,10 @@ export default function CategorySelector({
         `}
       >
         <div className={`text-2xl transition-colors duration-200 ${isSelected ? 'text-blue-600' : 'text-black'}`}>
-          {icon}
+          {category.icon}
         </div>
         <div className="text-sm">
-          {name}
+          {category.name}
         </div>
       </button>
     );

@@ -14,5 +14,5 @@ export type QrData = {
   category?: "link" | "email" | "pdf";
   tags?: string[];
   visits?: number;
-  [key: string]: any; // allows extra properties
+  [key: string]: unknown; // allows extra properties
 };

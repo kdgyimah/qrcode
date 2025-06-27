@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const BlogSection = () => {
   const blogPosts = [
@@ -52,11 +53,13 @@ const BlogSection = () => {
             viewport={{ once: true }}
           >
             {/* Blog Image */}
-            <div className="h-48 sm:h-56 overflow-hidden rounded-t-2xl">
-              <img
+            <div className="relative h-48 sm:h-56 overflow-hidden rounded-t-2xl">
+              <Image
                 src={post.imageUrl}
                 alt={post.title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
             </div>
 

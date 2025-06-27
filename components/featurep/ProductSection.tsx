@@ -1,47 +1,6 @@
 "use client";
 
-const BlogSection = () => {
-  // 6 blog posts for a 3-column grid
-  const productPosts = [
-    {
-      id: 1,
-      imageUrl: "/images/proimg1.jpg",
-      title: "The Future of QR Code Technology",
-      excerpt: "Exploring how QR codes are evolving and what to expect in coming years",
-    },
-    {
-      id: 2,
-      imageUrl: "/images/proimg2.png",
-      title: "Creative Uses of QR Codes in Marketing",
-      excerpt: "Innovative ways businesses are leveraging QR codes for customer engagement",
-    },
-    {
-      id: 3,
-      imageUrl: "/images/proimg3.png",
-      title: "QR Code Security Best Practices",
-      excerpt: "How to ensure your QR codes are secure and safe for your users",
-    },
-    {
-      id: 4,
-      imageUrl: "/images/proimg4.png",
-      title: "Design Trends for QR Codes",
-      excerpt: "Make your QR codes stand out with the latest design approaches and branding tips.",
-    },
-    {
-      id: 5,
-      imageUrl: "/images/proimg5.png",
-      title: "QR Codes in Everyday Life",
-      excerpt: "A look at how QR codes are making everyday interactions smoother and smarter.",
-    },
-    {
-      id: 6,
-      imageUrl: "/images/proimg6.png",
-      title: "How to Measure QR Campaign Success",
-      excerpt: "Understanding the analytics that matter for your QR marketing campaigns.",
-    },
-  ];
-
-}
+import Image from "next/image";
 
 export function ProductSection() {
   // 6 blog posts for a 3-column grid
@@ -103,7 +62,7 @@ export function ProductSection() {
           <div key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
             {/* Blog Image */}
             <div className="h-48 sm:h-56 overflow-hidden">
-              <img 
+              <Image
                 src={post.imageUrl} 
                 alt={post.title}
                 className="w-full h-full object-cover"

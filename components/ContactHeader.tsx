@@ -5,7 +5,7 @@ export default function ContactHeader() {
         Reaching out to us has <br className="hidden sm:block" /> never been easier.
       </h1>
       <p className="text-gray-600 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
-        We'd love to hear from you! Whether you have questions, feedback, or need
+        We&apos;d love to hear from you! Whether you have questions, feedback, or need
         assistance, our team is here to help. Reach out to us through any of the
         following methods.
       </p>

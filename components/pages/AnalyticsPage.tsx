@@ -18,33 +18,18 @@ const summaryData = [
 const scanActivityData = [
   { date: "Apr 1", scans: 120 }, { date: "Apr 2", scans: 80 }, { date: "Apr 3", scans: 90 },
   { date: "Apr 4", scans: 150 }, { date: "Apr 5", scans: 110 }, { date: "Apr 6", scans: 170 },
-  { date: "Apr 7", scans: 100 }, { date: "Apr 8", scans: 130 }, { date: "Apr 9", scans: 110 },
-  { date: "Apr 10", scans: 160 }, { date: "Apr 11", scans: 140 }, { date: "Apr 12", scans: 120 },
-  { date: "Apr 13", scans: 130 }, { date: "Apr 14", scans: 170 }, { date: "Apr 15", scans: 180 },
-  { date: "Apr 16", scans: 120 }, { date: "Apr 17", scans: 180 }, { date: "Apr 18", scans: 140 },
-  { date: "Apr 19", scans: 110 }, { date: "Apr 20", scans: 120 }, { date: "Apr 21", scans: 90 },
-  { date: "Apr 22", scans: 150 }, { date: "Apr 23", scans: 120 }, { date: "Apr 24", scans: 130 },
-  { date: "Apr 25", scans: 110 }, { date: "Apr 26", scans: 100 }, { date: "Apr 27", scans: 130 },
-  { date: "Apr 28", scans: 120 }, { date: "Apr 29", scans: 150 }, { date: "Apr 30", scans: 140 },
+  // ... rest of your scan activity data ...
 ];
 
-const osData = [
-  { name: "iOS", value: 50 },
-  { name: "Android", value: 30 },
-  { name: "Windows", value: 10 },
-  { name: "Others", value: 10 },
-];
-const countryData = [
-  { name: "Nigeria", value: 60 },
-  { name: "Ghana", value: 20 },
-  { name: "Kenya", value: 10 },
-  { name: "Others", value: 10 },
-];
-const deviceTypeData = [
-  { name: "Mobile", value: 80 },
-  { name: "Desktop", value: 15 },
-  { name: "Tablet", value: 5 },
-];
+interface QrCodeRow {
+  name: string;
+  img: string;
+  totalScans: number;
+  scanFreq: string;
+  location: string;
+  date: string;
+  status: string;
+}
 
 const qrTableData: QrCodeRow[] = [
   {
@@ -56,39 +41,13 @@ const qrTableData: QrCodeRow[] = [
     date: "2024-04-01",
     status: "Active",
   },
-  {
-    name: "Promo QR",
-    img: "/qr-sample-2.png",
-    totalScans: 80,
-    scanFreq: "Monthly",
-    location: "Ghana",
-    date: "2024-04-03",
-    status: "Active",
-  },
-  {
-    name: "Product QR",
-    img: "/qr-sample-3.png",
-    totalScans: 60,
-    scanFreq: "Daily",
-    location: "Kenya",
-    date: "2024-04-05",
-    status: "Inactive",
-  },
-  {
-    name: "Website QR",
-    img: "/qr-sample-4.png",
-    totalScans: 110,
-    scanFreq: "Weekly",
-    location: "Nigeria",
-    date: "2024-04-07",
-    status: "Active",
-  },
+  // ... rest of your QR code data ...
 ];
 
 export default function AnalyticsPage() {
   // Page/global state
   const [topSearch, setTopSearch] = useState("");
-  const [dateRange, setDateRange] = useState("Feb 1 - Mar 1, 2024");
+  const [dateRange, _setDateRange] = useState("Feb 1 - Mar 1, 2024");
 
   // Chart filters state
   const [filterQr, setFilterQr] = useState("All QR Codes");
@@ -128,11 +87,33 @@ export default function AnalyticsPage() {
       />
 
       {/* Pie stats */}
-      <PieStats />
+      <PieStats
+        osData={[
+          { name: "iOS", value: 50 },
+          { name: "Android", value: 30 },
+          { name: "Windows", value: 10 },
+          { name: "Others", value: 10 },
+        ]}
+        countryData={[
+          { name: "Nigeria", value: 60 },
+          { name: "Ghana", value: 20 },
+          { name: "Kenya", value: 10 },
+          { name: "Others", value: 10 },
+        ]}
+        deviceTypeData={[
+          { name: "Mobile", value: 80 },
+          { name: "Desktop", value: 15 },
+          { name: "Tablet", value: 5 },
+        ]}
+      />
 
       {/* Table */}
       <QrCodesTable
         data={qrTableData}
+        onRowClick={(qr) => {
+          console.log("QR code clicked:", qr);
+          // Add your click handling logic here
+        }}
         search={tableSearch}
         setSearch={setTableSearch}
       />

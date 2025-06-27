@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       
-      <body className={`${geistSans.variable} ${geistMono.variable}`} scroll-smooth>
+      <body className={`${geistSans.variable} ${geistMono.variable} scroll-smooth`}>
         <Toaster position="top-right" />
         {children}
       </body>

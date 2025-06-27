@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { ArrowDownToLine, Edit2, Share2, Trash2 } from "lucide-react";
+import Image from "next/image";
 
 interface QrEditViewProps {
   qr: {
@@ -12,13 +13,13 @@ interface QrEditViewProps {
     created?: string;
     lastModified?: string;
     qrImage?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   onClose?: () => void;
-  onSaved?: (updatedQr: any) => void;
+  onSaved?: (updatedQr: unknown) => void;
 }
 
-export default function QrEditView({ qr, onClose, onSaved }: QrEditViewProps) {
+export default function QrEditView({ qr, onSaved }: QrEditViewProps) {
   const [name, setName] = useState(qr.name || "");
   const [link, setLink] = useState(qr.link || "");
   const [folder, setFolder] = useState(qr.folder || "");
@@ -176,7 +177,7 @@ export default function QrEditView({ qr, onClose, onSaved }: QrEditViewProps) {
         <div className="w-full md:w-96 flex-shrink-2 ">
           <div className="bg-white rounded-lg shadow p-8 flex flex-col items-center">
             {qr.qrImage ? (
-              <img
+              <Image
                 src={qr.qrImage}
                 alt="QR Code"
                 className="w-48 h-48 object-contain mb-6"

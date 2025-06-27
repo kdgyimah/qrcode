@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const TutorialSection2 = () => {
   return (
@@ -51,9 +52,11 @@ const TutorialSection2 = () => {
           className="lg:w-1/2"
         >
           <div className="overflow-hidden">
-            <img
+            <Image
               src="/images/tutorial2img.png"
               alt="Generate your QR code"
+              width={800}
+              height={600}
               className="w-full h-auto object-cover"
             />
           </div>

@@ -20,7 +20,7 @@ export function CategoryGrid({ onCategorySelect }: CategoryGridProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {QR_CATEGORIES.map((category) => {
-          const IconComponent = Icons[category.icon as keyof typeof Icons] as any;
+          const IconComponent = Icons[category.icon as keyof typeof Icons] as React.ElementType;
           
           return (
             <Card

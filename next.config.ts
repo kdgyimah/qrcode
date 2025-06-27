@@ -1,7 +1,7 @@
 /**
  * @type {import('next').NextConfig}
  */
-const nextConfig = {
+const nextConfig: import('next').NextConfig = {
   /* config options here */
 }
  

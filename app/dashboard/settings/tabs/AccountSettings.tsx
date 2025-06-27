@@ -7,6 +7,7 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/24/outline";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function AccountSettings() {
@@ -54,7 +55,7 @@ export default function AccountSettings() {
               <div>
                 <label className="block text-xs mb-1 font-medium">Change Avatar</label>
                 <div className="flex items-center gap-3">
-                  <img
+                  <Image
                     src="/avatar-placeholder.png"
                     className="w-12 h-12 rounded-full border"
                     alt="avatar"

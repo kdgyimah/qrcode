@@ -1,6 +1,6 @@
 "use client";
 
-
+import Image from "next/image";
 import Link from "next/link";
 import {
   FaFacebookF,
@@ -16,13 +16,16 @@ export default function Footer() {
       <div className="flex flex-col md:flex-row justify-between gap-10 mb-20 px-6 text-center md:text-left">
         {/* Left: Logo + Description + Newsletter */}
         <div className="w-full md:w-1/3">
-          <img
+          <Image
             src="/logos/qrlogo.svg"
             alt="QRGen Logo"
+            width={120}
+            height={40}
             className="h-8 mb-4 mx-auto md:mx-0 filter brightness-0 invert"
           />
+
           <h3 className="mb-4 text-sm md:text-base">
-            We make QR code creation effortless, <br /> fast, and customizable.. 
+            We make QR code creation effortless, <br /> fast, and customizable..
           </h3>
           <div className="w-full max-w-md mt-10 mx-auto md:mx-0">
             {/* Mobile: Stack vertically */}
@@ -99,17 +102,21 @@ export default function Footer() {
 
       {/* Bottom Section */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
-        <p className="order-2 sm:order-1">&copy; {new Date().getFullYear()} QR Gen.</p>
+        <p className="order-2 sm:order-1">
+          &copy; {new Date().getFullYear()} QR Gen.
+        </p>
         <div className="flex space-x-4 order-1 sm:order-2">
-          {[FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn].map((Icon, i) => (
-            <a
-              key={i}
-              href="#"
-              className="bg-gray-600 p-2 rounded-full hover:bg-blue-600 transition transform hover:scale-110"
-            >
-              <Icon />
-            </a>
-          ))}
+          {[FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn].map(
+            (Icon, i) => (
+              <a
+                key={i}
+                href="#"
+                className="bg-gray-600 p-2 rounded-full hover:bg-blue-600 transition transform hover:scale-110"
+              >
+                <Icon />
+              </a>
+            )
+          )}
         </div>
       </div>
     </footer>

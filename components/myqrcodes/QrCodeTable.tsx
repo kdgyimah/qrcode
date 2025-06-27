@@ -3,6 +3,7 @@ import { MoreHorizontal, X, Trash, Download, Eye, Copy } from "lucide-react";
 // import type for OriginalQrData instead of value
 import type { OriginalQrData } from "@/app/dashboard/page";
 import PaginationBar from "@/components/PaginationBar";
+import Image from "next/image";
 
 // Extend QrData to include qrImage
 export type QrData = OriginalQrData & {
@@ -166,7 +167,7 @@ export default function QrTable({ onRowClick }: { onRowClick: (qr: QrData) => vo
                 />
               </td>
               <td className="p-3 py-4">
-                <img
+                <Image
                   src={qr.qrImage}
                   alt={qr.name}
                   className="w-12 h-12 rounded shadow border border-gray-100"

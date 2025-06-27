@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { FaGoogle } from 'react-icons/fa';
 
 export default function SignUpPage() {
@@ -10,11 +11,14 @@ export default function SignUpPage() {
 
       {/* Logo on Top */}
       <div className="mb-6">
-        <img
-          src="/logos/qrlogo.svg"
-          alt="QRGen Logo"
-          className="h-8 w-auto"
-        />
+        <Image
+  src="/logos/qrlogo.svg"
+  alt="QRGen Logo"
+  width={150}
+  height={50}
+  className="h-8 w-auto"
+/>
+
       </div>
 
       {/* Sign Up Card */}

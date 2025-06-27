@@ -1,3 +1,6 @@
+"use client";
+
+import Image from "next/image";
 import React from "react";
 
 export type QrCodeRow = {
@@ -10,15 +13,19 @@ export type QrCodeRow = {
   status: string;
 };
 
-export default function QrCodesTable({
-  data,
-  search,
-  setSearch,
-}: {
+interface QrCodesTableProps {
   data: QrCodeRow[];
+  onRowClick: (qr: QrCodeRow) => void;
   search: string;
-  setSearch: (v: string) => void;
-}) {
+  setSearch: (value: string) => void;
+}
+
+export default function QrCodesTable({ 
+  data, 
+  onRowClick, 
+  search, 
+  setSearch 
+}: QrCodesTableProps) {
   const filteredData = data.filter(
     (item) =>
       item.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -50,9 +57,19 @@ export default function QrCodesTable({
           </thead>
           <tbody>
             {filteredData.map((qr, idx) => (
-              <tr key={idx} className="border-t">
+              <tr 
+                key={idx} 
+                className="border-t hover:bg-gray-50 cursor-pointer"
+                onClick={() => onRowClick(qr)}
+              >
                 <td className="py-2 px-3 flex items-center gap-2">
-                  <img src={qr.img} alt={qr.name} className="w-8 h-8 rounded bg-gray-100" />
+                  <Image 
+                    src={qr.img} 
+                    alt={`QR Code: ${qr.name}`}
+                    width={32}
+                    height={32}
+                    className="w-8 h-8 rounded bg-gray-100" 
+                  />
                   <span>{qr.name}</span>
                 </td>
                 <td className="py-2 px-3">{qr.totalScans}</td>
@@ -82,7 +99,6 @@ export default function QrCodesTable({
           </tbody>
         </table>
       </div>
-      {/* Pagination mockup */}
       <div className="flex justify-end mt-4">
         <button className="px-2 text-sm text-blue-600">{"<"}</button>
         <span className="px-2 text-sm">1</span>

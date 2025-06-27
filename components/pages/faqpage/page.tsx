@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -191,29 +192,35 @@ const FAQPage = () => {
         {/* New "Still have questions?" section */}
         <div className="bg-white rounded-xl shadow-md mt-6 p-6 w-full mx-auto text-center">
           <div className="flex justify-center items-center mb-4 sm:mb-6">
-  <div className="relative w-28 sm:w-36 h-16 sm:h-20">
-    {/* Left image */}
-    <img
-      src="/images/img1.jpg"
-      alt="User"
-      className="w-8 h-8 sm:w-11 sm:h-10 rounded-full border-2 border-white absolute left-0 top-4 sm:top-5 z-0"
-    />
-    {/* Middle image */}
-    <img
-      src="/images/img2.jpg"
-      alt="User"
-      className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-2 border-white absolute left-1/2 top-0 transform -translate-x-1/2 z-10 shadow-md"
-    />
+            <div className="relative w-28 sm:w-36 h-16 sm:h-20">
+              {/* Left image */}
+              <Image
+                src="/images/img1.jpg"
+                alt="User"
+                width={44} // corresponds roughly to w-11 (11 * 4 = 44px)
+                height={40} // corresponds to h-10 (10 * 4 = 40px)
+                className="w-8 h-8 sm:w-11 sm:h-10 rounded-full border-2 border-white absolute left-0 top-4 sm:top-5 z-0"
+              />
 
-    {/* Right image */}
-    <img
-      src="/images/img3.jpg"
-      alt="User"
-      className="w-8 h-8 sm:w-11 sm:h-10 rounded-full border-2 border-white absolute right-0 top-4 sm:top-5 z-0"
-    />
-  </div>
-</div>
+              {/* Middle image */}
+              <Image
+                src="/images/img2.jpg"
+                alt="User"
+                width={56} // sm:w-14 = 14 * 4 = 56px
+                height={56} // sm:h-14 = 14 * 4 = 56px
+                className="w-10 h-10 sm:w-14 sm:h-14 rounded-full border-2 border-white absolute left-1/2 top-0 transform -translate-x-1/2 z-10 shadow-md"
+              />
 
+              {/* Right image */}
+              <Image
+                src="/images/img3.jpg"
+                alt="User"
+                width={44} // sm:w-11 = 11 * 4 = 44px
+                height={40} // sm:h-10 = 10 * 4 = 40px
+                className="w-8 h-8 sm:w-11 sm:h-10 rounded-full border-2 border-white absolute right-0 top-4 sm:top-5 z-0"
+              />
+            </div>
+          </div>
 
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
             Still have questions?
@@ -223,7 +230,10 @@ const FAQPage = () => {
             Our team is here to help you with any questions you might have
           </h4>
 
-          <Link href={"/contact"} className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 sm:py-2 sm:px-6 rounded-lg transition-colors duration-200 text-sm sm:text-base">
+          <Link
+            href={"/contact"}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 sm:py-2 sm:px-6 rounded-lg transition-colors duration-200 text-sm sm:text-base"
+          >
             Get in touch
           </Link>
         </div>

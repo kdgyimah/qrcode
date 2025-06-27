@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const TutorialSection3 = () => {
   return (
@@ -35,8 +36,9 @@ const TutorialSection3 = () => {
 
             {/* Step Description */}
             <h4 className="text-lg sm:text-xl text-gray-600">
-              Once satisfied, download your QR code in high-quality PNG, SVG, or PDF.
-              Print it, share it digitally, or integrate it into your designs effortlessly.
+              Once satisfied, download your QR code in high-quality PNG, SVG, or
+              PDF. Print it, share it digitally, or integrate it into your
+              designs effortlessly.
             </h4>
           </div>
         </motion.div>
@@ -50,9 +52,11 @@ const TutorialSection3 = () => {
           className="lg:w-1/2"
         >
           <div className="overflow-hidden">
-            <img
+            <Image
               src="/images/tutorial3img.png"
               alt="Enter your details"
+              width={800}
+              height={600}
               className="w-full h-auto object-cover"
             />
           </div>

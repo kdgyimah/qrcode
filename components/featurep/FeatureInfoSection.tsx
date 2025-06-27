@@ -71,7 +71,7 @@ export default function FeatureInfoSection() {
             maxWidth: "98vw",
           }}
         >
-          {cards.map((card, i) => (
+          {cards.map((card) => (
             <div
               key={card.title}
               className="relative bg-white rounded-lg shadow-2xl shadow-gray-300 p-8 flex flex-col items-start text-left transition-transform hover:scale-[1.02]"

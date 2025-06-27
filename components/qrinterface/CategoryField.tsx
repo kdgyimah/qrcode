@@ -8,14 +8,16 @@ import SMSForm from '../forms/SMSForm';
 import WhatsAppForm from '../forms/WhatsAppForm';
 import PDFForm from '../forms/PDFForm';
 import ImageForm from '../forms/ImageForm';
+import type { HandleContentCreateData } from "./QR-Interface";
 
 interface Category {
-  label: string;
+  selectedCategory?: Category;
+  onContentCreate: (content: HandleContentCreateData) => void;
 }
 
 interface CategoryFieldProps {
   selectedCategory?: Category;
-  onContentCreate: (content: string) => void;
+  onContentCreate: (content: string, ) => void;
 }
 
 export default function CategoryField({

@@ -1,5 +1,6 @@
 import QrEditView from "@/app/dashboard/components/QrEditView";
 import { ArrowDownToLine, Edit2, Share2, Trash2 } from "lucide-react";
+import Image from "next/image";
 
 // Mock data and fetch function
 const allQrData = [
@@ -60,7 +61,7 @@ export default async function QreditViewPage({ params }: { params: { id: string 
         </div>
         <div className="w-full md:w-96 flex-shrink-0">
           <div className="bg-white rounded-lg shadow p-6 flex flex-col items-center">
-            <img
+            <Image
               src={qr.qrImage}
               alt="QR Code"
               className="w-48 h-48 object-contain mb-6"

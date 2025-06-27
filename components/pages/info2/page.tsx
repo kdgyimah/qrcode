@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function Info2() {
   return (
@@ -14,9 +15,11 @@ export default function Info2() {
         viewport={{ once: true }}
         className="w-full md:w-1/2 p-4 flex justify-center"
       >
-        <img
-          src="./images/info2leftimg.jpg"
+        <Image
+          src="/images/info2leftimg.jpg"
           alt="Info Image"
+          width={800} // Adjust based on actual image size if known
+          height={600}
           className="w-[80%] rounded-lg shadow-lg"
           loading="lazy"
         />
@@ -38,9 +41,10 @@ export default function Info2() {
           Solutions.
         </h1>
         <h3 className="text-lg md:text-xl text-gray-600 mb-6">
-          We make QR code creation effortless, fast, and <br /> customizable. Whether
-          for business, events, or personal <br /> use, our platform ensures seamless
-          integration, high-quality design, and powerful analytics.
+          We make QR code creation effortless, fast, and <br /> customizable.
+          Whether for business, events, or personal <br /> use, our platform
+          ensures seamless integration, high-quality design, and powerful
+          analytics.
         </h3>
         <Link href="/signup">
           <motion.button

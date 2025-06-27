@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
+import Image from "next/image";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -38,20 +39,22 @@ export default function Navbar() {
 
   return (
     <nav
-   className={`
+      className={`
     fixed top-0 w-full px-6 md:px-16 py-4 z-50 transition-all duration-300
     ${showNavbar ? "translate-y-0" : "-translate-y-full"}
     ${lastScrollY > 10 ? "bg-white shadow-md" : "bg-transparent"}
   `}
-  style={{ willChange: "transform" }}
->
+      style={{ willChange: "transform" }}
+    >
       <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
         {/* Logo */}
         <div>
-          <img
+          <Image
             src="/logos/qrlogo.svg"
             alt="QRGen Logo"
-            className="h-7 w-auto max-w-[150px]"
+            width={150} // Or the actual logo width
+            height={40} // Or the actual logo height
+            className="max-w-[150px] h-auto"
           />
         </div>
 

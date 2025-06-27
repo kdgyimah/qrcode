@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Share2, Copy, Eye, X } from 'lucide-react';
+import { Download, Share2, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface DownloadModalProps {
@@ -44,10 +44,6 @@ export function DownloadModal({ isOpen, onClose, data, style, categoryName }: Do
     console.log('Sharing QR code');
   };
 
-  const handleCopy = () => {
-    // Implement copy to clipboard
-    console.log('Copying QR code');
-  };
 
   const handleTrack = () => {
     // Implement tracking functionality

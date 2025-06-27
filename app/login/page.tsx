@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { FaGoogle } from "react-icons/fa";
 
 export default function LoginPage() {
@@ -9,7 +10,13 @@ export default function LoginPage() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-200 via-white to-blue-300 opacity-90 backdrop-blur-md" />
       {/* Logo above the card */}
       <div className="mb-6">
-        <img src="/logos/qrlogo.svg" alt="QRGen Logo" className="h-8 w-auto" />
+        <Image
+          src="/logos/qrlogo.svg"
+          alt="QRGen Logo"
+          width={150}
+          height={50}
+          className="h-8 w-auto"
+        />
       </div>
 
       {/* Card */}
@@ -87,6 +94,6 @@ export default function LoginPage() {
           </a>
         </p>
       </div>
-      </div>
+    </div>
   );
 }

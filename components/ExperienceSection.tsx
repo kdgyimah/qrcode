@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export default function ExperienceSection() {
   return (
@@ -22,8 +23,8 @@ export default function ExperienceSection() {
               Experiences Shared by Our Clients
             </h1>
             <p className="text-base sm:text-lg text-gray-600">
-              The team at QR GEN provided unparalleled support throughout our project.
-              Their expertise and dedication were evident from day one.
+              The team at QR GEN provided unparalleled support throughout our
+              project. Their expertise and dedication were evident from day one.
             </p>
           </div>
         </motion.div>
@@ -45,18 +46,22 @@ export default function ExperienceSection() {
 
           {/* Testimonial */}
           <div className="text-gray-800 text-sm sm:text-base leading-relaxed p-2">
-            QR GEN is a tool that revolutionized our marketing campaigns. The real-time
-            tracking is a game-changer, and managing event check-ins has never been
-            easier with dynamic QR codes that are incredibly efficient.
+            QR GEN is a tool that revolutionized our marketing campaigns. The
+            real-time tracking is a game-changer, and managing event check-ins
+            has never been easier with dynamic QR codes that are incredibly
+            efficient.
           </div>
 
           {/* Profile */}
           <div className="flex items-center space-x-4">
-            <img
+            <Image
               src="/images/img1.jpg"
               alt="User Profile"
+              width={56}
+              height={56}
               className="w-14 h-14 rounded-full object-cover shadow"
             />
+
             <div>
               <h4 className="text-lg font-semibold text-gray-800">Jane Doe</h4>
               <p className="text-sm text-gray-500">Product Designer</p>

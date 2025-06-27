@@ -7,14 +7,7 @@ import { FaChevronDown } from "react-icons/fa";
 export default function ScanActivityChart({
   data,
   filterQr,
-  setFilterQr,
-  sortBy,
-  setSortBy,
   chartDateRange,
-  setChartDateRange,
-  qrOptions,
-  sortOptions,
-  dateOptions,
 }: {
   data: { date: string; scans: number }[];
   filterQr: string;

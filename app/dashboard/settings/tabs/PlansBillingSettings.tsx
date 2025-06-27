@@ -194,6 +194,6 @@ export default function PlansBillingSettings() {
 }
 
 // Provide a correct useEffect implementation for this file
-function useEffect(effect: () => void | (() => void), deps?: any[]) {
+function useEffect(effect: () => void | (() => void), deps?: unknown[]) {
   return reactUseEffect(effect, deps);
 }

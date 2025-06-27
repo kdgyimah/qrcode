@@ -13,7 +13,8 @@ import FrameEight from '../FrameStructure/FrameEight';
 import FrameNine from '../FrameStructure/FrameNine';
 
 interface FramesProps {
-  onsetFrame: (icon: ReactNode) => void;
+  // onsetFrame: (icon: ReactNode) => void;
+   onsetFrame: (frameUrl: string) => void;
 }
 
 interface FrameItem {

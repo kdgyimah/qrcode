@@ -46,7 +46,7 @@ export function QRForm({ category, onBack, onGenerate }: QRFormProps) {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleStyleChange = (field: keyof QRCodeStyle, value: any) => {
+  const handleStyleChange = (field: keyof QRCodeStyle, value: unknown) => {
     setStyle(prev => ({ ...prev, [field]: value }));
   };
 

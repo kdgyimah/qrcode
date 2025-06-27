@@ -1,5 +1,6 @@
 import { X, Edit2, Trash, Download, Share2 } from "lucide-react";
 import { QrData } from "@/components/myqrcodes/QrCodeTable"; // Adjust import path as needed
+import Image from "next/image";
 
 export default function QrDetailView({
   qr,
@@ -114,7 +115,7 @@ export default function QrDetailView({
         {/* QR Code */}
         <div className="flex-shrink-0 mt-6 sm:mt-0">
           {qr.qrImage ? (
-            <img
+            <Image
               src={qr.qrImage}
               alt="QR code"
               className="w-40 h-40 rounded shadow border border-gray-100"

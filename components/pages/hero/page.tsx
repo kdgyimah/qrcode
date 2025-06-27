@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 export default function Hero() {
@@ -61,7 +60,7 @@ export default function Hero() {
             transition={{ delay: 0.6, duration: 0.6 }}
             className="text-gray-600 md:text-xl mb-6"
           >
-            Generate unique and customizable QR codes for your business, events, or personal use in seconds. It's fast, easy, and free!
+            Generate unique and customizable QR codes for your business, events, or personal use in seconds. It&apos;s fast, easy, and free!
           </motion.h5>
 
           {/* Buttons */}
