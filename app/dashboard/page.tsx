@@ -13,6 +13,7 @@ import SupportPage from "@/components/pages/SupportPage";
 import QrDetailView from "@/app/dashboard/components/QrDetail";
 import QrEditView from "@/app/dashboard/components/QrEditView";
 import type { QrData } from './types'; // adjust path as needed
+import MyQrCodesClient from "./components/MyQrCodesClient";
 
 export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -23,13 +24,13 @@ export default function DashboardPage() {
   // Handler to show detail
   const handleShowDetail = (qr: QrData) => {
     setDetailQr(qr);
-    setEditQr(null); // Close edit view if open
+    setEditQr(qr); // Close edit view if open
   };
 
   // Handler to show edit in content area
   const handleShowEdit = (qr: QrData) => {
     setEditQr(qr);
-    setDetailQr(null); // Close detail view if open
+    setDetailQr(qr); // Close detail view if open
   };
 
   // Handler to close edit view
@@ -66,7 +67,7 @@ export default function DashboardPage() {
           ) : (
             <>
               {activeView === "my-qrs" ? (
-                <MyQrCodesPage
+                <MyQrCodesClient
                   onShowDetail={handleShowDetail}
                   onShowEdit={handleShowEdit}
                 />
@@ -83,7 +84,7 @@ export default function DashboardPage() {
               ) : activeView === "support" ? (
                 <SupportPage />
               ) : (
-                <MyQrCodesPage onShowDetail={handleShowDetail} onShowEdit={handleShowEdit} />
+                <MyQrCodesClient onShowDetail={handleShowDetail} onShowEdit={handleShowEdit} />
               )}
             </>
           )}

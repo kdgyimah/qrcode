@@ -11,7 +11,12 @@ type QROption = {
 };
 
 const qrOptions: QROption[] = [
-  { id: 1, name: "Website URL", icon: "🌐", description: "Link to any website" },
+  {
+    id: 1,
+    name: "Website URL",
+    icon: "🌐",
+    description: "Link to any website",
+  },
   { id: 2, name: "Plain Text", icon: "📝", description: "Display simple text" },
   { id: 3, name: "Email", icon: "✉️", description: "Compose an email" },
   { id: 4, name: "Phone", icon: "📱", description: "Dial a phone number" },
@@ -24,9 +29,19 @@ const qrOptions: QROption[] = [
   { id: 11, name: "PayPal", icon: "💲", description: "Send money via PayPal" },
   { id: 12, name: "YouTube", icon: "▶️", description: "Link to a video" },
   { id: 13, name: "Spotify", icon: "🎵", description: "Open a track or album" },
-  { id: 14, name: "Instagram", icon: "📸", description: "Link to an IG profile" },
+  {
+    id: 14,
+    name: "Instagram",
+    icon: "📸",
+    description: "Link to an IG profile",
+  },
   { id: 15, name: "Facebook", icon: "👍", description: "Link to a FB page" },
-  { id: 16, name: "Twitter", icon: "🐦", description: "Share a tweet or profile" },
+  {
+    id: 16,
+    name: "Twitter",
+    icon: "🐦",
+    description: "Share a tweet or profile",
+  },
 ];
 
 function QRGenerationSection() {
@@ -88,9 +103,10 @@ function QRGenerationSection() {
                     <div className="relative w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-lg">
                       <Image
                         src={qrCodeImage}
-                        alt="QR code"
-                        fill
-                        className="object-contain filter invert-[0.9] grayscale"
+                        alt={selectedOption?.name || "QR Code"}
+                        width={48}
+                        height={48}
+                        className="rounded shadow border border-gray-100"
                       />
                     </div>
                   </div>

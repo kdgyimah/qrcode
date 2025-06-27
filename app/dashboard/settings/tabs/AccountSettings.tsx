@@ -30,14 +30,18 @@ export default function AccountSettings() {
           <section className="bg-white rounded-xl shadow p-6">
             <div className="grid grid-cols-1 gap-4">
               <div>
-                <label className="block text-xs mb-1 font-medium">Full Name</label>
+                <label className="block text-xs mb-1 font-medium">
+                  Full Name
+                </label>
                 <input
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
                   defaultValue="Azusa Nakano"
                 />
               </div>
               <div>
-                <label className="block text-xs mb-1 font-medium">Email Address</label>
+                <label className="block text-xs mb-1 font-medium">
+                  Email Address
+                </label>
                 <input
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
                   defaultValue="elementary221@gmail.com"
@@ -45,7 +49,9 @@ export default function AccountSettings() {
                 />
               </div>
               <div>
-                <label className="block text-xs mb-1 font-medium">Phone Number</label>
+                <label className="block text-xs mb-1 font-medium">
+                  Phone Number
+                </label>
                 <input
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
                   defaultValue="+44 (123) 456-9878"
@@ -53,13 +59,18 @@ export default function AccountSettings() {
                 />
               </div>
               <div>
-                <label className="block text-xs mb-1 font-medium">Change Avatar</label>
+                <label className="block text-xs mb-1 font-medium">
+                  Change Avatar
+                </label>
                 <div className="flex items-center gap-3">
                   <Image
-                    src="/avatar-placeholder.png"
-                    className="w-12 h-12 rounded-full border"
+                    src="/images/img1.jpg"
                     alt="avatar"
+                    width={48}
+                    height={48}
+                    className="rounded-full border"
                   />
+
                   <button
                     type="button"
                     className="flex items-center gap-1 bg-blue-600 text-white px-4 py-1.5 text-xs rounded-md font-medium transition hover:bg-blue-700"
@@ -101,7 +112,9 @@ export default function AccountSettings() {
           <section className="bg-white rounded-xl shadow p-6">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs mb-1 font-medium">New Password</label>
+                <label className="block text-xs mb-1 font-medium">
+                  New Password
+                </label>
                 <div className="relative">
                   <input
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
@@ -123,7 +136,9 @@ export default function AccountSettings() {
                 </div>
               </div>
               <div>
-                <label className="block text-xs mb-1 font-medium">Confirm Password</label>
+                <label className="block text-xs mb-1 font-medium">
+                  Confirm Password
+                </label>
                 <div className="relative">
                   <input
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
@@ -156,7 +171,9 @@ export default function AccountSettings() {
       <div className="md:flex md:items-start gap-8">
         {/* Left: heading/info */}
         <div className="min-w-[180px] md:w-1/4 mb-4 md:mb-0">
-          <div className="font-semibold text-base text-red-500">Deactivate Account</div>
+          <div className="font-semibold text-base text-red-500">
+            Deactivate Account
+          </div>
           <div className="text-gray-400 text-sm">
             This will shut down your account and you may cry, lol
           </div>

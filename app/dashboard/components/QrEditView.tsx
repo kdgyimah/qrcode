@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { ArrowDownToLine, Edit2, Share2, Trash2 } from "lucide-react";
 import Image from "next/image";
+import { QrData } from "../types";
 
 interface QrEditViewProps {
   qr: {
@@ -16,7 +17,7 @@ interface QrEditViewProps {
     [key: string]: unknown;
   };
   onClose?: () => void;
-  onSaved?: (updatedQr: unknown) => void;
+  onSaved?: (updatedQr: QrData) => void;
 }
 
 export default function QrEditView({ qr, onSaved }: QrEditViewProps) {

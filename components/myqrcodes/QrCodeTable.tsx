@@ -1,18 +1,15 @@
 import React, { useState } from "react";
 import { MoreHorizontal, X, Trash, Download, Eye, Copy } from "lucide-react";
-// import type for OriginalQrData instead of value
-import type { OriginalQrData } from "@/app/dashboard/page";
-import PaginationBar from "@/components/PaginationBar";
 import Image from "next/image";
+import PaginationBar from "@/components/PaginationBar";
+import type { OriginalQrData } from "@/app/dashboard/page";
 
-// Extend QrData to include qrImage
 export type QrData = OriginalQrData & {
   qrImage: string;
   link: string;
-  category: "link" | "email" | "pdf"; // Define categories for links
+  category: "link" | "email" | "pdf";
 };
 
-// Sample data - replace with your actual QR data source
 const qrData: QrData[] = [
   {
     id: "1",
@@ -84,6 +81,11 @@ const qrData: QrData[] = [
   },
 ];
 
+interface QrTableProps {
+  onRowClick: (qr: QrData) => void;
+  onRowEdit?: (qr: QrData) => void;
+}
+
 function getCategoryLabel(qr: QrData) {
   switch (qr.category) {
     case "email":
@@ -104,7 +106,7 @@ function getCategoryLabel(qr: QrData) {
   }
 }
 
-export default function QrTable({ onRowClick }: { onRowClick: (qr: QrData) => void }) {
+export default function QrTable({ onRowClick, onRowEdit }: QrTableProps) {
   const [selected, setSelected] = useState<string[]>([]);
 
   const handleSelect = (id: string) => {
@@ -115,7 +117,6 @@ export default function QrTable({ onRowClick }: { onRowClick: (qr: QrData) => vo
 
   const allSelected = selected.length === qrData.length;
 
-  // For pagination UI
   const total = 20;
   const perPage = 8;
   const showingStart = 1;
@@ -157,7 +158,7 @@ export default function QrTable({ onRowClick }: { onRowClick: (qr: QrData) => vo
               }`}
               onClick={() => onRowClick(qr)}
             >
-              <td className="p-3 py-4" onClick={e => e.stopPropagation()}>
+              <td className="p-3 py-4" onClick={(e) => e.stopPropagation()}>
                 <input
                   type="checkbox"
                   checked={selected.includes(qr.id)}
@@ -170,7 +171,9 @@ export default function QrTable({ onRowClick }: { onRowClick: (qr: QrData) => vo
                 <Image
                   src={qr.qrImage}
                   alt={qr.name}
-                  className="w-12 h-12 rounded shadow border border-gray-100"
+                  width={48}
+                  height={48}
+                  className="rounded shadow border border-gray-100"
                 />
               </td>
               <td className="p-3 py-4 font-medium text-gray-800">
@@ -193,16 +196,30 @@ export default function QrTable({ onRowClick }: { onRowClick: (qr: QrData) => vo
                   {qr.status}
                 </span>
               </td>
-              <td className="p-3 text-right" onClick={e => e.stopPropagation()}>
-                <button className="text-gray-600 hover:text-gray-900">
-                  <MoreHorizontal size={18} />
-                </button>
+              <td className="p-3 text-right" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-end gap-2">
+                  {onRowEdit && (
+                    <button
+                      title="Edit"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRowEdit(qr);
+                      }}
+                      className="text-blue-600 hover:underline text-xs font-medium"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  <button className="text-gray-600 hover:text-gray-900">
+                    <MoreHorizontal size={18} />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      {/* Floating vertical action bar when any are selected */}
+
       {selected.length > 0 && (
         <div className="fixed right-4 top-1/4 z-50 flex flex-col gap-2 rounded-xl shadow-lg bg-white border border-gray-200 p-2 transition-all">
           <button className="p-2 hover:bg-blue-50 rounded">
@@ -223,7 +240,7 @@ export default function QrTable({ onRowClick }: { onRowClick: (qr: QrData) => vo
           <span className="mx-auto mt-2 text-blue-600 font-semibold">{selected.length}</span>
         </div>
       )}
-      {/* Pagination and showing info below the table */}
+
       <PaginationBar showingStart={showingStart} showingEnd={showingEnd} total={total} page={1} />
     </div>
   );
