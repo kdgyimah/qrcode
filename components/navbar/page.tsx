@@ -70,7 +70,7 @@ export default function Navbar() {
 
             <div className="absolute left-0 top-full w-30 bg-white shadow-md rounded-md opacity-0 hover:text-blue-600 group-hover:opacity-100 group-hover:visible invisible transition duration-200 z-50 pointer-events-auto">
               <Link
-                href="/product/featurepage"
+                href="/featurepage"
                 className="block px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               >
                 Features
@@ -132,7 +132,7 @@ export default function Navbar() {
             <span className="block font-medium text-gray-700">Products</span>
             <div className="ml-4 space-y-2">
               <Link
-                href="/features"
+                href="/featurepage"
                 className="block hover:text-blue-600 transition"
               >
                 Features
