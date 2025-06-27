@@ -70,7 +70,7 @@ export default function Navbar() {
 
             <div className="absolute left-0 top-full w-30 bg-white shadow-md rounded-md opacity-0 hover:text-blue-600 group-hover:opacity-100 group-hover:visible invisible transition duration-200 z-50 pointer-events-auto">
               <Link
-                href="/featurepagesss"
+                href="/featurepage"
                 className="block px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               >
                 Features
