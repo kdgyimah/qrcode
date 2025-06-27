@@ -5,7 +5,6 @@ import {
   Phone,
   Mail,
   Wifi,
-  Image,
   Video,
   FileText,
   MessageSquareText,

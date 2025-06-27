@@ -126,7 +126,12 @@ const FAQAccordion = ({ data }: { data: FAQItem[] }) => {
   );
 };
 
+
+
 const FAQPage = () => {
+  
+  const [activeTab, setActiveTab] = useState(FAQ_CATEGORIES[0].id);
+
   if (!FAQ_CATEGORIES || FAQ_CATEGORIES.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -142,8 +147,7 @@ const FAQPage = () => {
     );
   }
 
-  const [activeTab, setActiveTab] = useState(FAQ_CATEGORIES[0].id);
-
+  
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">

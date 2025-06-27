@@ -25,12 +25,6 @@ interface QRStyleOptions {
   gradient?: Gradient;
 }
 
-interface QRCornersDotOptions {
-  type?: CornerDotType;
-  color?: string;
-  gradient?: Gradient;
-}
-
 interface QRStyle {
   dotsOptions?: QRStyleOptions;
   cornersSquareOptions?: QRStyleOptions;
@@ -103,7 +97,12 @@ const QROutputInterface = ({ content, qrStyle, onStyleChange }: QROutputInterfac
     if (qrCodeRef.current) {
       qrCodeInstance.current.append(qrCodeRef.current);
     }
-  }, [isClient]);
+  }, [
+    isClient,
+    qrStyle.dotsOptions,
+    qrStyle.cornersSquareOptions,
+    qrStyle.cornersDotOptions,
+  ]);
 
   useEffect(() => {
     if (!isClient || !qrCodeInstance.current) return;
@@ -147,7 +146,6 @@ const QROutputInterface = ({ content, qrStyle, onStyleChange }: QROutputInterfac
       qrData = `Link: ${content.url}\nProgram Description: ${content.description}\nPowered by: KayDee Solutions`;
     }
 
-    // Map "dot" to "dots" for DotType compatibility
     const fixedDotsOptions = qrStyle.dotsOptions
       ? {
           ...qrStyle.dotsOptions,
@@ -162,7 +160,13 @@ const QROutputInterface = ({ content, qrStyle, onStyleChange }: QROutputInterfac
       cornersSquareOptions: qrStyle.cornersSquareOptions || {},
       cornersDotOptions: qrStyle.cornersDotOptions || {},
     });
-  }, [content, qrStyle, isClient]);
+  }, [
+    content,
+    isClient,
+    qrStyle.dotsOptions,
+    qrStyle.cornersSquareOptions,
+    qrStyle.cornersDotOptions,
+  ]);
 
   const handleDownload = (format: "png" | "svg" | "jpeg") => {
     if (!qrCodeInstance.current) return;

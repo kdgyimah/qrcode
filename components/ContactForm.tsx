@@ -16,9 +16,8 @@ export default function ContactForm() {
       await new Promise((res) => setTimeout(res, 1000));
       toast.success('Message sent successfully!');
       setForm({ name: '', email: '', message: '' });
-    } catch (error) {
-      toast.error('Failed to send message. Try again.');
-    }
+    } catch  {
+      
   };
 
   return (
@@ -67,4 +66,5 @@ export default function ContactForm() {
       </form>
     </div>
   );
+}
 }

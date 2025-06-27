@@ -65,8 +65,8 @@ export default function AnalyticsPage() {
         setSearch={setTopSearch}
         dateRange={dateRange}
         onDateClick={() => {
-          // implement date picker logic here
-        }}
+  _setDateRange("Mar 1 - Apr 1, 2024"); // update when user selects new range
+}}
       />
 
       {/* Stat cards */}
