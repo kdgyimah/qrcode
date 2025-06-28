@@ -27,5 +27,5 @@ const allQrData = [
 export default function QrDetailPage({ params }: { params: { id: string } }) {
   const qr = allQrData.find(q => q.id === params.id);
   if (!qr) return <div className="p-8 text-red-500">QR Code not found.</div>;
-  return <QrDetail qr={qr} />;
+  return <QrDetail qr={qr} onClose={() => {}} />;
 }

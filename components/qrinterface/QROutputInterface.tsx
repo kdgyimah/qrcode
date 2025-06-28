@@ -17,19 +17,42 @@ import {
   generateImage
 } from '../../lib/basicFunctions';
 
-import type { DotType, CornerSquareType, CornerDotType, Gradient } from "qr-code-styling";
+import type { Gradient } from "qr-code-styling";
 
-interface QRStyleOptions {
-  type?: DotType | CornerSquareType | CornerDotType;
-  color?: string;
+// === Type Definitions ===
+
+type DotType = "dots" | "rounded" | "classy" | "classy-rounded" | "square" | "extra-rounded" | "dot";
+
+type QRStyleOptions = {
+  type: "dots" | "rounded" | "classy" | "classy-rounded" | "square" | "extra-rounded" | "dot";
+  color: string;
   gradient?: Gradient;
-}
+};
 
 interface QRStyle {
-  dotsOptions?: QRStyleOptions;
-  cornersSquareOptions?: QRStyleOptions;
-  cornersDotOptions?: QRStyleOptions;
+  dotsOptions: QRStyleOptions;
+  cornersSquareOptions: QRStyleOptions;
+  cornersDotOptions: QRStyleOptions;
 }
+
+type QRFrameStyle = {
+  dotsOptions?: {
+    type?: DotType;
+    color?: string;
+    gradient?: Gradient;
+    roundSize?: boolean;
+  };
+  cornersSquareOptions?: {
+    type?: DotType;
+    color?: string;
+    gradient?: Gradient;
+  };
+  cornersDotOptions?: {
+    type?: DotType;
+    color?: string;
+    gradient?: Gradient;
+  };
+};
 
 interface QROutputInterfaceProps {
   content: {
@@ -60,6 +83,8 @@ interface QROutputInterfaceProps {
   qrStyle: QRStyle;
   onStyleChange: (newStyle: QRStyle) => void;
 }
+
+// === Component ===
 
 const QROutputInterface = ({ content, qrStyle, onStyleChange }: QROutputInterfaceProps) => {
   const qrCodeRef = useRef<HTMLDivElement>(null);
@@ -173,8 +198,26 @@ const QROutputInterface = ({ content, qrStyle, onStyleChange }: QROutputInterfac
     qrCodeInstance.current.download({ name: "qr-code", extension: format });
   };
 
-  const handleStyleChange = (newStyle: QRStyle) => {
-    onStyleChange(newStyle);
+  const handleFrameStyleChange = (newFrameStyle: QRFrameStyle) => {
+    const convertedStyle: QRStyle = {
+      dotsOptions: {
+        type: newFrameStyle.dotsOptions?.type ?? "dots",
+        color: newFrameStyle.dotsOptions?.color ?? "#000000",
+        gradient: newFrameStyle.dotsOptions?.gradient,
+      },
+      cornersSquareOptions: {
+        type: newFrameStyle.cornersSquareOptions?.type ?? "square",
+        color: newFrameStyle.cornersSquareOptions?.color ?? "#000000",
+        gradient: newFrameStyle.cornersSquareOptions?.gradient,
+      },
+      cornersDotOptions: {
+        type: newFrameStyle.cornersDotOptions?.type ?? "dot",
+        color: newFrameStyle.cornersDotOptions?.color ?? "#000000",
+        gradient: newFrameStyle.cornersDotOptions?.gradient,
+      },
+    };
+
+    onStyleChange(convertedStyle);
   };
 
   if (!isClient) return null;
@@ -190,7 +233,7 @@ const QROutputInterface = ({ content, qrStyle, onStyleChange }: QROutputInterfac
       </div>
 
       <div>
-        <QRFrame className="qr" qrCompStyle={handleStyleChange} />
+        <QRFrame qrCompStyle={handleFrameStyleChange} />
       </div>
 
       <div className="takeAction d-flex">

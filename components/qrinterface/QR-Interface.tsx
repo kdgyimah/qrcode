@@ -6,8 +6,9 @@ import "./QR-Interface.css";
 import QROutputInterface from "./QROutputInterface";
 import ScrollCategoryOption from "./ScrollCategoryOption";
 import Frames from "./Frames";
-import FormModal from "../FrameStructure/FormModal";
+import FormModal from "../qrinterface/ConfirmationModal";
 import ConfirmationModal from "./ConfirmationModal";
+import type { Gradient } from "qr-code-styling";
 
 interface CategoryItem {
   label: string;
@@ -52,9 +53,21 @@ interface WhatsappData {
 }
 
 interface QrStyle {
-  dotsOptions: { type: string; color: string };
-  cornersSquareOptions: { type: string; color: string };
-  cornersDotOptions: { type: string; color: string };
+  dotsOptions: {
+    type: "dots" | "square" | "rounded" | "classy" | "classy-rounded" | "extra-rounded" | "dot" ;
+    color: string;
+    gradient?: Gradient;
+  };
+  cornersSquareOptions: {
+    type: "dots" | "square" | "rounded" | "classy" | "classy-rounded" | "extra-rounded" | "dot" ;
+    color: string;
+    gradient?: Gradient;
+  };
+  cornersDotOptions: {
+    type: "dots" | "square" | "rounded" | "classy" | "classy-rounded" | "extra-rounded" | "dot" ;
+    color: string;
+    gradient?: Gradient;
+  };
 }
 
 type HandleContentCreateData =
@@ -205,16 +218,9 @@ const QRInterface = () => {
         <Frames onsetFrame={frameHandler} />
 
         {(selectedCategory?.label === "Contact"
-          ? contactInfo.firstName // Check a required field for ContactInfo
-          : content.url // Check url for ContentData
-        ) && (
-          <FormModal
-            formCSSData={frame}
-            qrCodeContent={
-              selectedCategory?.label === "Contact" ? contactInfo : content
-            }
-            qrStyle={qrStyle}
-          />
+          ? contactInfo.firstName
+          : content.url) && (
+          <FormModal onDiscard={handleDiscard} onCancel={handleCancel} />
         )}
 
         {showModal && (

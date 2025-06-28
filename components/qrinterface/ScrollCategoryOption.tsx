@@ -11,7 +11,7 @@ import PictureAsPdfSharpIcon from "@mui/icons-material/PictureAsPdfSharp";
 import ImageSharpIcon from "@mui/icons-material/ImageSharp";
 
 interface ScrollCategoryOptionProps {
-  onCategorySelect: (item: { icon: React.ReactElement; label: string }) => void;
+  onCategorySelect: (item: CategoryItem) => void;
 }
 
 const ScrollCategoryOption = ({ onCategorySelect }: ScrollCategoryOptionProps) => {

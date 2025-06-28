@@ -3,8 +3,10 @@
 import Image from 'next/image';
 import React from 'react';
 
+import type { ReactElement } from 'react';
+
 interface CardItem {
-  icon: JSX.Element;
+  icon: ReactElement;
   title: string;
   description: string;
 }

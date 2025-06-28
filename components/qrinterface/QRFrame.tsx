@@ -8,11 +8,8 @@ import QRCodeStyling, {
 } from "qr-code-styling";
 import PropTypes from "prop-types";
 
-interface QRStyleOptions {
-  type?: DotType | CornerDotType | CornerSquareType;
-  color?: string;
-  gradient?: Gradient;
-}
+
+
 
 interface QRFrameStyle extends Partial<QRCodeStylingOptions> {
   width: number;
