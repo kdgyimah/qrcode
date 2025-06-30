@@ -3,9 +3,9 @@
 import { FaFileInvoice } from "react-icons/fa";
 import { RiTeamFill } from "react-icons/ri";
 import { SlCalender } from "react-icons/sl";
-import { motion } from "framer-motion";
+import { motion, easeOut, Variants } from "framer-motion"; // ✅ import easing function
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 40 },
   visible: (i: number) => ({
     opacity: 1,
@@ -13,7 +13,7 @@ const cardVariants = {
     transition: {
       delay: i * 0.2,
       duration: 0.6,
-      ease: "easeOut",
+      ease: easeOut, // ✅ use easing function (not a string)
     },
   }),
 };
