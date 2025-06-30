@@ -78,7 +78,7 @@ export default function Hero() {
               Get Started
             </Link>
             <Link
-              href="/product/featurepage"
+              href="/featurepage"
               className="border border-blue-600 text-black px-6 py-3 rounded-md hover:bg-white transition"
             >
               Learn More

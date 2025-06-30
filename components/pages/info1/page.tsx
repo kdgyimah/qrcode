@@ -38,7 +38,7 @@ export default function Info1() {
       </motion.div>
 
       {/* Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-10 gap-x-6 sm:gap-y-10 sm:gap-x-8">
         {[
           {
             icon: <FaFileInvoice className="text-2xl sm:text-3xl" />,
