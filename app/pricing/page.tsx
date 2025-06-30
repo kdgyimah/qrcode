@@ -8,18 +8,16 @@ import AddOnsSection from "@/components/AddOnsSection";
 
 export default function PricingPage() {
   return (
-    <div className="pt-16 md:pt-18 min-h-screen flex flex-col">
+    <>
       <Navbar />
-      
-    
+      <div className="pt-16 md:pt-18 min-h-screen flex flex-col">
         <PricingHeroSec />
         <PricingSection />
         <AddOnsSection />
         <FAQPage />
         <Info3 />
-      
-      
+      </div>
       <Footer />
-    </div>
+    </>
   );
 }
