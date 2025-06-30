@@ -3,7 +3,6 @@
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import React, { useState } from "react";
-import MyQrCodesPage from "@/app/dashboard/myqrcodes/page";
 import AnalyticsPage from "@/components/pages/AnalyticsPage";
 import TeamPage from "@/components/pages/TeamPage";
 import BulkPage from "@/components/pages/BulkPage";
@@ -12,7 +11,7 @@ import SettingsPage from "@/app/dashboard/settings/SettingsPage";
 import SupportPage from "@/components/pages/SupportPage";
 import QrDetailView from "@/app/dashboard/components/QrDetail";
 import QrEditView from "@/app/dashboard/components/QrEditView";
-import type { QrData } from './types'; // adjust path as needed
+import { QrData } from "@/types/qr-generator"; 
 import MyQrCodesClient from "./components/MyQrCodesClient";
 
 export default function DashboardPage() {

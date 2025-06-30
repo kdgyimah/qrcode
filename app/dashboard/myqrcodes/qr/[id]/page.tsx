@@ -18,7 +18,7 @@ const allQrData = [
     visits: 200,
     lastModified: "2025-05-21",
     qrImage: "/qr1-image.png", // mock value for qrImage
-    category: "Marketing",     // mock value for category
+    category: "link" as "link",     // mock value for category, must be "link", "email", or "pdf"
     // Add any other required properties with default or mock values
   },
   // ...other QR items

@@ -2,13 +2,7 @@ import React, { useState } from "react";
 import { MoreHorizontal, X, Trash, Download, Eye, Copy } from "lucide-react";
 import Image from "next/image";
 import PaginationBar from "@/components/PaginationBar";
-import type { OriginalQrData } from "@/app/dashboard/page";
-
-export type QrData = OriginalQrData & {
-  qrImage: string;
-  link: string;
-  category: "link" | "email" | "pdf";
-};
+import { QrData } from "@/types/qr-generator";
 
 const qrData: QrData[] = [
   {

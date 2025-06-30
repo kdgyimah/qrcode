@@ -1,5 +1,5 @@
 import { X, Edit2, Trash, Download, Share2 } from "lucide-react";
-import { QrData } from "@/components/myqrcodes/QrCodeTable"; // Adjust import path as needed
+import { QrData } from "@/types/qr-generator"; 
 import Image from "next/image";
 
 export default function QrDetailView({

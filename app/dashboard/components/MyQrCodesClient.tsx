@@ -9,7 +9,7 @@ import QrTabs from "@/components/myqrcodes/QrTabs";
 import QrTable from "@/components/myqrcodes/QrCodeTable";
 import DateSelector from "@/components/myqrcodes/DateSelector";
 import FilterDropdown from "@/components/myqrcodes/FilterDropdown";
-import type { QrData } from '../types'; // adjust path if needed
+import type { QrData } from '@/types/qr-generator';
 
 // ✅ Define props interface
 interface MyQrCodesClientProps {
