@@ -15,24 +15,27 @@ import {
   Barcode,
   ImageIcon,
 } from "lucide-react";
-import type { ReactElement } from "react";
 
-interface Category {
-  id: string;
+import type { ReactElement } from "react";
+import type { Category } from "@/types/Category"; // ✅ Using your string union
+
+// Define structure for local display, but only pass Category as selected/onSelect
+interface CategoryOption {
+  id: Category;
   name: string;
   icon: ReactElement;
 }
 
 interface CategorySelectorProps {
   selected: Category;
-  onSelect: (categoryId: Category) => void;
+  onSelect: (category: Category) => void;
 }
 
 export default function CategorySelector({
   selected,
   onSelect,
 }: CategorySelectorProps) {
-  const categoryList: Category[] = [
+  const categoryList: CategoryOption[] = [
     { id: "link", name: "Link", icon: <QrCode size={28} /> },
     { id: "call", name: "Call", icon: <Phone size={28} /> },
     { id: "mail", name: "Email", icon: <Mail size={28} /> },
@@ -53,33 +56,34 @@ export default function CategorySelector({
   return (
     <div className="bg-white shadow-lg p-4 rounded-sm">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-  {categoryList.map((category) => {
-    const isSelected = selected.id === category.id;
-    return (
-      <button
-        key={category.id}
-        type="button"
-        aria-pressed={isSelected}
-        aria-label={category.name}
-        onClick={() => onSelect(category)}
-        className={`w-full rounded-md p-3 flex items-center justify-center gap-2
-          transition-all duration-200 ease-in-out transform hover:scale-105
-          ${isSelected 
-            ? 'bg-blue-100 text-blue-600 ring-2 ring-blue-500 font-semibold' 
-            : 'bg-white text-black hover:bg-blue-50 hover:text-blue-500 hover:ring-1 hover:ring-blue-300'}
-        `}
-      >
-        <div className={`text-2xl transition-colors duration-200 ${isSelected ? 'text-blue-600' : 'text-black'}`}>
-          {category.icon}
-        </div>
-        <div className="text-sm">
-          {category.name}
-        </div>
-      </button>
-    );
-  })}
-</div>
-
+        {categoryList.map((category) => {
+          const isSelected = selected === category.id;
+          return (
+            <button
+              key={category.id}
+              type="button"
+              aria-pressed={isSelected}
+              aria-label={category.name}
+              onClick={() => onSelect(category.id)}
+              className={`w-full rounded-md p-3 flex items-center justify-center gap-2
+                transition-all duration-200 ease-in-out transform hover:scale-105
+                ${isSelected
+                  ? "bg-blue-100 text-blue-600 ring-2 ring-blue-500 font-semibold"
+                  : "bg-white text-black hover:bg-blue-50 hover:text-blue-500 hover:ring-1 hover:ring-blue-300"}
+              `}
+            >
+              <div
+                className={`text-2xl transition-colors duration-200 ${
+                  isSelected ? "text-blue-600" : "text-black"
+                }`}
+              >
+                {category.icon}
+              </div>
+              <div className="text-sm">{category.name}</div>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

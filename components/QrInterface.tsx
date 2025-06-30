@@ -52,7 +52,13 @@ const initialFormData: Record<Category, FormDataType> = {
   bulkqr: { bulkList: "" },
   app: { appUrl: "" },
   social: { socialUrl: "" },
-  event: { eventTitle: "", eventStart: "", eventEnd: "", eventLocation: "", eventDesc: "" },
+  event: {
+    eventTitle: "",
+    eventStart: "",
+    eventEnd: "",
+    eventLocation: "",
+    eventDesc: "",
+  },
   barcode2d: { barcodeValue: "" },
   contact: { name: "", phone: "", email: "" },
   pdf: { pdfUrl: "" },
@@ -131,13 +137,13 @@ export default function QrInterface() {
   return (
     <div id="qr-interface" className="bg-blue-100 px-4 md:px-8 scroll-mt-20">
       <div className="flex flex-col md:flex-row h-full">
-        {/* Left: Main Panel */}
+        {/* Left Panel */}
         <div className="w-full md:w-4/5 shadow-md p-6 md:ml-12 my-10 bg-gray-50">
           <CategorySelector selected={category} onSelect={setCategory} />
           <QrFormRenderer category={category} formData={formData} setFormData={setFormData} />
           <QRDesignPanel design={design} setDesign={setDesign} />
         </div>
-        {/* Right: Preview Panel */}
+        {/* Right Panel */}
         <div className="w-full md:w-1/4 bg-white mx-4 my-10 md:mr-24 shadow-sm">
           <QrPreview category={category} formData={formData} ready={formReady} design={design} />
         </div>
