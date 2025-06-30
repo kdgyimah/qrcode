@@ -1,6 +1,10 @@
 // FrameTwo.tsx
 import React from "react";
 
+type FrameProps = {
+  className?: string;
+};
+
 const FrameTwo: React.FC<FrameProps> = ({ className }) => {
   return (
     <div className={`w-12 h-12 bg-green-500 rounded-full border-2 border-white shadow-md ${className}`}>
