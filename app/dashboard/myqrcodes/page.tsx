@@ -1,7 +1,7 @@
 // app/dashboard/myqrcodes/page.tsx
 import MyQrCodesClient from '../components/MyQrCodesClient';
 
-import type { QrData } from '../types';
+import type { QrData } from '@/types/qr-generator';
 
 export default function Page() {
   const handleShowDetail = (qr: QrData) => {
