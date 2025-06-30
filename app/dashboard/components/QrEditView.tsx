@@ -15,7 +15,9 @@ export default function QrEditView({ qr, onSaved }: QrEditViewProps) {
   const [name, setName] = useState(qr.name);
   const [link, setLink] = useState(qr.link);
   const [folder, setFolder] = useState(qr.folder);
-  const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">(
+    "idle"
+  );
 
   useEffect(() => {
     setName(qr.name);
@@ -28,14 +30,24 @@ export default function QrEditView({ qr, onSaved }: QrEditViewProps) {
     setStatus("saving");
 
     try {
-      await new Promise(res => setTimeout(res, 700)); // Simulate API call
+      await new Promise((res) => setTimeout(res, 700)); // Simulate API call
 
       const updatedQr: QrData = {
-        ...qr,
+        id: qr.id,
         name,
         link,
         folder,
         lastModified: new Date().toISOString(),
+        created: qr.created ?? new Date().toISOString(),
+        type: qr.type ?? "Dynamic",
+        scans: qr.scans ?? 0,
+        lastScan: qr.lastScan ?? "",
+        status: qr.status ?? "Active",
+        description: qr.description ?? "",
+        qrImage: qr.qrImage ?? "/images/sample-qr.png",
+        category: qr.category ?? "link",
+        tags: qr.tags ?? [],
+        visits: qr.visits ?? 0,
       };
 
       onSaved?.(updatedQr);
@@ -48,10 +60,18 @@ export default function QrEditView({ qr, onSaved }: QrEditViewProps) {
   }
 
   const formattedCreated = qr.created
-    ? new Date(qr.created).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" })
+    ? new Date(qr.created).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+      })
     : "";
   const formattedModified = qr.lastModified
-    ? new Date(qr.lastModified).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" })
+    ? new Date(qr.lastModified).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+      })
     : "";
 
   return (
@@ -67,13 +87,25 @@ export default function QrEditView({ qr, onSaved }: QrEditViewProps) {
           </div>
         </div>
         <div className="flex gap-2 items-center">
-          <button title="Delete" className="rounded-full p-2 border border-gray-200 hover:bg-red-50" type="button">
+          <button
+            title="Delete"
+            className="rounded-full p-2 border border-gray-200 hover:bg-red-50"
+            type="button"
+          >
             <Trash2 size={18} className="text-blue-500" />
           </button>
-          <button title="Share" className="rounded-full p-2 border border-gray-200 hover:bg-blue-50" type="button">
+          <button
+            title="Share"
+            className="rounded-full p-2 border border-gray-200 hover:bg-blue-50"
+            type="button"
+          >
             <Share2 size={18} className="text-blue-500" />
           </button>
-          <button title="Edit" className="rounded px-4 py-2 border border-blue-200 text-blue-700 bg-white flex items-center gap-1 font-medium" type="button">
+          <button
+            title="Edit"
+            className="rounded px-4 py-2 border border-blue-200 text-blue-700 bg-white flex items-center gap-1 font-medium"
+            type="button"
+          >
             <Edit2 size={18} />
             Edit
           </button>
@@ -99,36 +131,51 @@ export default function QrEditView({ qr, onSaved }: QrEditViewProps) {
       {/* Content Area */}
       <div className="flex flex-col md:flex-row gap-14">
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg p-8 w-[70%] shadow flex flex-col gap-5">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-lg p-8 w-[70%] shadow flex flex-col gap-5"
+        >
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">QR Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              QR Name
+            </label>
             <input
               placeholder="Enter QR name"
               className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white"
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value)}
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Target URL</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Target URL
+            </label>
             <div className="flex">
-              <span className="inline-flex items-center px-3 rounded-l border border-r-0 border-gray-200 bg-gray-50 text-gray-400 text-sm">https://</span>
+              <span className="inline-flex items-center px-3 rounded-l border border-r-0 border-gray-200 bg-gray-50 text-gray-400 text-sm">
+                https://
+              </span>
               <input
                 placeholder="your-url.com"
                 className="w-full border border-gray-200 rounded-r px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white"
                 value={link.replace(/^https?:\/\//, "")}
-                onChange={e => setLink("https://" + e.target.value.replace(/^https?:\/\//, ""))}
+                onChange={(e) =>
+                  setLink(
+                    "https://" + e.target.value.replace(/^https?:\/\//, "")
+                  )
+                }
                 required
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Folder</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Folder
+            </label>
             <select
               className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white"
               value={folder}
-              onChange={e => setFolder(e.target.value)}
+              onChange={(e) => setFolder(e.target.value)}
               required
             >
               <option value="">Select Folder</option>

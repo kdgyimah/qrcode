@@ -118,6 +118,8 @@ export default function QrDetailView({
             <Image
               src={qr.qrImage}
               alt="QR code"
+              width={192}
+              height={192}
               className="w-40 h-40 rounded shadow border border-gray-100"
             />
           ) : (
