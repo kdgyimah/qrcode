@@ -1,3 +1,6 @@
+"use client";
+
+
 // app/dashboard/myqrcodes/page.tsx
 import MyQrCodesClient from '../components/MyQrCodesClient';
 

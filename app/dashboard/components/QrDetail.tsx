@@ -1,3 +1,5 @@
+"use client";
+
 import { X, Edit2, Trash, Download, Share2 } from "lucide-react";
 import { QrData } from "@/types/qr-generator"; 
 import Image from "next/image";

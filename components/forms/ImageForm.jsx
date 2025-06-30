@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { uploadImageAndGetURL } from '../../firebase'; // Adjust path as necessary
 import { auth } from '../../firebase'; // Ensure you import your auth configuration

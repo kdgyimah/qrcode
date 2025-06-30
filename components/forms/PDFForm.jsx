@@ -1,3 +1,4 @@
+"use client";
 
 import { useState } from 'react';
 import { uploadPDFAndGetURL } from '../../firebase'; // Adjust path as necessary

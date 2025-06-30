@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { MoreHorizontal, X, Trash, Download, Eye, Copy } from "lucide-react";
 import Image from "next/image";

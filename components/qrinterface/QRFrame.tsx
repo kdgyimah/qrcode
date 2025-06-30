@@ -1,10 +1,8 @@
+"use client";
+
 import { useEffect, useRef } from "react";
 import QRCodeStyling, {
   Options as QRCodeStylingOptions,
-  DotType,
-  CornerDotType,
-  CornerSquareType,
-  Gradient
 } from "qr-code-styling";
 import PropTypes from "prop-types";
 

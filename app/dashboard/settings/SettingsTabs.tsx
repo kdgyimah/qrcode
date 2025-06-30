@@ -1,3 +1,5 @@
+"use client";
+
 type Tab = { key: string; label: string };
 
 export default function SettingsTabs({
