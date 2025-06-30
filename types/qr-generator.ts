@@ -1,5 +1,8 @@
 // types/qr-generator.ts
 
+
+
+
 // QR category type
 export type QrCategory = "link" | "email" | "pdf";
 
@@ -48,7 +51,8 @@ export interface QrData {
   qrImage: string;                   // preview image URL or path
   qrCodeUrl?: string;                // optional CDN-hosted version
   data?: QRFormData;                 // optional form input used for generation
-  style?: QRCodeStyle;              // optional QR visual styling
+  style?: QRCodeStyle;
+               // optional QR visual styling
 }
 
 // Optional: Extend with UI-related fields if needed in frontend
@@ -56,3 +60,9 @@ export interface QrDataWithUI extends QrData {
   selected?: boolean;
   isEditing?: boolean;
 }
+
+// Chart data type for analytics visualizations (e.g., Pie/Bar charts)
+export type ChartData = {
+  name: string;
+  value: number;
+};

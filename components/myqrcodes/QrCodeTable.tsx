@@ -4,80 +4,13 @@ import Image from "next/image";
 import PaginationBar from "@/components/PaginationBar";
 import { QrData } from "@/types/qr-generator";
 
-const qrData: QrData[] = [
-  {
-    id: "1",
-    name: "Product Launch",
-    type: "Dynamic",
-    folder: "Marketing",
-    created: "2025-05-01",
-    scans: 152,
-    lastScan: "2025-05-20",
-    status: "Active",
-    description: "This QR promotes our product launch.",
-    qrImage: "/images/sample-qr.png",
-    link: "https://productlaunch.example.com",
-    category: "link",
-    tags: ["launch", "marketing"],
-    visits: 152,
-    lastModified: "2025-05-20",
-  },
-  {
-    id: "2",
-    name: "Event Invite",
-    type: "Dynamic",
-    folder: "Events",
-    created: "2025-05-10",
-    scans: 98,
-    lastScan: "2025-05-22",
-    status: "Active",
-    description: "Invite attendees to your upcoming event.",
-    qrImage: "/images/sample-qr.png",
-    link: "mailto:event@company.com",
-    category: "email",
-    tags: ["event", "invite"],
-    visits: 98,
-    lastModified: "2025-05-22",
-  },
-  {
-    id: "3",
-    name: "Feedback Form",
-    type: "Static",
-    folder: "Surveys",
-    created: "2025-04-15",
-    scans: 76,
-    lastScan: "2025-05-19",
-    status: "Inactive",
-    description: "Collect valuable feedback from customers.",
-    qrImage: "/images/sample-qr.png",
-    link: "https://feedback.example.com",
-    category: "link",
-    tags: ["feedback", "survey"],
-    visits: 76,
-    lastModified: "2025-05-19",
-  },
-  {
-    id: "4",
-    name: "Promo QR",
-    type: "Dynamic",
-    folder: "Marketing",
-    created: "2025-05-03",
-    scans: 201,
-    lastScan: "2025-05-21",
-    status: "Active",
-    description: "Special promo for the latest campaign.",
-    qrImage: "/images/sample-qr.png",
-    link: "/files/promo.pdf",
-    category: "pdf",
-    tags: ["promo", "marketing"],
-    visits: 201,
-    lastModified: "2025-05-21",
-  },
-];
-
+// ✅ Accept `data` prop from parent
 interface QrTableProps {
+  data: QrData[];
   onRowClick: (qr: QrData) => void;
   onRowEdit?: (qr: QrData) => void;
+  search?: string;
+  setSearch?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function getCategoryLabel(qr: QrData) {
@@ -86,21 +19,31 @@ function getCategoryLabel(qr: QrData) {
       return <span className="text-xs text-blue-600">{qr.link}</span>;
     case "pdf":
       return (
-        <a href={qr.link} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 underline">
+        <a
+          href={qr.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-blue-600 underline"
+        >
           PDF
         </a>
       );
     case "link":
     default:
       return (
-        <a href={qr.link} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 underline">
+        <a
+          href={qr.link}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-blue-600 underline"
+        >
           {qr.link}
         </a>
       );
   }
 }
 
-export default function QrTable({ onRowClick, onRowEdit }: QrTableProps) {
+export default function QrTable({ data, onRowClick, onRowEdit }: QrTableProps) {
   const [selected, setSelected] = useState<string[]>([]);
 
   const handleSelect = (id: string) => {
@@ -109,7 +52,7 @@ export default function QrTable({ onRowClick, onRowEdit }: QrTableProps) {
     );
   };
 
-  const allSelected = selected.length === qrData.length;
+  const allSelected = selected.length === data.length;
 
   const total = 20;
   const perPage = 8;
@@ -126,7 +69,7 @@ export default function QrTable({ onRowClick, onRowEdit }: QrTableProps) {
                 type="checkbox"
                 checked={allSelected}
                 onChange={() =>
-                  setSelected(allSelected ? [] : qrData.map((qr) => qr.id))
+                  setSelected(allSelected ? [] : data.map((qr) => qr.id))
                 }
                 aria-label="Select all"
                 className="accent-blue-600 w-4 h-4 rounded"
@@ -144,7 +87,7 @@ export default function QrTable({ onRowClick, onRowEdit }: QrTableProps) {
           </tr>
         </thead>
         <tbody>
-          {qrData.map((qr) => (
+          {data.map((qr) => (
             <tr
               key={qr.id}
               className={`border-t text-sm bg-white transition cursor-pointer hover:bg-blue-50 ${
@@ -231,11 +174,18 @@ export default function QrTable({ onRowClick, onRowEdit }: QrTableProps) {
           <button className="p-2 hover:bg-blue-50 rounded">
             <Copy size={20} className="text-blue-600" />
           </button>
-          <span className="mx-auto mt-2 text-blue-600 font-semibold">{selected.length}</span>
+          <span className="mx-auto mt-2 text-blue-600 font-semibold">
+            {selected.length}
+          </span>
         </div>
       )}
 
-      <PaginationBar showingStart={showingStart} showingEnd={showingEnd} total={total} page={1} />
+      <PaginationBar
+        showingStart={showingStart}
+        showingEnd={showingEnd}
+        total={total}
+        page={1}
+      />
     </div>
   );
 }

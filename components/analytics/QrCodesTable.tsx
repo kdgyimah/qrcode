@@ -2,7 +2,9 @@
 
 import Image from "next/image";
 import React from "react";
+import { QrData } from "@/types/qr-generator";
 
+// Mapped row structure for table display
 export type QrCodeRow = {
   name: string;
   img: string;
@@ -14,19 +16,30 @@ export type QrCodeRow = {
 };
 
 interface QrCodesTableProps {
-  data: QrCodeRow[];
+  data: QrData[];
   onRowClick: (qr: QrCodeRow) => void;
   search: string;
   setSearch: (value: string) => void;
 }
 
-export default function QrCodesTable({ 
-  data, 
-  onRowClick, 
-  search, 
-  setSearch 
+export default function QrCodesTable({
+  data,
+  onRowClick,
+  search,
+  setSearch,
 }: QrCodesTableProps) {
-  const filteredData = data.filter(
+  // Map QrData into QrCodeRow shape
+  const mappedData: QrCodeRow[] = data.map((item) => ({
+    name: item.name,
+    img: item.qrImage,
+    totalScans: item.scans ?? 0,
+    scanFreq: "Weekly", // You can replace this with a real value if available
+    location: "N/A", // Replace if you have region/location data
+    date: item.created,
+    status: item.status ?? "Inactive",
+  }));
+
+  const filteredData = mappedData.filter(
     (item) =>
       item.name.toLowerCase().includes(search.toLowerCase()) ||
       item.location.toLowerCase().includes(search.toLowerCase())
@@ -57,18 +70,18 @@ export default function QrCodesTable({
           </thead>
           <tbody>
             {filteredData.map((qr, idx) => (
-              <tr 
-                key={idx} 
+              <tr
+                key={idx}
                 className="border-t hover:bg-gray-50 cursor-pointer"
                 onClick={() => onRowClick(qr)}
               >
                 <td className="py-2 px-3 flex items-center gap-2">
-                  <Image 
-                    src={qr.img} 
+                  <Image
+                    src={qr.img}
                     alt={`QR Code: ${qr.name}`}
                     width={32}
                     height={32}
-                    className="w-8 h-8 rounded bg-gray-100" 
+                    className="w-8 h-8 rounded bg-gray-100"
                   />
                   <span>{qr.name}</span>
                 </td>

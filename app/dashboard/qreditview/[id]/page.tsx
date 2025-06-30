@@ -2,19 +2,37 @@ import QrEditView from "@/app/dashboard/components/QrEditView";
 import { ArrowDownToLine, Edit2, Share2, Trash2 } from "lucide-react";
 import Image from "next/image";
 
-// Mock data and fetch function
-const allQrData = [
-  {
-    id: "1",
-    name: "Product Launch",
-    link: "https://behance.portfolio",
-    folder: "Event",
-    created: "2025-02-15",
-    lastModified: "2025-03-02",
-    qrImage: "/qr1-image.png",
-  },
-  // ...other QR codes
-];
+import type { QrData, QrCategory, QrType } from "@/types/qr-generator";
+
+const mockQr: QrData = {
+  id: "123",
+  name: "Sample QR",
+  link: "https://example.com",
+  folder: "Marketing",
+  created: "2025-01-01T12:00:00.000Z",
+  lastModified: "2025-01-02T12:00:00.000Z",
+  qrImage: "/qr.png",
+  type: "Dynamic" as QrType,
+  category: "link" as QrCategory,
+  scans: 42,
+  lastScan: "2025-01-02T10:00:00.000Z",
+  status: "Active",
+  description: "Promo QR code for marketing",
+  tags: ["promo", "campaign"],
+  visits: 100,
+  // Optional fields:
+  qrCodeUrl: "/cdn/qrs/123.png",
+  data: { link: "https://example.com" },
+  style: {
+    shape: "rounded",
+    backgroundColor: "#ffffff",
+    foregroundColor: "#000000",
+    logo: null,
+    logoSize: 20
+  }
+};
+
+const allQrData: QrData[] = [mockQr]; // Add more mock data as needed
 
 async function fetchQrById(id: string) {
   // Simulate async fetching

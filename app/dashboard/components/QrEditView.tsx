@@ -48,6 +48,9 @@ export default function QrEditView({ qr, onSaved }: QrEditViewProps) {
         category: qr.category ?? "link",
         tags: qr.tags ?? [],
         visits: qr.visits ?? 0,
+        qrCodeUrl: qr.qrCodeUrl ?? "", // Add fallback or leave empty
+        data: qr.data ?? undefined, // Or use {} if your app expects it
+        style: qr.style ?? undefined, // Add default style if required
       };
 
       onSaved?.(updatedQr);

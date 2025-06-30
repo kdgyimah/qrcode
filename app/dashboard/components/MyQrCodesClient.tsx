@@ -48,7 +48,7 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({ onShowDetail, onShowE
       </div>
 
       {/* ✅ Pass both props to the table */}
-      <QrTable onRowClick={onShowDetail} onRowEdit={onShowEdit} />
+      <QrTable data={[]} onRowClick={onShowDetail} onRowEdit={onShowEdit} />
     </div>
   );
 };
