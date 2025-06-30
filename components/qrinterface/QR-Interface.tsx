@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import React, { useState } from "react";
 import CategoryField from "./CategoryField";
 import "./QR-Interface.css";
 import QROutputInterface from "./QROutputInterface";
@@ -13,7 +13,7 @@ import type { Gradient } from "qr-code-styling";
 interface CategoryItem {
   label: string;
   value: string;
-  icon?: JSX.Element;
+  icon?: React.ReactElement;
   color?: string;
 }
 
