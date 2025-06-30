@@ -3,7 +3,6 @@
 import Image from "next/image";
 
 export function ProductSection() {
-  // 6 blog posts for a 3-column grid
   const blogPosts = [
     {
       id: 1,
@@ -53,48 +52,50 @@ export function ProductSection() {
         "Understanding the analytics that matter for your QR marketing campaigns.",
     },
   ];
-  return (
-    <div>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        {/* Section Header */}
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 sm:mb-12 text-center">
-          Built For Every Purpose
-        </h2>
 
-        {/* Blog Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+  return (
+    <section className="w-full bg-white py-16 px-20">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Heading */}
+        <div className="text-center mb-12">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+            Built For Every Purpose
+          </h2>
+          <p className="text-gray-600 text-base mt-2">
+            QR code solutions tailored to fit any need or industry.
+          </p>
+        </div>
+
+        {/* Grid Layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map((post) => (
-            <div
+            <article
               key={post.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.01] transition-all duration-300"
             >
-              {/* Blog Image */}
-              <div className="h-48 sm:h-56 overflow-hidden">
+              {/* Image */}
+              <div className="h-48 sm:h-56 w-full overflow-hidden">
                 <Image
                   src={post.imageUrl}
                   alt={post.title}
-                  width={400} // adjust width as needed
-                  height={250} // adjust height as needed
-                  className="w-full h-full object-cover"
+                  width={400}
+                  height={250}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 />
               </div>
 
-              {/* Blog Content */}
+              {/* Content */}
               <div className="p-6">
-                {/* Title */}
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">
+                <p className="text-sm text-gray-400 mb-1">{post.date}</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {post.title}
-                </h1>
-
-                {/* Excerpt */}
-                <h4 className="text-sm sm:text-base text-gray-600 mb-6">
-                  {post.excerpt}
-                </h4>
+                </h3>
+                <p className="text-gray-600 text-sm">{post.excerpt}</p>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

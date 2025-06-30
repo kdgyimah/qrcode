@@ -58,41 +58,26 @@ export default function FeatureInfoSection() {
           </h1>
         </div>
 
-        {/* Cards Container */}
-        <div
-          className="relative mx-auto"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 360px)",
-            gridTemplateRows: "repeat(2, 300px)",
-            gap: 64,
-            width: 1148,
-            height: 980,
-            maxWidth: "98vw",
-          }}
-        >
-          {cards.map((card) => (
-            <div
-              key={card.title}
-              className="relative bg-white rounded-lg shadow-2xl shadow-gray-300 p-8 flex flex-col items-start text-left transition-transform hover:scale-[1.02]"
-              style={{
-                width: 360,
-                height: 300,
-                minWidth: 0,
-                minHeight: 0,
-              }}
-            >
-              <div
-                className={`absolute -top-8 left-1/2 -translate-x-1/2 text-white rounded-full p-4 shadow-md ${card.iconBg}`}
-              >
-                {card.icon}
-              </div>
-              <h2 className="text-xl font-semibold mt-12 mb-3">{card.title}</h2>
-              <p className="text-gray-600">{card.desc}</p>
-            </div>
-          ))}
-        </div>
+       {/* Cards Container */}
+<div
+  className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-7 sm:gap-10 max-w-[1148px] w-full px-4"
+>
+  {cards.map((card) => (
+    <div
+      key={card.title}
+      className="relative bg-white rounded-lg shadow-2xl shadow-gray-300 p-8 flex flex-col items-start text-left transition-transform hover:scale-[1.02] min-h-[300px]"
+    >
+      <div
+        className={`absolute -top-8 left-1/2 -translate-x-1/2 text-white rounded-full p-4 shadow-md ${card.iconBg}`}
+      >
+        {card.icon}
       </div>
+      <h2 className="text-xl font-semibold mt-12 mb-3">{card.title}</h2>
+      <p className="text-gray-600">{card.desc}</p>
+    </div>
+  ))}
+</div>
+
       {/* Responsive override for mobile */}
       <style jsx>{`
         @media (max-width: 1200px) {
@@ -116,6 +101,7 @@ export default function FeatureInfoSection() {
           }
         }
       `}</style>
+      </div>
     </section>
   );
 }
