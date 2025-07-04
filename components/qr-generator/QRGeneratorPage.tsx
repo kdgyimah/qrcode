@@ -6,7 +6,11 @@ import { CategoryGrid } from '@/components/qr-generator/category-grid';
 import { QRForm } from '@/components/qr-generator/qr-form';
 import { DownloadModal } from '@/components/qr-generator/download-modal';
 
-export default function QRGeneratorPage() {
+interface QRGeneratorPageProps {
+  onBack?: () => void; // ✅ Optional back prop
+}
+
+export default function QRGeneratorPage({ onBack }: QRGeneratorPageProps) {
   const [currentStep, setCurrentStep] = useState<'categories' | 'form' | 'download'>('categories');
   const [selectedCategory, setSelectedCategory] = useState<QRCategory | null>(null);
   const [formData, setFormData] = useState<QRFormData>({});
@@ -43,6 +47,16 @@ export default function QRGeneratorPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* ✅ Optional Back Button */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="mb-6 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+        >
+          ← Back to My QR Codes
+        </button>
+      )}
+
       {currentStep === 'categories' && (
         <CategoryGrid onCategorySelect={handleCategorySelect} />
       )}

@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import CreateQrButton from "@/components/myqrcodes/CreateQrButton";
 import FolderManager from "@/components/myqrcodes/FolderManager";
 import FolderSearch from "@/components/myqrcodes/FolderSearch";
@@ -11,20 +10,17 @@ import DateSelector from "@/components/myqrcodes/DateSelector";
 import FilterDropdown from "@/components/myqrcodes/FilterDropdown";
 import type { QrData } from '@/types/qr-generator';
 
-// ✅ Define props interface
 interface MyQrCodesClientProps {
   onShowDetail: (qr: QrData) => void;
   onShowEdit: (qr: QrData) => void;
+  handleCreateClick: () => void;
 }
 
-// ✅ Accept props in component
-const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({ onShowDetail, onShowEdit }) => {
-  const router = useRouter();
-
-  const handleCreateClick = () => {
-    router.push('/dashboard/qr-generator');
-  };
-
+const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
+  onShowDetail,
+  onShowEdit,
+  handleCreateClick,
+}) => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -47,7 +43,6 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({ onShowDetail, onShowE
         </div>
       </div>
 
-      {/* ✅ Pass both props to the table */}
       <QrTable data={[]} onRowClick={onShowDetail} onRowEdit={onShowEdit} />
     </div>
   );

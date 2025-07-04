@@ -44,7 +44,7 @@ export const qrTableData: QrData[] = [
     status: "Active",
     description: "QR code for event entry",
     tags: ["event", "entry", "qr"],
-    qrImage: "/qr-sample-1.png",
+    qrImage: "/images/sample-qr.png",
     qrCodeUrl: "https://cdn.example.com/qrs/qr1.png", // Optional
     data: {
       eventName: "Tech Conference",
@@ -73,7 +73,7 @@ export const qrTableData: QrData[] = [
     status: "Inactive",
     description: "Collect user feedback",
     tags: ["feedback", "form"],
-    qrImage: "/qr-sample-2.png",
+    qrImage: "/images/sample-qr.png",
     data: {
       formId: "fb123"
     },

@@ -1,18 +1,22 @@
-"use client";
+'use client';
 
+import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import React, { useState } from "react";
+
 import AnalyticsPage from "@/components/pages/AnalyticsPage";
 import TeamPage from "@/components/pages/TeamPage";
 import BulkPage from "@/components/pages/BulkPage";
 import ApiIntegrationPage from "@/components/pages/ApiIntegrationPage";
 import SettingsPage from "@/app/dashboard/settings/SettingsPage";
 import SupportPage from "@/components/pages/SupportPage";
+
 import QrDetailView from "@/app/dashboard/components/QrDetail";
 import QrEditView from "@/app/dashboard/components/QrEditView";
-import { QrData } from "@/types/qr-generator"; 
 import MyQrCodesClient from "./components/MyQrCodesClient";
+import QRGeneratorPage from "@/components/qr-generator/QRGeneratorPage";
+
+import type { QrData } from "@/types/qr-generator";
 
 export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,73 +24,90 @@ export default function DashboardPage() {
   const [detailQr, setDetailQr] = useState<QrData | null>(null);
   const [editQr, setEditQr] = useState<QrData | null>(null);
 
-  // Handler to show detail
   const handleShowDetail = (qr: QrData) => {
     setDetailQr(qr);
-    setEditQr(qr); // Close edit view if open
+    setEditQr(null);
   };
 
-  // Handler to show edit in content area
   const handleShowEdit = (qr: QrData) => {
     setEditQr(qr);
-    setDetailQr(qr); // Close detail view if open
+    setDetailQr(null);
   };
 
-  // Handler to close edit view
   const handleCloseEdit = () => setEditQr(null);
-
-  // Handler to close detail view
   const handleCloseDetail = () => setDetailQr(null);
 
-  // Handler for when edit is saved
   const handleEditSaved = (updatedQr: QrData) => {
     setEditQr(null);
-    setDetailQr(updatedQr); // Optionally show detail after saving
+    setDetailQr(updatedQr);
+  };
+
+  const renderMainContent = () => {
+    if (editQr) {
+      return (
+        <QrEditView
+          qr={editQr}
+          onClose={handleCloseEdit}
+          onSaved={handleEditSaved}
+        />
+      );
+    }
+
+    if (detailQr) {
+      return (
+        <QrDetailView
+          qr={detailQr}
+          onClose={handleCloseDetail}
+          onEdit={handleShowEdit}
+        />
+      );
+    }
+
+    switch (activeView) {
+      case "my-qrs":
+        return (
+          <MyQrCodesClient
+            onShowDetail={handleShowDetail}
+            onShowEdit={handleShowEdit}
+            handleCreateClick={() => setActiveView("qr-generator")}
+          />
+        );
+      case "qr-generator":
+        return <QRGeneratorPage onBack={() => setActiveView("my-qrs")} />;
+      case "analytics":
+        return <AnalyticsPage />;
+      case "team":
+        return <TeamPage />;
+      case "bulk":
+        return <BulkPage />;
+      case "api":
+        return <ApiIntegrationPage />;
+      case "settings":
+        return <SettingsPage />;
+      case "support":
+        return <SupportPage />;
+      default:
+        return (
+          <MyQrCodesClient
+            onShowDetail={handleShowDetail}
+            onShowEdit={handleShowEdit}
+            handleCreateClick={() => setActiveView("qr-generator")}
+          />
+        );
+    }
   };
 
   return (
     <div className="flex h-screen">
-      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} onNavigate={setActiveView} />
+      <Sidebar
+        open={sidebarOpen}
+        setOpen={setSidebarOpen}
+        onNavigate={setActiveView}
+      />
       <div className="flex-1 flex flex-col">
         <Header setSidebarOpen={setSidebarOpen} />
         <main className="flex-1 overflow-y-auto p-6 bg-gray-100 relative">
-          {editQr ? (
-            // Render edit view as main content (not modal)
-            <QrEditView
-              qr={editQr}
-              onClose={handleCloseEdit}
-              onSaved={handleEditSaved}
-            />
-          ) : detailQr ? (
-            <QrDetailView
-              qr={detailQr}
-              onClose={handleCloseDetail}
-              onEdit={handleShowEdit}
-            />
-          ) : (
-            <>
-              {activeView === "my-qrs" ? (
-                <MyQrCodesClient
-                  onShowDetail={handleShowDetail}
-                  onShowEdit={handleShowEdit}
-                />
-              ) : activeView === "analytics" ? (
-                <AnalyticsPage />
-              ) : activeView === "team" ? (
-                <TeamPage />
-              ) : activeView === "bulk" ? (
-                <BulkPage />
-              ) : activeView === "api" ? (
-                <ApiIntegrationPage />
-              ) : activeView === "settings" ? (
-                <SettingsPage />
-              ) : activeView === "support" ? (
-                <SupportPage />
-              ) : (
-                <MyQrCodesClient onShowDetail={handleShowDetail} onShowEdit={handleShowEdit} />
-              )}
-            </>
-          )}
+          {renderMainContent()}
         </main>
       </div>
     </div>
