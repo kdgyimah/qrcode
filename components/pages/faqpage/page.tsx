@@ -83,17 +83,17 @@ const FAQAccordionItem = ({ item }: { item: FAQItem }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="mb-4 last:mb-0">
+    <div className="bg-white rounded-xl border border-gray-100 transition-shadow duration-200 mb-3">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center w-full p-4 sm:p-5 text-left bg-white rounded-lg shadow-xs hover:shadow-sm transition-all duration-200 focus:outline-none"
+        className="w-full flex justify-between items-center px-5 py-4 text-left"
       >
-        <h3 className="text-base sm:text-lg font-medium text-gray-900 pr-4">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900">
           {item.question}
         </h3>
-        <div className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center bg-blue-50 rounded-full">
+        <div className="w-8 h-8 flex items-center justify-center bg-blue-50 rounded-full">
           <svg
-            className={`w-4 h-4 sm:w-5 sm:h-5 text-blue-600 transform transition-transform duration-200 ${
+            className={`w-4 h-4 text-blue-600 transition-transform duration-200 ${
               isOpen ? "rotate-180" : ""
             }`}
             viewBox="0 0 20 20"
@@ -108,8 +108,8 @@ const FAQAccordionItem = ({ item }: { item: FAQItem }) => {
         </div>
       </button>
       {isOpen && (
-        <div className="mt-2 p-4 sm:p-5 bg-white rounded-lg shadow-xs">
-          <p className="text-gray-600 text-sm sm:text-base">{item.answer}</p>
+        <div className="px-5 pb-5 text-sm sm:text-base text-gray-600">
+          {item.answer}
         </div>
       )}
     </div>
@@ -126,15 +126,12 @@ const FAQAccordion = ({ data }: { data: FAQItem[] }) => {
   );
 };
 
-
-
 const FAQPage = () => {
-  
   const [activeTab, setActiveTab] = useState(FAQ_CATEGORIES[0].id);
 
   if (!FAQ_CATEGORIES || FAQ_CATEGORIES.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen  py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
             Frequently Asked Questions
@@ -147,7 +144,6 @@ const FAQPage = () => {
     );
   }
 
-  
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -161,17 +157,18 @@ const FAQPage = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-gray-100 p-1 rounded-lg mb-6 sm:mb-8 overflow-x-auto">
-          <div className="flex space-x-1 w-max min-w-full">
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex items-center bg-gray-50 px-2 py-1 rounded-lg">
             {FAQ_CATEGORIES.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setActiveTab(category.id)}
-                className={`px-3 py-2 sm:px-6 sm:py-3 font-medium text-xs sm:text-sm rounded-md focus:outline-none transition-colors duration-200 ${
-                  activeTab === category.id
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
-                }`}
+                className={`px-4 sm:px-6 py-2 text-sm sm:text-base font-medium rounded-md transition-all duration-200
+          ${
+            activeTab === category.id
+              ? "bg-white text-black border border-b-0 border-gray-200 rounded-t-md"
+              : "text-gray-600 hover:text-black"
+          }`}
               >
                 {category.title}
               </button>
@@ -180,7 +177,7 @@ const FAQPage = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className=" rounded-xl overflow-hidden">
           <div className="p-4 sm:p-6 md:p-8">
             {FAQ_CATEGORIES.map((category) => (
               <div

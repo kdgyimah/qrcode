@@ -73,13 +73,13 @@ export default function Hero() {
           >
             <Link
               href="/signup"
-              className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition"
+              className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-blue-700 transition"
             >
               Get Started
             </Link>
             <Link
               href="/featurepage"
-              className="border border-blue-600 text-black px-6 py-3 rounded-md hover:bg-white transition"
+              className="border border-blue-600 font-semibold text-black px-6 py-3 rounded-md hover:bg-white transition"
             >
               Learn More
             </Link>

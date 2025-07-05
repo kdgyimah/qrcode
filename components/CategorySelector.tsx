@@ -14,6 +14,9 @@ import {
   CalendarDays,
   Barcode,
   ImageIcon,
+  Globe2Icon,
+  Globe2,
+  Globe,
 } from "lucide-react";
 
 import type { ReactElement } from "react";
@@ -36,7 +39,7 @@ export default function CategorySelector({
   onSelect,
 }: CategorySelectorProps) {
   const categoryList: CategoryOption[] = [
-    { id: "link", name: "Link", icon: <QrCode size={28} /> },
+    { id: "link", name: "Link", icon: <Globe size={28} /> },
     { id: "call", name: "Call", icon: <Phone size={28} /> },
     { id: "mail", name: "Email", icon: <Mail size={28} /> },
     { id: "sms", name: "SMS", icon: <MessageSquareText size={28} /> },
