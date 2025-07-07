@@ -14,6 +14,7 @@ import TutorialSection2 from "@/components/pages/tutorialsec2/page";
 import TutorialSection3 from "@/components/pages/tutorialsec3/page";
 import ExperienceSection from "@/components/ExperienceSection";
 import QrInterface from "@/components/QrInterface";
+import QuestionSupportSection from "@/components/QuestionSupportSection";
 
 
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
       <TutorialSection3 />
       <QRGeneratorSection />
       <FAQPage/>
+      <QuestionSupportSection/>
       <BlogSection />
       <ExperienceSection />
       <Info3/>

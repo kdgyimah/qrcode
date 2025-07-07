@@ -1,68 +1,87 @@
-// types/qr-generator.ts
+// QR code type: either static or dynamic
+export type QrType = "static" | "dynamic";
 
+// Available QR code categories
+export type QrCategory =
+  | "link"
+  | "email"
+  | "pdf"
+  | "contact"
+  | "phone"
+  | "sms"
+  | "vcard"
+  | "app"
+  | "social"
+  | "image"
+  | "video"
+  | "wifi"
+  | "event"
+  | "bulk";
 
-
-
-// QR category type
-export type QrCategory = "link" | "email" | "pdf";
-
-// QR type (static or dynamic)
-export type QrType = "Static" | "Dynamic";
-
-// Individual QR category info
+// Information about a QR category used in the UI
 export interface QRCategory {
-  id: string;
-  name: string;
-  icon: string;
-  description: string;
-  color: string;
+  id: string;               // category key, e.g. 'link'
+  name: string;             // Display name
+  description: string;      // Short description
+  icon: string;             // Icon name (Lucide icon key)
+  color: string;            // Tailwind color class (e.g., 'bg-blue-600')
 }
 
-// Dynamic form data used to generate QR codes
+// Form data used to generate a QR code (varies by category)
 export interface QRFormData {
-  [key: string]: string | boolean | File | null;
+  url?: string;
+  phone?: string;
+  email?: string;
+  subject?: string;
+  body?: string;
+  message?: string;
+  ssid?: string;
+  password?: string;
+  security?: string;
+  text?: string;
+  content?: string;
+  [key: string]: string | boolean | File | null | undefined;
 }
 
-// Style configuration for a generated QR code
+// Visual customization for a generated QR code
 export interface QRCodeStyle {
-  shape: "square" | "circle" | "rounded";
+  shape: 'square' | 'circle' | 'rounded';
   backgroundColor: string;
   foregroundColor: string;
-  logo?: File | null;
-  logoSize: number;
+  logo?: File | string | null; // ← allow string too for URL-based logos
+  logoSize?: number; // % relative to QR size
 }
 
-// Main unified QR data interface
+// Complete QR code record used in app/database
 export interface QrData {
   id: string;
   name: string;
-  type: QrType;                      // Static or Dynamic
-  category: QrCategory;              // link, email, pdf
-  link: string;                      // URL or email or file path
+  type: QrType;
+  category: QrCategory;
+  link: string;               // Could be a URL, phone, etc.
   folder: string;
-  created: string;                   // ISO string or display date
-  lastModified: string;
+  created: string;            // ISO date string
+  lastModified: string;       // ISO date string
   scans: number;
-  lastScan: string;
+  lastScan: string;           // ISO date string
   visits: number;
   status: "Active" | "Inactive";
   description: string;
   tags: string[];
-  qrImage: string;                   // preview image URL or path
-  qrCodeUrl?: string;                // optional CDN-hosted version
-  data?: QRFormData;                 // optional form input used for generation
-  style?: QRCodeStyle;
-               // optional QR visual styling
+  qrImage: string;            // Preview image path/URL
+  qrCodeUrl?: string;         // CDN or public-facing QR code
+  data?: QRFormData;          // Optional form input
+  style?: QRCodeStyle;        // Optional styling
 }
 
-// Optional: Extend with UI-related fields if needed in frontend
+// Extended data used in UI (for editing, selection)
 export interface QrDataWithUI extends QrData {
   selected?: boolean;
   isEditing?: boolean;
 }
 
-// Chart data type for analytics visualizations (e.g., Pie/Bar charts)
-export type ChartData = {
+// Reusable format for analytics charts (Pie/Bar)
+export interface ChartData {
   name: string;
   value: number;
-};
+}

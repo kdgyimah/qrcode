@@ -3,8 +3,21 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import {
-  Globe, Phone, Mail, User, Wifi, MessageCircle, FileText, ImageIcon,
-  Video, Calendar, AppWindow, BookUser, Share2, Layers3, Barcode,
+  Globe,
+  Phone,
+  Mail,
+  User,
+  Wifi,
+  MessageCircle,
+  FileText,
+  ImageIcon,
+  Video,
+  Calendar,
+  AppWindow,
+  BookUser,
+  Share2,
+  Layers3,
+  Barcode,
 } from "lucide-react";
 import { LiaSmsSolid } from "react-icons/lia";
 
@@ -16,22 +29,102 @@ type QROption = {
 };
 
 const qrOptions: QROption[] = [
-  { id: 1, name: "Website", icon: <Globe size={24} />, description: "Link to any website" },
-  { id: 2, name: "Call", icon: <Phone size={24} />, description: "Click to dial directly" },
-  { id: 3, name: "Contact", icon: <User size={24} />, description: "Link to any Contact" },
-  { id: 4, name: "Mail", icon: <Mail size={24} />, description: "Send email with one scan" },
-  { id: 5, name: "SMS", icon: <LiaSmsSolid size={24} />, description: "Send SMS Easily" },
-  { id: 6, name: "Whatsapp", icon: <MessageCircle size={24} />, description: "Link to WhatsApp" },
-  { id: 7, name: "PDF", icon: <FileText size={24} />, description: "Download shared PDF" },
-  { id: 8, name: "Image", icon: <ImageIcon size={24} />, description: "Link to an image" },
-  { id: 9, name: "Video", icon: <Video size={24} />, description: "Link to a video" },
-  { id: 10, name: "App", icon: <AppWindow size={24} />, description: "Redirect to App Store" },
-  { id: 11, name: "Vcard", icon: <BookUser size={24} />, description: "Save contact with one tap" },
-  { id: 12, name: "Social Media", icon: <Share2 size={24} />, description: "Link to your profile" },
-  { id: 13, name: "Wifi", icon: <Wifi size={24} />, description: "Connect without password" },
-  { id: 14, name: "Event Info", icon: <Calendar size={24} />, description: "Share event details" },
-  { id: 15, name: "Bulk QR", icon: <Layers3 size={24} />, description: "Generate in bulk" },
-  { id: 16, name: "2D Barcode", icon: <Barcode size={24} />, description: "Create 2D barcodes" },
+  {
+    id: 1,
+    name: "Website",
+    icon: <Globe size={24} />,
+    description: "Link to any website",
+  },
+  {
+    id: 2,
+    name: "Call",
+    icon: <Phone size={24} />,
+    description: "Click to dial directly",
+  },
+  {
+    id: 3,
+    name: "Contact",
+    icon: <User size={24} />,
+    description: "Link to any Contact",
+  },
+  {
+    id: 4,
+    name: "Mail",
+    icon: <Mail size={24} />,
+    description: "Send email with one scan",
+  },
+  {
+    id: 5,
+    name: "SMS",
+    icon: <LiaSmsSolid size={24} />,
+    description: "Send SMS Easily",
+  },
+  {
+    id: 6,
+    name: "Whatsapp",
+    icon: <MessageCircle size={24} />,
+    description: "Link to WhatsApp",
+  },
+  {
+    id: 7,
+    name: "PDF",
+    icon: <FileText size={24} />,
+    description: "Download shared PDF",
+  },
+  {
+    id: 8,
+    name: "Image",
+    icon: <ImageIcon size={24} />,
+    description: "Link to an image",
+  },
+  {
+    id: 9,
+    name: "Video",
+    icon: <Video size={24} />,
+    description: "Link to a video",
+  },
+  {
+    id: 10,
+    name: "App",
+    icon: <AppWindow size={24} />,
+    description: "Redirect to App Store",
+  },
+  {
+    id: 11,
+    name: "Vcard",
+    icon: <BookUser size={24} />,
+    description: "Save contact with one tap",
+  },
+  {
+    id: 12,
+    name: "Social Media",
+    icon: <Share2 size={24} />,
+    description: "Link to your profile",
+  },
+  {
+    id: 13,
+    name: "Wifi",
+    icon: <Wifi size={24} />,
+    description: "Connect without password",
+  },
+  {
+    id: 14,
+    name: "Event Info",
+    icon: <Calendar size={24} />,
+    description: "Share event details",
+  },
+  {
+    id: 15,
+    name: "Bulk QR",
+    icon: <Layers3 size={24} />,
+    description: "Generate in bulk",
+  },
+  {
+    id: 16,
+    name: "2D Barcode",
+    icon: <Barcode size={24} />,
+    description: "Create 2D barcodes",
+  },
 ];
 
 export default function QRGenerationSection() {
@@ -68,9 +161,13 @@ export default function QRGenerationSection() {
                     : "border-gray-200 hover:shadow-sm"
                 }`}
               >
-                <div className="text-blue-600 bg-blue-50 p-2.5 rounded-full ">{option.icon}</div>
+                <div className="text-blue-600 bg-blue-50 p-2.5 rounded-full ">
+                  {option.icon}
+                </div>
                 <div className="text-sm font-semibold mt-2">{option.name}</div>
-                <div className="text-xs text-gray-500 mt-1">{option.description}</div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {option.description}
+                </div>
               </button>
             ))}
           </div>
@@ -110,6 +207,7 @@ export default function QRGenerationSection() {
               Generate
             </button>
           </div>
+          <div/>
         </div>
       </div>
     </section>

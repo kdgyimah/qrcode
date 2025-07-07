@@ -39,9 +39,9 @@ export default function ExperienceSection() {
         >
           {/* Main Image */}
           <motion.img
-            src="/images/enter.jpg"
+            src="/images/testiimg.png"
             alt="Experience Showcase"
-            className="rounded-xl shadow-lg w-full max-w-full transform transition duration-300 hover:scale-105"
+            className=" shadow-lg w-full max-w-full transform transition duration-300 hover:scale-105"
           />
 
           {/* Testimonial */}
@@ -55,7 +55,7 @@ export default function ExperienceSection() {
           {/* Profile */}
           <div className="flex items-center space-x-4">
             <Image
-              src="/images/img1.jpg"
+              src="/images/ladyimg.png"
               alt="User Profile"
               width={56}
               height={56}
@@ -64,7 +64,7 @@ export default function ExperienceSection() {
 
             <div>
               <h4 className="text-lg font-semibold text-gray-800">Jane Doe</h4>
-              <p className="text-sm text-gray-500">Product Designer</p>
+              <p className="text-sm text-gray-500">Marketing Specialist</p>
             </div>
           </div>
         </motion.div>
