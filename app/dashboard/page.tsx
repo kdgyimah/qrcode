@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
@@ -14,8 +14,7 @@ import SupportPage from "@/components/pages/SupportPage";
 import QrDetailView from "@/app/dashboard/components/QrDetail";
 import QrEditView from "@/app/dashboard/components/QrEditView";
 import MyQrCodesClient from "./components/MyQrCodesClient";
-import QRGeneratorPage from "@/components/qr-generator/QRGeneratorPage";
-
+import QRGeneratorPage from "@/components/qr-generator/QRGeneratorPage"
 import type { QrData } from "@/types/qr-generator";
 
 export default function DashboardPage() {
@@ -49,6 +48,7 @@ export default function DashboardPage() {
           qr={editQr}
           onClose={handleCloseEdit}
           onSaved={handleEditSaved}
+          availableFolders={[]}
         />
       );
     }

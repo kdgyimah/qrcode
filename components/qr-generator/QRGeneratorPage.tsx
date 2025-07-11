@@ -1,19 +1,20 @@
-"use client";
-
-import { useState } from "react";
+import React, { useState } from "react";
 import { QRCategory, QRFormData, QRCodeStyle } from "@/types/qr-generator";
 import { CategoryGrid } from "@/components/qr-generator/CategoryGrid";
 import { QRForm } from "@/components/qr-generator/QRForm";
 import { DownloadModal } from "@/components/qr-generator/DownloadModal";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function QRGeneratorPage() {
+interface QRGeneratorPageProps {
+  onBack: () => void;
+}
+
+export default function QRGeneratorPage({ onBack }: QRGeneratorPageProps) {
   const [currentStep, setCurrentStep] = useState<
     "categories" | "form" | "download"
   >("categories");
-  const [selectedCategory, setSelectedCategory] = useState<QRCategory | null>(
-    null
-  );
+
+  const [selectedCategory, setSelectedCategory] = useState<QRCategory | null>(null);
   const [formData, setFormData] = useState<QRFormData>({});
   const [qrStyle, setQrStyle] = useState<QRCodeStyle>({
     shape: "square",
@@ -29,9 +30,13 @@ export default function QRGeneratorPage() {
   };
 
   const handleBackToCategories = () => {
-    setCurrentStep("categories");
-    setSelectedCategory(null);
-    setFormData({});
+    if (currentStep === "form") {
+      setCurrentStep("categories");
+      setSelectedCategory(null);
+      setFormData({});
+    } else {
+      onBack(); // ← fallback to Dashboard navigation
+    }
   };
 
   const handleGenerateQR = (data: QRFormData, style: QRCodeStyle) => {
