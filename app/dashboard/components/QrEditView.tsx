@@ -7,21 +7,20 @@ import type { QrData } from "@/types/qr-generator";
 
 interface QrEditViewProps {
   qr: QrData;
-  availableFolders: string[];
+  availableFolders?: string[]; // made optional with "?"
   onClose?: () => void;
   onSaved?: (updatedQr: QrData) => void;
 }
 
 export default function QrEditView({
   qr,
-  availableFolders,
+  availableFolders = [], // default empty array
   onSaved,
 }: QrEditViewProps) {
   const [name, setName] = useState(qr.name);
   const [link, setLink] = useState(qr.link);
   const [folder, setFolder] = useState(qr.folder);
   const [status, setStatus] = useState<"idle" | "saving" | "success" | "error">("idle");
-  const [newFolderName, setNewFolderName] = useState("");
 
   useEffect(() => {
     setName(qr.name);
@@ -167,7 +166,7 @@ export default function QrEditView({
               required
             >
               <option value="">Select Folder</option>
-              {(availableFolders ?? []).map((f) => (
+              {availableFolders.map((f) => (
                 <option key={f} value={f}>
                   {f}
                 </option>

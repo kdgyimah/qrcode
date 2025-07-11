@@ -56,7 +56,7 @@ export interface QRCodeStyle {
 export interface QrData {
   id: string;
   name: string;
-  type: QrType;
+  type: String;
   category: QrCategory;
   link: string;               // Could be a URL, phone, etc.
   folder: string;

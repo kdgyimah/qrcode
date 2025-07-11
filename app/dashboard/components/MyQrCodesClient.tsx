@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import type { QrData } from '@/types/qr-generator';
+import type { QrData } from "@/types/qr-generator";
 import QrEditView from "@/app/dashboard/components/QrEditView";
 
 interface MyQrCodesClientProps {
@@ -212,7 +212,9 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
 
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>{editingIndex !== null ? "Edit Folder" : "Create New Folder"}</DialogTitle>
+              <DialogTitle>
+                {editingIndex !== null ? "Edit Folder" : "Create New Folder"}
+              </DialogTitle>
             </DialogHeader>
             <div className="mt-4 space-y-2">
               <Input
@@ -323,18 +325,27 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
           <QrEditView
             qr={editQr}
             availableFolders={availableFolderNames}
+            onClose={() => setEditQr(null)} 
             onSaved={(updatedQr) => {
               setEditQr(null);
+
               if (updatedQr.folder !== editQr.folder) {
                 setFolders((prev) => {
                   const updated = [...prev];
 
-                  const oldIndex = updated.findIndex((f) => f.name === editQr.folder);
+                  const oldIndex = updated.findIndex(
+                    (f) => f.name === editQr.folder
+                  );
                   if (oldIndex !== -1) {
-                    updated[oldIndex].qrCount = Math.max(0, updated[oldIndex].qrCount - 1);
+                    updated[oldIndex].qrCount = Math.max(
+                      0,
+                      updated[oldIndex].qrCount - 1
+                    );
                   }
 
-                  const newIndex = updated.findIndex((f) => f.name === updatedQr.folder);
+                  const newIndex = updated.findIndex(
+                    (f) => f.name === updatedQr.folder
+                  );
                   if (newIndex !== -1) {
                     updated[newIndex].qrCount += 1;
                   } else {
@@ -348,6 +359,7 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
                   return updated;
                 });
               }
+
               console.log("Updated QR:", updatedQr);
             }}
           />
