@@ -1,6 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/superbase";
+
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 
@@ -14,14 +17,51 @@ import SupportPage from "@/components/pages/SupportPage";
 import QrDetailView from "@/app/dashboard/components/QrDetail";
 import QrEditView from "@/app/dashboard/components/QrEditView";
 import MyQrCodesClient from "./components/MyQrCodesClient";
-import QRGeneratorPage from "@/components/qr-generator/QRGeneratorPage"
+import QRGeneratorPage from "@/components/qr-generator/QRGeneratorPage";
 import type { QrData } from "@/types/qr-generator";
+import { useUser } from "@/hooks/useUser";
+import TrialModal from "@/components/TrialModal";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeView, setActiveView] = useState("my-qrs");
   const [detailQr, setDetailQr] = useState<QrData | null>(null);
   const [editQr, setEditQr] = useState<QrData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const user = useUser();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      const session = data?.session;
+
+      if (!session) {
+        router.replace("/login");
+        return;
+      }
+
+      const user = session.user;
+
+      // 🚨 Check and set trial start time if not already present
+      if (!user.user_metadata?.trial_started_at) {
+        await supabase.auth.updateUser({
+          data: {
+            trial_started_at: new Date().toISOString(),
+          },
+        });
+      }
+
+      setLoading(false);
+    };
+
+    checkSession();
+  }, [router]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
 
   const handleShowDetail = (qr: QrData) => {
     setDetailQr(qr);
@@ -97,7 +137,16 @@ export default function DashboardPage() {
     }
   };
 
+  if (loading || !user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-lg text-gray-600">Loading dashboard...</p>
+      </div>
+    );
+  }
+
   return (
+  <>
     <div className="flex h-screen">
       <Sidebar
         open={sidebarOpen}
@@ -105,11 +154,14 @@ export default function DashboardPage() {
         onNavigate={setActiveView}
       />
       <div className="flex-1 flex flex-col">
-        <Header setSidebarOpen={setSidebarOpen} />
+        <Header setSidebarOpen={setSidebarOpen} onLogout={handleLogout} />
         <main className="flex-1 overflow-y-auto p-6 bg-gray-100 relative">
           {renderMainContent()}
         </main>
       </div>
     </div>
-  );
+
+    {!loading && user?.user_metadata?.trial_started_at && <TrialModal />}
+  </>
+);
 }

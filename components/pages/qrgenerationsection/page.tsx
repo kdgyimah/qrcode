@@ -179,8 +179,9 @@ export default function QRGenerationSection() {
                 src="/images/iphoneprev.png"
                 alt="Phone Screen"
                 width={200}
-                height={501}
+                height={401}
                 className="w-full h-auto object-contain"
+                style={{ height: "auto" }}
               />
               {qrCodeImage && (
                 <div className="absolute inset-0 flex items-center justify-center p-4">
@@ -207,7 +208,7 @@ export default function QRGenerationSection() {
               Generate
             </button>
           </div>
-          <div/>
+          <div />
         </div>
       </div>
     </section>
