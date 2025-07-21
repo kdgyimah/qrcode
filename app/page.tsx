@@ -19,7 +19,7 @@ import QuestionSupportSection from "@/components/QuestionSupportSection";
 
 export default function Home() {
   return (
-    <div className="pt-18 w-full" >
+    <div className="pt-16 md:pt-18 min-h-screen flex flex-col" >
       <Navbar />
       <Hero />
       <QrInterface />
