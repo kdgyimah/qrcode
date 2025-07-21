@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from 'react';
-import { uploadImageAndGetURL } from '../../firebase'; // Adjust path as necessary
-import { auth } from '../../firebase'; // Ensure you import your auth configuration
-import PropTypes from 'prop-types';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Button from '@mui/material/Button';
-import '../QRInterface/QR-Interface.css';
+import { useState } from "react";
+import { uploadImageAndGetURL } from "../../lib/uploadImage";
+import { supabase } from "@/lib/superbase";
+import PropTypes from "prop-types";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Button from "@mui/material/Button";
+import "../QRInterface/QR-Interface.css";
 
 const theme = createTheme({
   typography: {
@@ -21,13 +21,13 @@ const theme = createTheme({
     MuiFilledInput: {
       styleOverrides: {
         root: {
-          borderColor: 'black',
-          '&:hover': {
-            borderColor: 'black',
+          borderColor: "black",
+          "&:hover": {
+            borderColor: "black",
           },
-          '&.Mui-focused': {
-            borderColor: 'black',
-            backgroundColor: '#e8e8e8',
+          "&.Mui-focused": {
+            borderColor: "black",
+            backgroundColor: "#e8e8e8",
           },
         },
       },
@@ -35,14 +35,30 @@ const theme = createTheme({
   },
 });
 
-const ImageForm = ({ linkContent }) => {
-  const [formInfo, setFormInfo] = useState({
-    imageContent: '',
-  });
-  const [uploadType, setUploadType] = useState('file');
-  const [errorMessage, setErrorMessage] = useState('');
+interface ImageFormProps {
+  linkContent: (info: { imageContent: string; uploadType?: string }) => void;
+}
 
-  const handleChange = (e) => {
+const ImageForm = ({ linkContent }: ImageFormProps) => {
+  const [formInfo, setFormInfo] = useState({
+    imageContent: "",
+  });
+  const [uploadType, setUploadType] = useState("file");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  interface FormInfo {
+    imageContent: string;
+    imageUrl?: string;
+  }
+
+  interface ChangeEvent {
+    target: {
+      name: string;
+      value: string;
+    };
+  }
+
+  const handleChange = (e: ChangeEvent) => {
     const { name, value } = e.target;
     setFormInfo({
       ...formInfo,
@@ -50,34 +66,39 @@ const ImageForm = ({ linkContent }) => {
     });
   };
 
-  const handleUploadTypeChange = (e) => {
+  interface UploadTypeChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
+
+  const handleUploadTypeChange = (e: UploadTypeChangeEvent): void => {
     setUploadType(e.target.value);
-    setFormInfo({ imageContent: '' });
-    setErrorMessage(''); // Reset error message on type change
+    setFormInfo({ imageContent: "" });
+    setErrorMessage(""); // Reset error message on type change
   };
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
+  interface FileChangeEvent extends React.ChangeEvent<HTMLInputElement> {}
 
-    // Authentication check before file upload
-    const user = auth.currentUser; // Get the current user
-    console.log("Current User:", user); // Check if user is authenticated
+  const handleFileChange = async (e: FileChangeEvent): Promise<void> => {
+    const file: File | undefined = e.target.files?.[0];
 
-    if (!user) {
-      console.error("User is not authenticated. Cannot upload files.");
-      setErrorMessage("You must be logged in to upload files."); // Set error message
-      return; // Prevent the upload
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (!user || authError) {
+      console.error("User is not authenticated.");
+      setErrorMessage("You must be logged in to upload files.");
+      return;
     }
 
     if (file) {
       try {
-        const downloadURL = await uploadImageAndGetURL(file); // Use the image upload function
+        const downloadURL = await uploadImageAndGetURL(file);
         setFormInfo({ ...formInfo, imageContent: downloadURL });
         linkContent({ ...formInfo, imageContent: downloadURL });
-        setErrorMessage(''); // Clear error message on success
-      } catch (error) {
-        console.error("File upload failed:", error);
-        setErrorMessage("Error uploading file: " + error.message); // Set error message
+        setErrorMessage("");
+      } catch (error: any) {
+        console.error("Upload failed:", error.message);
+        setErrorMessage("Error uploading file: " + error.message);
       }
     }
   };
@@ -89,7 +110,12 @@ const ImageForm = ({ linkContent }) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box className='image-form' component="form" noValidate autoComplete="off">
+      <Box
+        className="image-form"
+        component="form"
+        noValidate
+        autoComplete="off"
+      >
         {errorMessage && (
           <div className="tw-bg-red-500 tw-text-white tw-p-3 tw-rounded tw-mb-4">
             {errorMessage}
@@ -97,11 +123,19 @@ const ImageForm = ({ linkContent }) => {
         )}
 
         <RadioGroup value={uploadType} onChange={handleUploadTypeChange} row>
-          <FormControlLabel value="file" control={<Radio />} label="Upload Image File" />
-          <FormControlLabel value="url" control={<Radio />} label="Enter Image URL" />
+          <FormControlLabel
+            value="file"
+            control={<Radio />}
+            label="Upload Image File"
+          />
+          <FormControlLabel
+            value="url"
+            control={<Radio />}
+            label="Enter Image URL"
+          />
         </RadioGroup>
 
-        {uploadType === 'file' ? (
+        {uploadType === "file" ? (
           <div>
             <input
               type="file"
@@ -119,7 +153,7 @@ const ImageForm = ({ linkContent }) => {
             type="text"
             name="imageContent"
             placeholder="https://example.com/image.jpg"
-            value={formInfo.imageUrl}
+            value={formInfo.imageContent}
             onChange={handleChange}
             required
           />
@@ -129,7 +163,7 @@ const ImageForm = ({ linkContent }) => {
           variant="contained"
           color="primary"
           onClick={handleGenerateQR}
-          style={{ marginTop: '10px' }}
+          style={{ marginTop: "10px" }}
         >
           Generate QR Code
         </Button>

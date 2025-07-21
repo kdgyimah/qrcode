@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -27,8 +26,22 @@ const theme = createTheme({
   },
 });
 
-const ContactForm = ({ linkContent }) => {
-  const [contactInfo, setContactInfo] = useState({
+interface ContactInfo {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  address: string;
+  company: string;
+  jobTitle: string;
+}
+
+interface ContactFormProps {
+  linkContent: (data: ContactInfo) => void;
+}
+
+const ContactForm: React.FC<ContactFormProps> = ({ linkContent }) => {
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
     firstName: '',
     lastName: '',
     phone: '',
@@ -39,16 +52,18 @@ const ContactForm = ({ linkContent }) => {
   });
 
   useEffect(() => {
-    linkContent(contactInfo); // Pass the updated contact info to the parent component
+    linkContent(contactInfo);
   }, [contactInfo, linkContent]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setContactInfo({
-      ...contactInfo,
+    setContactInfo((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
+
+  const requiredFields = ['firstName', 'lastName', 'phone', 'email'];
 
   return (
     <ThemeProvider theme={theme}>
@@ -69,7 +84,7 @@ const ContactForm = ({ linkContent }) => {
           autoComplete="off"
           sx={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '100%' }}
         >
-          {['firstName', 'lastName', 'phone', 'email', 'address', 'company', 'jobTitle'].map((field) => (
+          {(Object.keys(contactInfo) as (keyof ContactInfo)[]).map((field) => (
             <TextField
               key={field}
               id={`${field}-field`}
@@ -79,17 +94,13 @@ const ContactForm = ({ linkContent }) => {
               name={field}
               value={contactInfo[field]}
               onChange={handleChange}
-              required={['firstName', 'lastName', 'phone', 'email'].includes(field)} // Required fields
+              required={requiredFields.includes(field)}
             />
           ))}
         </Box>
       </Box>
     </ThemeProvider>
   );
-};
-
-ContactForm.propTypes = {
-  linkContent: PropTypes.func.isRequired, // Function to pass form data for QR code generation
 };
 
 export default ContactForm;

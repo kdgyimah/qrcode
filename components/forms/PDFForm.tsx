@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { uploadPDFAndGetURL } from '../../firebase'; // Adjust path as necessary
-import { auth } from '../../firebase'; // Ensure you import your auth configuration
-import PropTypes from 'prop-types';
+import { supabase } from '@/lib/superbase';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -22,9 +20,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderColor: 'black',
-          '&:hover': {
-            borderColor: 'black',
-          },
+          '&:hover': { borderColor: 'black' },
           '&.Mui-focused': {
             borderColor: 'black',
             backgroundColor: '#e8e8e8',
@@ -35,55 +31,62 @@ const theme = createTheme({
   },
 });
 
-const PDFForm = ({ linkContent }) => {
-  const [formInfo, setFormInfo] = useState({
-    pdfContent: '',
-  });
+interface PDFFormProps {
+  linkContent: (info: { pdfContent: string; uploadType?: string }) => void;
+}
+
+const PDFForm = ({ linkContent }: PDFFormProps) => {
+  const [formInfo, setFormInfo] = useState({ pdfContent: '' });
   const [uploadType, setUploadType] = useState('file');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormInfo({
-      ...formInfo,
-      [name]: value,
-    });
+    setFormInfo({ ...formInfo, [name]: value });
   };
 
-  const handleUploadTypeChange = (e) => {
+  const handleUploadTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUploadType(e.target.value);
     setFormInfo({ pdfContent: '' });
-    setErrorMessage(''); // Reset error message on type change
+    setErrorMessage('');
   };
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    // Authentication check before file upload
-    const user = auth.currentUser; // Get the current user
-    console.log("Current User:", user); // Check if user is authenticated
+    // Get current user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
 
-    if (!user) {
-      console.error("User is not authenticated. Cannot upload files.");
-      setErrorMessage("You must be logged in to upload files."); // Set error message
-      return; // Prevent the upload
+    if (userError || !user) {
+      setErrorMessage("You must be logged in to upload files.");
+      return;
     }
 
-    if (file) {
-      try {
-        const downloadURL = await uploadPDFAndGetURL(file);
-        setFormInfo({ ...formInfo, pdfContent: downloadURL });
-        linkContent({ ...formInfo, pdfContent: downloadURL });
-        setErrorMessage(''); // Clear error message on success
-      } catch (error) {
-        console.error("File upload failed:", error);
-        setErrorMessage("Error uploading file: " + error.message); // Set error message
-      }
+    const filePath = `pdfs/${Date.now()}-${file.name}`;
+
+    const { data, error } = await supabase.storage
+      .from('pdf-uploads') // ← your bucket name
+      .upload(filePath, file);
+
+    if (error) {
+      console.error(error);
+      setErrorMessage("Error uploading file: " + error.message);
+      return;
     }
+
+    const { data: urlData } = supabase
+      .storage
+      .from('pdf-uploads')
+      .getPublicUrl(filePath);
+
+    const publicUrl = urlData.publicUrl;
+
+    setFormInfo({ pdfContent: publicUrl });
+    linkContent({ pdfContent: publicUrl, uploadType });
   };
 
   const handleGenerateQR = () => {
-    console.log("Form Info Submitted:", formInfo);
     linkContent({ ...formInfo, uploadType });
   };
 
@@ -102,14 +105,12 @@ const PDFForm = ({ linkContent }) => {
         </RadioGroup>
 
         {uploadType === 'file' ? (
-          <div>
-            <input
-              type="file"
-              name="pdfContent"
-              onChange={handleFileChange}
-              accept="application/pdf"
-            />
-          </div>
+          <input
+            type="file"
+            name="pdfContent"
+            onChange={handleFileChange}
+            accept="application/pdf"
+          />
         ) : (
           <TextField
             id="pdf-url-field"
@@ -136,10 +137,6 @@ const PDFForm = ({ linkContent }) => {
       </Box>
     </ThemeProvider>
   );
-};
-
-PDFForm.propTypes = {
-  linkContent: PropTypes.func.isRequired,
 };
 
 export default PDFForm;

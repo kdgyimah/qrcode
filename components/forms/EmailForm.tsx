@@ -1,11 +1,10 @@
-import { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useState, ChangeEvent } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import EmailImage from '../../images/email.png'; // Adjust the path as necessary
+import EmailImage from '../../images/email.png'; // Adjust path as needed
 
 const theme = createTheme({
   typography: {
@@ -29,31 +28,46 @@ const theme = createTheme({
   },
 });
 
-const EmailForm = ({ linkContent }) => {
-  const [formInfo, setFormInfo] = useState({
+interface EmailFormData {
+  receiverEmail: string;
+  subject: string;
+  message: string;
+  showIcon?: boolean;
+}
+
+interface EmailFormProps {
+  linkContent: (data: EmailFormData) => void;
+}
+
+const EmailForm: React.FC<EmailFormProps> = ({ linkContent }) => {
+  const [formInfo, setFormInfo] = useState<EmailFormData>({
     receiverEmail: '',
     subject: '',
-    message: ''
+    message: '',
   });
-  const [showEmailIcon, setShowEmailIcon] = useState(false);
 
-  const handleChange = (e) => {
+  const [showEmailIcon, setShowEmailIcon] = useState<boolean>(false);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    const updatedFormInfo = {
+    const updatedFormInfo: EmailFormData = {
       ...formInfo,
       [name]: value,
-      showEmailIcon
+      showIcon: showEmailIcon,
     };
     setFormInfo(updatedFormInfo);
-    linkContent(updatedFormInfo); // Pass the updated form info to QRInterface in real-time
+    linkContent(updatedFormInfo);
   };
 
   const handleIconToggle = () => {
     const newShowIcon = !showEmailIcon;
     setShowEmailIcon(newShowIcon);
-    const updatedFormInfo = { ...formInfo, showIcon: newShowIcon };
+    const updatedFormInfo: EmailFormData = {
+      ...formInfo,
+      showIcon: newShowIcon,
+    };
     setFormInfo(updatedFormInfo);
-    linkContent(updatedFormInfo); // Pass updated icon visibility state
+    linkContent(updatedFormInfo);
   };
 
   return (
@@ -65,7 +79,8 @@ const EmailForm = ({ linkContent }) => {
             label="Add Icon"
           />
           {showEmailIcon && (
-            <Box component="img" src={EmailImage} alt="Icon" width={30} height={30} ml={1} />
+           <Box component="img" src={EmailImage.src} alt="Icon" width={30} height={30} ml={1} />
+
           )}
         </Box>
 
@@ -83,7 +98,7 @@ const EmailForm = ({ linkContent }) => {
           fullWidth
           margin="normal"
         />
-        
+
         <TextField
           id="subject"
           label="Subject"
@@ -115,10 +130,6 @@ const EmailForm = ({ linkContent }) => {
       </Box>
     </ThemeProvider>
   );
-};
-
-EmailForm.propTypes = {
-  linkContent: PropTypes.func.isRequired,
 };
 
 export default EmailForm;

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
@@ -16,23 +15,32 @@ const theme = createTheme({
   },
 });
 
-const CallForm = ({ linkContent }) => {
-  const [selectedCode, setSelectedCode] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [showIcon, setShowIcon] = useState(false);
+interface LinkContentProps {
+  phoneNumber: string;
+  showIcon: boolean;
+}
 
-  const handlePhoneChange = (value) => {
+interface CallFormProps {
+  linkContent: (data: LinkContentProps) => void;
+}
+
+const CallForm: React.FC<CallFormProps> = ({ linkContent }) => {
+  const [selectedCode, setSelectedCode] = useState<string>(''); // currently unused
+  const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
+  const [showIcon, setShowIcon] = useState<boolean>(false);
+
+  const handlePhoneChange = (value: string | undefined) => {
     setPhoneNumber(value);
-    if (linkContent) {
-      // Combine the selectedCode with the phoneNumber
+    if (linkContent && value) {
       linkContent({ phoneNumber: `${selectedCode}${value}`, showIcon });
     }
   };
 
   const handleIconToggle = () => {
-    setShowIcon(!showIcon);
-    if (linkContent) {
-      linkContent({ phoneNumber: `${selectedCode}${phoneNumber}`, showIcon: !showIcon });
+    const newShowIcon = !showIcon;
+    setShowIcon(newShowIcon);
+    if (linkContent && phoneNumber) {
+      linkContent({ phoneNumber: `${selectedCode}${phoneNumber}`, showIcon: newShowIcon });
     }
   };
 
@@ -45,7 +53,8 @@ const CallForm = ({ linkContent }) => {
             label="Add Call Image"
           />
           {showIcon && (
-            <Box component="img" src={IconImage} alt="Icon" width={30} height={30} ml={1} />
+            <Box component="img" src={IconImage.src} alt="WhatsApp Icon" width={30} height={30} ml={1} />
+
           )}
         </Box>
 
@@ -57,8 +66,6 @@ const CallForm = ({ linkContent }) => {
             value={phoneNumber}
             onChange={handlePhoneChange}
             defaultCountry="GH"
-            // international
-            limitMaxLength={16}
             required
             style={{
               width: '100%',
@@ -74,10 +81,6 @@ const CallForm = ({ linkContent }) => {
       </Box>
     </ThemeProvider>
   );
-};
-
-CallForm.propTypes = {
-  linkContent: PropTypes.func.isRequired,
 };
 
 export default CallForm;
