@@ -2,12 +2,12 @@
 
 import LinkForm from '../forms/LinkForm';
 import CallForm from '../forms/CallForm';
-import ContactForm from '../forms/ContactForm';
-import EmailForm from '../forms/EmailForm';
-import SMSForm from '../forms/SMSForm';
-import WhatsAppForm from '../forms/WhatsAppForm';
-import PDFForm from '../forms/PDFForm';
-import ImageForm from '../forms/ImageForm';
+import ContactForm from '../forms/ContactForm.jsx';
+import EmailForm from '../forms/EmailForm.jsx';
+import SMSForm from '../forms/SMSForm.jsx';
+import WhatsAppForm from '../forms/WhatsAppForm.jsx';
+import PDFForm from '../forms/PDFForm.jsx';
+import ImageForm from '../forms/ImageForm.jsx';
 
 interface Category {
   label: string;
