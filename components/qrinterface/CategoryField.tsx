@@ -1,7 +1,7 @@
 'use client';
 
-import LinkForm from '../forms/LinkForm';
-import CallForm from '../forms/CallForm';
+import LinkForm from '../forms/LinkForm.jsx';
+import CallForm from '../forms/CallForm.jsx';
 import ContactForm from '../forms/ContactForm.jsx';
 import EmailForm from '../forms/EmailForm.jsx';
 import SMSForm from '../forms/SMSForm.jsx';
