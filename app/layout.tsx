@@ -4,9 +4,8 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import 'react-datepicker/dist/react-datepicker.css';
 
-// Google Font Setup (replace Geist with Inter & Roboto_Mono)
 const inter = Inter({
-  variable: "--font-geist-sans", // still using same CSS variable names to avoid extra changes
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
@@ -15,7 +14,6 @@ const robotoMono = Roboto_Mono({
   subsets: ["latin"],
 });
 
-// Metadata for SEO
 export const metadata: Metadata = {
   title: "QR Code Generator",
   icons: {
@@ -27,7 +25,6 @@ export const metadata: Metadata = {
     "Generate unique and customizable QR codes for your business, events, or personal uses in seconds. It's fast, easy, and free.",
 };
 
-// Root Layout Wrapper
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${robotoMono.variable} scroll-smooth`}
+        className={`${inter.variable} ${robotoMono.variable} scroll-smooth overflow-x-hidden`}
       >
         <Toaster position="top-right" />
         {children}

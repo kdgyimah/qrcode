@@ -1,8 +1,13 @@
 /* styles/globals.css */
-
-:target {
-  scroll-margin-top: 100px; /* Adjust to match navbar height */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground overflow-x-hidden;
+  }
 }
+
 
 @import "tailwindcss";
 @import "tw-animate-css";
