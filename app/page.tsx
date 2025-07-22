@@ -19,22 +19,25 @@ import QuestionSupportSection from "@/components/QuestionSupportSection";
 
 export default function Home() {
   return (
-    <div className="pt-16 md:pt-18 min-h-screen flex flex-col" >
-      <Navbar />
-      <Hero />
-      <QrInterface />
-      <Info1 />
-      <Info2 />
-      <TutorialSection1 />
-      <TutorialSection2 />
-      <TutorialSection3 />
-      <QRGeneratorSection />
-      <FAQPage/>
-      <QuestionSupportSection/>
-      <BlogSection />
-      <ExperienceSection />
-      <Info3/>
-      <Footer />
-    </div>
+    <>
+  <Navbar />
+  <main className="pt-16 md:pt-18 min-h-screen w-full overflow-x-hidden">
+    <Hero />
+    <QrInterface />
+    <Info1 />
+    <Info2 />
+    <TutorialSection1 />
+    <TutorialSection2 />
+    <TutorialSection3 />
+    <QRGeneratorSection />
+    <FAQPage/>
+    <QuestionSupportSection/>
+    <BlogSection />
+    <ExperienceSection />
+    <Info3/>
+  </main>
+  <Footer />
+</>
+
   );
 }

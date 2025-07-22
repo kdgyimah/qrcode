@@ -15,7 +15,7 @@ export default function Hero() {
         initial={{ opacity: 0, x: 100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1 }}
-        className="absolute top-24 right-[-80px] md:top-10 md:right-[-60px] max-w-none"
+        className="absolute top-24 right-[-80px] md:top-10 md:right-[-60px] max-w-none hidden md:block"
       >
         <Image
           src="/images/rightheroimg.png"
@@ -79,7 +79,7 @@ export default function Hero() {
                 href="/featurepage"
                 className="border border-blue-600 font-semibold text-black px-6 py-3 rounded-md hover:bg-white transition"
               >
-                Le
+                Learn More
               </Link>
             </motion.div>
           </div>

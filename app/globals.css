@@ -3,10 +3,16 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    @apply w-full p-0 m-0 bg-background text-foreground overflow-x-hidden;
+  }
+
   body {
-    @apply bg-background text-foreground overflow-x-hidden;
+    @apply w-full min-h-screen p-0 m-0;
   }
 }
+
 
 
 @import "tailwindcss";

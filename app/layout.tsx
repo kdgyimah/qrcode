@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${robotoMono.variable} scroll-smooth overflow-x-hidden`}
+        className={`${inter.variable} ${robotoMono.variable} scroll-smooth w-full min-h-screen`}
       >
         <Toaster position="top-right" />
         {children}

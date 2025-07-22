@@ -18,10 +18,19 @@ export default function Navbar() {
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev)
 
   useEffect(() => {
+    let ticking = false
+
     const handleScroll = () => {
-      const currentScrollY = window.pageYOffset
-      setShowNavbar(currentScrollY <= 0 || currentScrollY < lastScrollY)
-      setLastScrollY(currentScrollY)
+      const currentScrollY = window.scrollY
+
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setShowNavbar(currentScrollY < lastScrollY || currentScrollY < 10)
+          setLastScrollY(currentScrollY)
+          ticking = false
+        })
+        ticking = true
+      }
     }
 
     window.addEventListener('scroll', handleScroll)
@@ -53,7 +62,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 w-full px-6 md:px-16 py-4 z-50 transition-all duration-300 ${
+      className={`fixed top-0 w-full px-6 md:px-16 py-4 z-50 transition-transform duration-300 ${
         showNavbar ? 'translate-y-0' : '-translate-y-full'
       } ${lastScrollY > 10 ? 'bg-white shadow-md' : 'bg-transparent'}`}
       style={{ willChange: 'transform' }}
