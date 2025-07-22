@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   QrCode,
@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 import SidebarItem from "./SidebarItem";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 type SidebarProps = {
@@ -38,19 +38,26 @@ const menuItemsBottom = [
 export default function Sidebar({ open, setOpen, onNavigate }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [open]);
+
   const SidebarContent = (
     <>
-      {/* Logo & Collapse Button */}
+      {/* Collapse Button & Logo */}
       <div className="relative">
-        {/* Collapse Button (desktop only) */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute -right-3 top-6 z-0 bg-white border border-gray-300 rounded-l-full shadow p-1 hover:bg-gray-100 hidden md:block"
+          className="absolute -right-3 top-6 z-10 bg-white border border-gray-300 rounded-l-full shadow p-1 hover:bg-gray-100 hidden md:block"
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
 
-        {/* Logo */}
         <div className="p-6 flex items-center text-indigo-600 text-xl font-bold gap-2">
           <Image
             src="/logos/logod.svg"
@@ -62,20 +69,15 @@ export default function Sidebar({ open, setOpen, onNavigate }: SidebarProps) {
         </div>
       </div>
 
-      {/* Menu */}
-      <nav className="px-4 mb-20">
+      {/* Menu Items */}
+      <nav className="px-4 pb-20 overflow-y-auto">
         {menuItemsTop.map((item) => (
           <button
             key={item.label}
             onClick={() => onNavigate(item.view)}
             className="w-full text-left"
           >
-            <SidebarItem
-              icon={item.icon}
-              label={item.label}
-              href="#"
-              collapsed={collapsed}
-            />
+            <SidebarItem icon={item.icon} label={item.label} href="#" collapsed={collapsed} />
           </button>
         ))}
         <hr className="my-10 border-gray-200" />
@@ -85,12 +87,7 @@ export default function Sidebar({ open, setOpen, onNavigate }: SidebarProps) {
             onClick={() => onNavigate(item.view)}
             className="w-full text-left"
           >
-            <SidebarItem
-              icon={item.icon}
-              label={item.label}
-              href="#"
-              collapsed={collapsed}
-            />
+            <SidebarItem icon={item.icon} label={item.label} href="#" collapsed={collapsed} />
           </button>
         ))}
       </nav>
@@ -101,7 +98,7 @@ export default function Sidebar({ open, setOpen, onNavigate }: SidebarProps) {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`bg-white h-screen md:flex flex-col shadow-2xs border-r-1 border-gray-300 justify-between hidden transition-all duration-300 ${
+        className={`bg-white h-screen md:flex flex-col shadow-2xs border-r border-gray-300 justify-between hidden transition-all duration-300 ${
           collapsed ? "w-15" : "w-60"
         }`}
       >
@@ -111,14 +108,14 @@ export default function Sidebar({ open, setOpen, onNavigate }: SidebarProps) {
       {/* Mobile Overlay */}
       {open && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden"
+          className="fixed inset-0 bg-white bg-opacity-50 z-40 md:hidden"
           onClick={() => setOpen(false)}
         />
       )}
 
-      {/* Mobile Drawer */}
+      {/* Mobile Sidebar Drawer */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-full w-64 bg-white border-r transform transition-transform duration-300 md:hidden ${
+        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r transform transition-transform duration-300 md:hidden ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -128,7 +125,8 @@ export default function Sidebar({ open, setOpen, onNavigate }: SidebarProps) {
             <X className="text-gray-600" size={20} />
           </button>
         </div>
-        {SidebarContent}
+
+        <div className="overflow-y-auto h-[calc(100vh-64px)]">{SidebarContent}</div>
       </aside>
     </>
   );

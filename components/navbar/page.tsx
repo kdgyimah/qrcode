@@ -1,56 +1,72 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { FiChevronDown, FiMenu, FiX } from 'react-icons/fi'
+import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/superbase'
 
 export default function Navbar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showNavbar, setShowNavbar] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [showNavbar, setShowNavbar] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
+  const [user, setUser] = useState<any>(null)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const router = useRouter()
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen((prev) => !prev);
-  };
+  const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev)
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.pageYOffset;
+      const currentScrollY = window.pageYOffset
+      setShowNavbar(currentScrollY <= 0 || currentScrollY < lastScrollY)
+      setLastScrollY(currentScrollY)
+    }
 
-      if (currentScrollY <= 0) {
-        // Always show navbar at the top
-        setShowNavbar(true);
-      } else if (currentScrollY > lastScrollY) {
-        // Scrolling down -> hide navbar
-        setShowNavbar(false);
-      } else {
-        // Scrolling up -> show navbar
-        setShowNavbar(true);
-      }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
 
-      setLastScrollY(currentScrollY);
-    };
+  useEffect(() => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession()
+      setUser(data.session?.user || null)
+    }
 
-    window.addEventListener("scroll", handleScroll);
+    getSession()
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+      getSession()
+    })
+
+    return () => {
+      authListener?.subscription.unsubscribe()
+    }
+  }, [])
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setUser(null)
+    router.push('/')
+  }
 
   return (
     <nav
-      className={`
-        fixed top-0 w-full bg-white px-6 md:px-16 py-4 z-50 shadow transition-transform duration-300
-        ${showNavbar ? "translate-y-0" : "-translate-y-full"}
-      `}
-      style={{ willChange: "transform" }}
+      className={`fixed top-0 w-full px-6 md:px-16 py-4 z-50 transition-all duration-300 ${
+        showNavbar ? 'translate-y-0' : '-translate-y-full'
+      } ${lastScrollY > 10 ? 'bg-white shadow-md' : 'bg-transparent'}`}
+      style={{ willChange: 'transform' }}
     >
       <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
         {/* Logo */}
         <div>
-          <img
+          <Image
             src="/logos/qrlogo.svg"
             alt="QRGen Logo"
-            className="h-7 w-auto max-w-[150px]"
+            width={150}
+            height={40}
+            className="max-w-[150px] h-auto"
           />
         </div>
 
@@ -63,10 +79,9 @@ export default function Navbar() {
             <div className="flex items-center gap-1 hover:text-blue-600 transition">
               Products <FiChevronDown className="text-sm" />
             </div>
-
-            <div className="absolute left-0 top-full w-30 bg-white shadow-md rounded-md opacity-0 hover:text-blue-600 group-hover:opacity-100 group-hover:visible invisible transition duration-200 z-50 pointer-events-auto">
+            <div className="absolute left-0 top-full w-30 bg-white shadow-md rounded-md opacity-0 group-hover:opacity-100 group-hover:visible invisible transition duration-200 z-50">
               <Link
-                href="/features"
+                href="/featurepage"
                 className="block px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50"
               >
                 Features
@@ -85,7 +100,6 @@ export default function Navbar() {
               </Link>
             </div>
           </div>
-
           <Link href="/about" className="hover:text-blue-600 transition">
             About Us
           </Link>
@@ -94,20 +108,64 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop Auth */}
-        <div className="hidden md:flex space-x-4">
-          <Link
-            href="/login"
-            className="px-4 py-2 rounded-md text-gray-950 hover:bg-blue-300 transition"
-          >
-            Login
-          </Link>
-          <Link
-            href="/signup"
-            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
-          >
-            Sign Up
-          </Link>
+        {/* Desktop Right: Auth or Profile */}
+        <div className="hidden md:flex items-center space-x-4">
+          {!user ? (
+            <>
+              <Link
+                href="/login"
+                className="px-4 py-2 rounded-md text-gray-950 hover:bg-blue-300 transition"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition"
+              >
+                Sign Up
+              </Link>
+            </>
+          ) : (
+            <div className="relative">
+              <div
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
+                <Image
+                  src={
+                    user.user_metadata?.avatar_url ||
+                    '/images/default-avatar.png'
+                  }
+                  alt="User"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
+                <span className="text-sm font-medium text-gray-800">
+                  {user.user_metadata?.name || user.email}
+                </span>
+                <FiChevronDown className="text-sm text-gray-600" />
+              </div>
+
+              {/* Dropdown */}
+              {dropdownOpen && (
+                <div className="absolute right-0 top-10 bg-white border rounded shadow-md z-50 w-40">
+                  <Link
+                    href="/dashboard"
+                    className="block px-4 py-2 text-sm hover:bg-gray-100"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-gray-700"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Mobile Hamburger */}
@@ -124,51 +182,54 @@ export default function Navbar() {
           <Link href="/" className="block hover:text-blue-600 transition">
             Home
           </Link>
-          <div className="block">
+          <div>
             <span className="block font-medium text-gray-700">Products</span>
             <div className="ml-4 space-y-2">
-              <Link
-                href="/features"
-                className="block hover:text-blue-600 transition"
-              >
+              <Link href="/featurepage" className="block hover:text-blue-600">
                 Features
               </Link>
-              <Link
-                href="/qr-codes"
-                className="block hover:text-blue-600 transition"
-              >
+              <Link href="/qr-codes" className="block hover:text-blue-600">
                 QR Codes
               </Link>
-              <Link
-                href="/contact"
-                className="block hover:text-blue-600 transition"
-              >
+              <Link href="/contact" className="block hover:text-blue-600">
                 Contact
               </Link>
             </div>
           </div>
-
-          <Link href="/about" className="block hover:text-blue-600 transition">
+          <Link href="/about" className="block hover:text-blue-600">
             About Us
           </Link>
-          <Link
-            href="/pricing"
-            className="block hover:text-blue-600 transition"
-          >
+          <Link href="/pricing" className="block hover:text-blue-600">
             Pricing
           </Link>
           <hr />
-          <Link href="/login" className="block hover:text-blue-600 transition">
-            Login
-          </Link>
-          <Link
-            href="/signup"
-            className="block px-4 py-2 rounded-md bg-blue-600 text-white w-fit hover:bg-blue-700 transition"
-          >
-            Sign Up
-          </Link>
+          {!user ? (
+            <>
+              <Link href="/login" className="block hover:text-blue-600">
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="block px-4 py-2 rounded-md bg-blue-600 text-white w-fit hover:bg-blue-700 transition"
+              >
+                Sign Up
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/dashboard" className="block hover:text-blue-600">
+                Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left text-sm text-gray-700 hover:text-blue-600"
+              >
+                Logout
+              </button>
+            </>
+          )}
         </div>
       )}
     </nav>
-  );
+  )
 }

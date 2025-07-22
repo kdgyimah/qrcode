@@ -14,11 +14,12 @@ import TutorialSection2 from "@/components/pages/tutorialsec2/page";
 import TutorialSection3 from "@/components/pages/tutorialsec3/page";
 import ExperienceSection from "@/components/ExperienceSection";
 import QrInterface from "@/components/QrInterface";
+import QuestionSupportSection from "@/components/QuestionSupportSection";
 
 
 export default function Home() {
   return (
-    <div className="pt-18 w-full" >
+    <div className="pt-16 md:pt-18 min-h-screen flex flex-col" >
       <Navbar />
       <Hero />
       <QrInterface />
@@ -29,6 +30,7 @@ export default function Home() {
       <TutorialSection3 />
       <QRGeneratorSection />
       <FAQPage/>
+      <QuestionSupportSection/>
       <BlogSection />
       <ExperienceSection />
       <Info3/>

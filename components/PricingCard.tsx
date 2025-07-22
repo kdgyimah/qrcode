@@ -1,4 +1,5 @@
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle } from "lucide-react";
+import { ReactNode } from "react";
 
 type Feature = {
   text: string;
@@ -11,6 +12,8 @@ type PricingCardProps = {
   price: string;
   features: Feature[];
   additional: string;
+  icon: ReactNode;
+  isPopular?: boolean;
 };
 
 export default function PricingCard({
@@ -19,23 +22,35 @@ export default function PricingCard({
   price,
   features,
   additional,
+  icon,
+  isPopular,
 }: PricingCardProps) {
   return (
-    <div className="bg-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col">
-      <div className="flex items-center mb-4">
-        <div className="bg-gray-200 p-2 rounded-full mr-3">
-          <CheckCircle className="w-6 h-6 text-blue-600" />
-        </div>
+    <div
+      className={`relative bg-gray-100 border border-gray-200 rounded-2xl p-6 shadow-md transition-all duration-300 transform hover:scale-[1.03] hover:shadow-xl
+      }`}
+    >
+      {isPopular && (
+        <span className="absolute top-3 right-3 bg-black text-white text-xs font-semibold px-2 py-1 rounded-full shadow">
+        Popular
+        </span>
+      )}
+
+      <div className="flex items-center gap-3 mb-4">
+        <div className="bg-gray-100 p-3 rounded-full">{icon}</div>
         <h2 className="text-2xl font-bold">{title}</h2>
       </div>
-      <h4 className="text-md text-gray-600 mb-2">{subtitle}</h4>
+
+      <h4 className="text-sm text-gray-500 mb-2">{subtitle}</h4>
       <p className="text-xl font-semibold text-black mb-4">{price}</p>
-      <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg mb-6 transition">
+
+      <button className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded-lg font-medium mb-6 transition">
         Get Started
       </button>
-      <ul className="flex-1 mb-6 space-y-2">
+
+      <ul className="space-y-2 mb-6 text-sm">
         {features.map((feature, i) => (
-          <li key={i} className="flex items-center text-sm">
+          <li key={i} className="flex items-center">
             {feature.available ? (
               <CheckCircle className="text-green-500 w-5 h-5 mr-2" />
             ) : (
@@ -45,9 +60,10 @@ export default function PricingCard({
           </li>
         ))}
       </ul>
+
       <hr className="border-t border-gray-200 mb-4" />
-      <h4 className="text-md font-semibold mb-1">Additional Features:</h4>
-      <h4 className="text-sm text-gray-700">{additional}</h4>
+      <h4 className="text-sm font-semibold mb-1">Additional Features:</h4>
+      <p className="text-sm text-gray-700">{additional}</p>
     </div>
   );
 }

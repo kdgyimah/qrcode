@@ -1,81 +1,118 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import PricingCard from './PricingCard';
-import ToggleSwitch from './ToggleSwitch';
+import { useState } from "react";
+import PricingCard from "./PricingCard";
+import ToggleSwitch from "./ToggleSwitch";
+import { RiHeartsFill } from "react-icons/ri";
+import { BiSolidCrown } from "react-icons/bi";
+import { PiLightningFill } from "react-icons/pi";
+import Image from "next/image";
 
 const pricingData = {
   monthly: [
     {
-      title: 'Basic',
-      subtitle: 'For individuals',
-      price: '$0 /month',
+      title: "Free",
+      subtitle: "Perfect plan to get started",
+      price: "$0 /month",
       features: [
-        { text: '1 Project', available: true },
-        { text: 'Email Support', available: true },
-        { text: 'Analytics', available: false },
+        { text: "Basic QR Codes", available: true },
+        { text: "Limited Scans", available: true },
+        { text: "PNG Download", available: true },
+        { text: "Analytics", available: false },
+        { text: "Bulk QR Codes", available: false },
+        { text: "100+ integrations", available: true },
       ],
-      additional: 'Access to community support',
+      additional: "Basic QR customization (colors, shapes)",
+      isPopular: false,
     },
     {
-      title: 'Pro',
-      subtitle: 'For small teams',
-      price: '$15 /month',
+      title: "Pro",
+      subtitle: "Advanced customization & analytics.",
+      price: "$12 /month",
       features: [
-        { text: '10 Projects', available: true },
-        { text: 'Priority Support', available: true },
-        { text: 'Advanced Analytics', available: false },
+        { text: "Everything in Free Plan", available: true },
+        { text: "Dynamic QR codes", available: true },
+        { text: "Advanced Custom", available: true },
+        { text: "Scan Analytics", available: true },
+        { text: "Logo uploads", available: true },
+        { text: "Bulk Generation", available: true },
+        { text: "SVG, PDF, EPS", available: true },
       ],
-      additional: 'Team collaboration features included',
+      additional: "Expiry-based QR codes",
+      isPopular: true,
     },
     {
-      title: 'Enterprise',
-      subtitle: 'For large organizations',
-      price: '$49 /month',
+      title: "Business",
+      subtitle: "Best suits for great company!",
+      price: "$20 /month",
       features: [
-        { text: 'Unlimited Projects', available: true },
-        { text: '24/7 Support', available: true },
-        { text: 'Custom Analytics', available: true },
+        { text: "Everything in Pro Plan", available: true },
+        { text: "Team Collaboration", available: true },
+        { text: "API Access", available: true },
+        { text: "White-label QR", available: true },
+        { text: "Priority Support", available: true },
+        { text: "Custom features", available: true },
       ],
-      additional: 'Dedicated account manager',
+      additional: "Advanced security (2FA, encrypted QR codes)",
+      isPopular: false,
     },
   ],
   yearly: [
     {
-      title: 'Basic',
-      subtitle: 'For individuals',
-      price: '$0 /year',
+      title: "Free",
+      subtitle: "Perfect plan to get started",
+      price: "$0 /year",
       features: [
-        { text: '1 Project', available: true },
-        { text: 'Email Support', available: true },
-        { text: 'Analytics', available: false },
+        { text: "Basic QR Codes", available: true },
+        { text: "Limited Scans", available: true },
+        { text: "PNG Download", available: true },
+        { text: "Analytics", available: false },
+        { text: "Bulk QR Codes", available: false },
+        { text: "100+ integrations", available: true },
       ],
-      additional: 'Access to community support',
+      additional: "Basic QR customization (colors, shapes)",
+      isPopular: false,
     },
     {
-      title: 'Pro',
-      subtitle: 'For small teams',
-      price: '$120 /year',
+      title: "Pro",
+      subtitle: "Advanced customization & analytics.",
+      price: "$120 /year",
       features: [
-        { text: '10 Projects', available: true },
-        { text: 'Priority Support', available: true },
-        { text: 'Advanced Analytics', available: true },
+        { text: "Everything in Free Plan", available: true },
+        { text: "Dynamic QR codes", available: true },
+        { text: "Advanced Custom", available: true },
+        { text: "Scan Analytics", available: true },
+        { text: "Logo uploads", available: true },
+        { text: "Bulk Generation", available: true },
+        { text: "SVG, PDF, EPS", available: true },
       ],
-      additional: 'Team collaboration features included',
+      additional: "Expiry-based QR codes",
+      isPopular: true,
     },
     {
-      title: 'Enterprise',
-      subtitle: 'For large organizations',
-      price: '$420 /year',
+      title: "Business",
+      subtitle: "Best suits for great company!",
+      price: "$200 /year",
       features: [
-        { text: 'Unlimited Projects', available: true },
-        { text: '24/7 Support', available: true },
-        { text: 'Custom Analytics', available: true },
+        { text: "Everything in Pro Plan", available: true },
+        { text: "Team Collaboration", available: true },
+        { text: "API Access", available: true },
+        { text: "White-label QR", available: true },
+        { text: "Priority Support", available: true },
+        { text: "Custom features", available: true },
       ],
-      additional: 'Dedicated account manager',
+      additional: "Advanced security (2FA, encrypted QR codes)",
+      isPopular: false,
     },
   ],
 };
+
+const iconColor = "text-[#7C5CFC]";
+const icons = [
+  <RiHeartsFill className={`${iconColor} w-6 h-6`} />,
+  <BiSolidCrown className={`${iconColor} w-6 h-6`} />,
+  <PiLightningFill className={`${iconColor} w-6 h-6`} />,
+];
 
 export default function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
@@ -83,21 +120,30 @@ export default function PricingSection() {
 
   return (
     <section className="px-4 sm:px-6 md:px-12 py-16 bg-white text-gray-900">
-      {/* Toggle */}
-      <div className="text-center mb-12">
+      {/* Toggle + Save 65% */}
+      <div className="flex flex-col items-center gap-4 relative mb-12">
         <div className="inline-flex items-center gap-4">
           <span className="font-semibold text-lg">Monthly</span>
           <ToggleSwitch enabled={isYearly} setEnabled={setIsYearly} />
-          <span className="font-semibold text-lg relative">
-            Yearly
-            <span className="absolute -bottom-5 left-1/2 transform -translate-x-1/2 bg-pink-600 text-white text-xs font-semibold px-2 rounded-full shadow-md">
-              Save 65%
-            </span>
+          <span className="font-semibold text-lg">Yearly</span>
+        </div>
+
+        {/* Save 65% badge with arrow */}
+        <div className="relative">
+          <span className="bg-[#E9DFFF] text-[#0F0F0F] text-sm font-medium px-4 py-1 rounded-full">
+            Save 65%
           </span>
+          <Image
+            className="absolute -bottom-3 -right-26 transform -translate-x-1/2 w-20 h-14"
+            src="/pricingarrow.svg"
+            alt="icon"
+            width={32}
+            height={32}
+          />
         </div>
       </div>
 
-      {/* Pricing Cards Grid */}
+      {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {plans.map((plan, index) => (
           <PricingCard
@@ -107,6 +153,8 @@ export default function PricingSection() {
             price={plan.price}
             features={plan.features}
             additional={plan.additional}
+            icon={icons[index]}
+            isPopular={plan.isPopular}
           />
         ))}
       </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import PropTypes from 'prop-types';
 
@@ -9,31 +11,33 @@ import EmailSharpIcon from "@mui/icons-material/EmailSharp";
 import TextsmsSharpIcon from "@mui/icons-material/TextsmsSharp";
 import PictureAsPdfSharpIcon from "@mui/icons-material/PictureAsPdfSharp";
 import ImageSharpIcon from "@mui/icons-material/ImageSharp";
+import type { Category } from "@/types/Category";
+
+interface CategoryItem {
+  value: Category;
+  label: string;
+  icon: React.ReactElement;
+}
 
 interface ScrollCategoryOptionProps {
-  onCategorySelect: (item: { icon: React.ReactElement; label: string }) => void;
+  onCategorySelect: (item: CategoryItem) => void;
 }
 
 const ScrollCategoryOption = ({ onCategorySelect }: ScrollCategoryOptionProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  const items = [
-    { icon: <InsertLinkSharpIcon className="icons" />, label: "Link" },
-    { icon: <CallSharpIcon className="icons" />, label: "Call" },
-    { icon: <ContactPageIcon className="icons" />, label: "Contact" },
-    { icon: <EmailSharpIcon className="icons" />, label: "Mail" },
-    { icon: <TextsmsSharpIcon className="icons" />, label: "SMS" },
-    { icon: <WhatsAppIcon className="icons" />, label: "WhatsApp" },
-    { icon: <PictureAsPdfSharpIcon className="icons" />, label: "PDF" },
-    { icon: <ImageSharpIcon className="icons" />, label: "Image" },
+  const items: CategoryItem[] = [
+    { value: "link", label: "Link", icon: <InsertLinkSharpIcon className="icons" /> },
+    { value: "call", label: "Call", icon: <CallSharpIcon className="icons" /> },
+    { value: "contact", label: "Contact", icon: <ContactPageIcon className="icons" /> },
+    { value: "mail", label: "Mail", icon: <EmailSharpIcon className="icons" /> },
+    { value: "sms", label: "SMS", icon: <TextsmsSharpIcon className="icons" /> },
+    { value: "whatsapp", label: "WhatsApp", icon: <WhatsAppIcon className="icons" /> },
+    { value: "pdf", label: "PDF", icon: <PictureAsPdfSharpIcon className="icons" /> },
+    { value: "image", label: "Image", icon: <ImageSharpIcon className="icons" /> },
   ];
 
-  interface ScrollCategoryItem {
-    icon: React.ReactElement;
-    label: string;
-  }
-
-  const handleCategoryClick = (item: ScrollCategoryItem, selectedObjectIndex: number) => {
+  const handleCategoryClick = (item: CategoryItem, selectedObjectIndex: number) => {
     setActiveIndex(selectedObjectIndex);
     onCategorySelect(item);
     console.log(`item selected label is: ${item.label} with index: ${selectedObjectIndex}`);
@@ -42,7 +46,7 @@ const ScrollCategoryOption = ({ onCategorySelect }: ScrollCategoryOptionProps) =
   return (
     <div
       className="bg-white p-2 shadow-lg text-white qr-interface-item"
-      style={{ backgroundColor: "#fff" }} // fixed color value
+      style={{ backgroundColor: "#fff" }}
     >
       <div className="scroller snaps-inline">
         {items.map((item, i) => (

@@ -21,12 +21,13 @@ export default function Info3() {
         </h4>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">
-          <Link href="/generate">
+          <a href="#qr-interface">
             <button className="bg-white text-blue-700 px-6 py-3 rounded-md font-medium hover:bg-blue-100 transition">
               Generate Now
             </button>
-          </Link>
-          <Link href="/upgrade">
+          </a>
+          <Link href="/pricing">
+          
             <button className="bg-blue-700 border border-white text-white px-6 py-3 rounded-md font-medium hover:bg-white hover:text-blue-700 transition">
               Upgrade to Pro
             </button>

@@ -6,7 +6,41 @@ import QrFormRenderer from "@/components/QrFormRenderer";
 import QrPreview from "@/components/QrPreview";
 import QRDesignPanel from "./QRDesignPanel";
 
-const initialFormData: Record<string, any> = {
+import type { Category } from "@/types/Category";
+
+type FormDataType = {
+  url?: string;
+  smsPhone?: string;
+  smsBody?: string;
+  waPhone?: string;
+  waBody?: string;
+  email?: string;
+  phone?: string;
+  ssid?: string;
+  password?: string;
+  encryption?: "WPA" | "WEP" | "None" | string;
+  imageUrl?: string;
+  videoUrl?: string;
+  bulkList?: string;
+  appUrl?: string;
+  socialUrl?: string;
+  eventTitle?: string;
+  eventStart?: string;
+  eventEnd?: string;
+  eventLocation?: string;
+  eventDesc?: string;
+  barcodeValue?: string;
+  name?: string;
+  pdfUrl?: string;
+};
+
+interface DesignConfig {
+  frame: string;
+  color: string;
+  logo: File | null;
+}
+
+const initialFormData: Record<Category, FormDataType> = {
   link: { url: "" },
   sms: { smsPhone: "", smsBody: "" },
   whatsapp: { waPhone: "", waBody: "" },
@@ -18,24 +52,29 @@ const initialFormData: Record<string, any> = {
   bulkqr: { bulkList: "" },
   app: { appUrl: "" },
   social: { socialUrl: "" },
-  event: { eventTitle: "", eventStart: "", eventEnd: "", eventLocation: "", eventDesc: "" },
+  event: {
+    eventTitle: "",
+    eventStart: "",
+    eventEnd: "",
+    eventLocation: "",
+    eventDesc: "",
+  },
   barcode2d: { barcodeValue: "" },
   contact: { name: "", phone: "", email: "" },
-  pdf: { pdfUrl: "" }
+  pdf: { pdfUrl: "" },
 };
 
-const initialDesign = {
+const initialDesign: DesignConfig = {
   frame: "Frame 1",
   color: "#000000",
-  logo: null as File | null
+  logo: null,
 };
 
 export default function QrInterface() {
-  const [category, setCategory] = useState<string>("link");
-  const [formData, setFormData] = useState<any>(initialFormData["link"]);
+  const [category, setCategory] = useState<Category>("link");
+  const [formData, setFormData] = useState<FormDataType>(initialFormData["link"]);
   const [formReady, setFormReady] = useState<boolean>(false);
-
-  const [design, setDesign] = useState(initialDesign);
+  const [design, setDesign] = useState<DesignConfig>(initialDesign);
 
   useEffect(() => {
     setFormData(initialFormData[category] || {});
@@ -96,26 +135,17 @@ export default function QrInterface() {
   }, [category, formData]);
 
   return (
-    <div className="bg-blue-100 px-4 md:px-8">
+    <div id="qr-interface" className="bg-blue-100 px-4 md:px-8 scroll-mt-20">
       <div className="flex flex-col md:flex-row h-full">
-        {/* Left: Main Panel */}
+        {/* Left Panel */}
         <div className="w-full md:w-4/5 shadow-md p-6 md:ml-12 my-10 bg-gray-50">
           <CategorySelector selected={category} onSelect={setCategory} />
-          <QrFormRenderer
-            category={category}
-            formData={formData}
-            setFormData={setFormData}
-          />
+          <QrFormRenderer category={category} formData={formData} setFormData={setFormData} />
           <QRDesignPanel design={design} setDesign={setDesign} />
         </div>
-        {/* Right: Preview Panel */}
+        {/* Right Panel */}
         <div className="w-full md:w-1/4 bg-white mx-4 my-10 md:mr-24 shadow-sm">
-          <QrPreview
-            category={category}
-            formData={formData}
-            ready={formReady}
-            design={design}
-          />
+          <QrPreview category={category} formData={formData} ready={formReady} design={design} />
         </div>
       </div>
     </div>

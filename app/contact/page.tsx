@@ -19,7 +19,7 @@ export default function ContactPage() {
         </div>
         <div className="w-full md:w-1/2">
           <div className="h-auto md:h-[650px]">
-            <ContactForm />
+            <ContactForm/>
           </div>
         </div>
       </div>

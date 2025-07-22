@@ -10,7 +10,7 @@ interface QRDesignPanelProps {
     color: string;
     logo: File | null;
   };
-  setDesign: (d: any) => void;
+  setDesign: React.Dispatch<React.SetStateAction<{ frame: string; color: string; logo: File | null; }>>;
 }
 
 export default function QRDesignPanel({ design, setDesign }: QRDesignPanelProps) {

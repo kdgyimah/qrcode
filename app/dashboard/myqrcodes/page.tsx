@@ -1,43 +1,95 @@
-import CreateQrButton from "@/components/myqrcodes/CreateQrButton";
-import FolderManager from "@/components/myqrcodes/FolderManager";
-import FolderSearch from "@/components/myqrcodes/FolderSearch";
-import QrSearch from "@/components/myqrcodes/QrSearch";
-import QrTabs from "@/components/myqrcodes/QrTabs";
-import QrTable from "@/components/myqrcodes/QrCodeTable";
+"use client";
 
-// Import your DateSelector
-import DateSelector from "@/components/myqrcodes/DateSelector";
-import FilterDropdown from "@/components/myqrcodes/FilterDropdown";
+import { useState } from "react";
+import MyQrCodesClient from "../components/MyQrCodesClient";
+import type { QrData } from "@/types/qr-generator";
 
-export default function MyQrCodesPage() {
+export default function Page() {
+  const [selectedQr, setSelectedQr] = useState<QrData | null>(null);
+  const [mode, setMode] = useState<"detail" | "edit" | null>(null);
+
+  const handleShowDetail = (qr: QrData) => {
+    setSelectedQr(qr);
+    setMode("detail");
+  };
+
+  const handleShowEdit = (qr: QrData) => {
+    setSelectedQr(qr);
+    setMode("edit");
+  };
+
+  const handleCreateClick = () => {
+    // Your logic to open a create QR code modal or page
+    console.log("Create button clicked");
+  };
+
+  const handleClosePanel = () => {
+    setSelectedQr(null);
+    setMode(null);
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Top Bar: Create Button + Folder Manager */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">My QR Codes</h1>
-          <p className="text-gray-500 mt-2">Browse all QR Codes.</p>
-        </div>
-        <CreateQrButton />
-      </div>
-      {/* Search Area: Folder Search */}
-      <FolderSearch />
-      <div>
-        <FolderManager />
-      </div>
+    <div className="relative">
+      <MyQrCodesClient
+        onShowDetail={handleShowDetail}
+        handleCreateClick={handleCreateClick}
+        onShowEdit={handleShowEdit}
+      />
 
-      {/* Tabs + Search + Date Selector */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-        <QrTabs />
-        <div className="flex items-end gap-2">
-          <QrSearch />
-          <DateSelector />
-          <FilterDropdown />
-        </div>
-      </div>
+      {/* Conditional Drawer/Panel */}
+      {selectedQr && mode && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-[90vw] max-w-lg relative shadow-lg">
+            <button
+              onClick={handleClosePanel}
+              className="absolute top-3 right-3 text-gray-500 hover:text-black"
+            >
+              &times;
+            </button>
 
-      {/* QR Code Table */}
-      <QrTable />
+            {mode === "detail" ? (
+              <div>
+                <h2 className="text-xl font-bold mb-2">QR Code Details</h2>
+                <p><strong>Title:</strong> {selectedQr.name}</p>
+                <p><strong>Type:</strong> {selectedQr.type}</p>
+                <p><strong>Folder:</strong> {selectedQr.folder}</p>
+                <p><strong>Scans:</strong> {selectedQr.scans}</p>
+                <p><strong>Status:</strong> {selectedQr.status}</p>
+                <p className="text-sm text-gray-500 mt-4">
+                  Created: {selectedQr.created} | Last Modified: {selectedQr.lastModified}
+                </p>
+              </div>
+            ) : (
+              <div>
+                <h2 className="text-xl font-bold mb-4">Edit QR Code</h2>
+                {/* You can replace this with a proper form component */}
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  // Save logic here
+                  alert("Changes saved (mock)");
+                  handleClosePanel();
+                }}>
+                  <label className="block mb-2">
+                    Name:
+                    <input
+                      type="text"
+                      defaultValue={selectedQr.name}
+                      className="mt-1 block w-full border border-gray-300 rounded px-3 py-2"
+                    />
+                  </label>
+                  {/* Add more fields as needed */}
+                  <button
+                    type="submit"
+                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
+                  >
+                    Save Changes
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

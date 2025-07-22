@@ -17,7 +17,7 @@ export default function ContactForm() {
       toast.success('Message sent successfully!');
       setForm({ name: '', email: '', message: '' });
     } catch (error) {
-      toast.error('Failed to send message. Try again.');
+      toast.error('Something went wrong!');
     }
   };
 

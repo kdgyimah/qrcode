@@ -1,34 +1,99 @@
-import { useState } from "react";
+'use client';
+
+import React, { useState } from "react";
 import CategoryField from "./CategoryField";
 import "./QR-Interface.css";
 import QROutputInterface from "./QROutputInterface";
 import ScrollCategoryOption from "./ScrollCategoryOption";
 import Frames from "./Frames";
-// Update the import path to the correct location of FormModal, for example:
-import FormModal from "../FrameStructure/FormModal"; // <-- Change this path if FormModal is elsewhere
-
-// If FormModal is actually in the same folder, use:
-// import FormModal from "./FormModal";
-
-// Or if it's in a different folder, adjust the path accordingly, e.g.:
-// import FormModal from "../someOtherFolder/FormModal";
+import FormModal from "../qrinterface/ConfirmationModal";
 import ConfirmationModal from "./ConfirmationModal";
+import type { Gradient } from "qr-code-styling";
+
+interface CategoryItem {
+  label: string;
+  value: string;
+  icon?: React.ReactElement;
+  color?: string;
+}
+
+interface ContentData {
+  url: string;
+  description: string;
+  imageUrl: string;
+  showIcon: boolean;
+}
+
+interface PdfData {
+  pdfContent: string;
+}
+
+interface ImageData {
+  imageContent: string;
+}
+
+interface ContactInfo {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  address: string;
+  company: string;
+  jobTitle: string;
+}
+
+interface SmsData {
+  phone: string;
+  message: string;
+}
+
+interface WhatsappData {
+  waPhoneNumber: string;
+  waMessage: string;
+}
+
+interface QrStyle {
+  dotsOptions: {
+    type: "dots" | "square" | "rounded" | "classy" | "classy-rounded" | "extra-rounded" | "dot" ;
+    color: string;
+    gradient?: Gradient;
+  };
+  cornersSquareOptions: {
+    type: "dots" | "square" | "rounded" | "classy" | "classy-rounded" | "extra-rounded" | "dot" ;
+    color: string;
+    gradient?: Gradient;
+  };
+  cornersDotOptions: {
+    type: "dots" | "square" | "rounded" | "classy" | "classy-rounded" | "extra-rounded" | "dot" ;
+    color: string;
+    gradient?: Gradient;
+  };
+}
+
+type HandleContentCreateData =
+  | ContentData
+  | PdfData
+  | ImageData
+  | ContactInfo
+  | SmsData
+  | WhatsappData;
 
 const QRInterface = () => {
   const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(null);
   const [tempCategory, setTempCategory] = useState<CategoryItem | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [content, setContent] = useState({
+
+  const [content, setContent] = useState<ContentData>({
     url: "",
     description: "",
     imageUrl: "",
     showIcon: false,
   });
 
-  const [pdfData, setPdfData] = useState({ pdfContent: "" });
-  const [imageData, setImageData] = useState({ imageContent: "" });
+  const [pdfData, setPdfData] = useState<PdfData>({ pdfContent: "" });
+  const [imageData, setImageData] = useState<ImageData>({ imageContent: "" });
 
-  const [contactInfo, setContactInfo] = useState({
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
     firstName: "",
     lastName: "",
     phone: "",
@@ -38,14 +103,14 @@ const QRInterface = () => {
     jobTitle: "",
   });
 
-  const [smsData, setSmsData] = useState({});
-  const [whatsappData, setWhatsappData] = useState({
+  const [smsData, setSmsData] = useState<SmsData>({ phone: "", message: "" });
+  const [whatsappData, setWhatsappData] = useState<WhatsappData>({
     waPhoneNumber: "",
     waMessage: "",
   });
 
   const [frame, setFrame] = useState<string | null>(null);
-  const [qrStyle, setQrStyle] = useState({
+  const [qrStyle, setQrStyle] = useState<QrStyle>({
     dotsOptions: { type: "dots", color: "#726e6e" },
     cornersSquareOptions: { type: "square", color: "#160101" },
     cornersDotOptions: { type: "square", color: "#635858" },
@@ -61,51 +126,6 @@ const QRInterface = () => {
       Object.values(whatsappData).some(Boolean)
     );
   };
-
-  interface CategoryItem {
-    label: string;
-    [key: string]: any;
-  }
-
-  interface ContentData {
-    url: string;
-    description: string;
-    imageUrl: string;
-    showIcon: boolean;
-  }
-
-  interface PdfData {
-    pdfContent: string;
-  }
-
-  interface ImageData {
-    imageContent: string;
-  }
-
-  interface ContactInfo {
-    firstName: string;
-    lastName: string;
-    phone: string;
-    email: string;
-    address: string;
-    company: string;
-    jobTitle: string;
-  }
-
-  interface SmsData {
-    [key: string]: any;
-  }
-
-  interface WhatsappData {
-    waPhoneNumber: string;
-    waMessage: string;
-  }
-
-  interface QrStyle {
-    dotsOptions: { type: string; color: string };
-    cornersSquareOptions: { type: string; color: string };
-    cornersDotOptions: { type: string; color: string };
-  }
 
   const handleCategorySelected = (categoryItem: CategoryItem) => {
     if (hasUnsavedData()) {
@@ -129,7 +149,7 @@ const QRInterface = () => {
       company: "",
       jobTitle: "",
     });
-    setSmsData({});
+    setSmsData({ phone: "", message: "" });
     setWhatsappData({ waPhoneNumber: "", waMessage: "" });
     setSelectedCategory(tempCategory);
     setTempCategory(null);
@@ -141,17 +161,9 @@ const QRInterface = () => {
     setTempCategory(null);
   };
 
-  interface FrameHandler {
-    (frameUrl: string): void;
-  }
-
-  const frameHandler: FrameHandler = (frameUrl) => {
+  const frameHandler = (frameUrl: string) => {
     setFrame(frameUrl);
   };
-
-  interface HandleContentCreateData {
-    [key: string]: any;
-  }
 
   const handleContentCreate = (data: HandleContentCreateData) => {
     switch (selectedCategory?.label) {
@@ -186,7 +198,6 @@ const QRInterface = () => {
         />
 
         <QROutputInterface
-          frameSelected={frame}
           content={
             selectedCategory?.label === "Contact"
               ? contactInfo
@@ -207,16 +218,9 @@ const QRInterface = () => {
         <Frames onsetFrame={frameHandler} />
 
         {(selectedCategory?.label === "Contact"
-          ? contactInfo
-          : content
-        ).url && (
-          <FormModal
-            formCSSData={frame}
-            qrCodeContent={
-              selectedCategory?.label === "Contact" ? contactInfo : content
-            }
-            qrStyle={qrStyle}
-          />
+          ? contactInfo.firstName
+          : content.url) && (
+          <FormModal onDiscard={handleDiscard} onCancel={handleCancel} />
         )}
 
         {showModal && (
