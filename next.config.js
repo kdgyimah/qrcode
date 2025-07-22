@@ -1,3 +1,4 @@
+
 // @ts-check
 
 /** @type {import('next').NextConfig} */
@@ -8,6 +9,7 @@ const nextConfig = {
       "lh3.googleusercontent.com", // allow Google profile pics
     ],
   },
+
 };
 
 module.exports = nextConfig;
