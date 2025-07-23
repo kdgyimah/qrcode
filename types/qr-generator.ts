@@ -85,3 +85,10 @@ export interface ChartData {
   name: string;
   value: number;
 }
+
+// Define the HandleContentCreateData type here or adjust as needed
+export type HandleContentCreateData = {
+  // Example fields, adjust according to your actual usage
+  type: string;
+  value: string;
+};

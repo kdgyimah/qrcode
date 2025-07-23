@@ -13,9 +13,12 @@ interface Category {
   label: string;
 }
 
+
+import type { HandleContentCreateData } from '@/types/qr-generator'; // Adjust the path as needed
+
 interface CategoryFieldProps {
   selectedCategory?: Category;
-  onContentCreate: (content: any) => void;
+  onContentCreate: (content: HandleContentCreateData) => void;
 }
 
 export default function CategoryField({

@@ -46,10 +46,6 @@ const ImageForm = ({ linkContent }: ImageFormProps) => {
   const [uploadType, setUploadType] = useState("file");
   const [errorMessage, setErrorMessage] = useState("");
 
-  interface FormInfo {
-    imageContent: string;
-    imageUrl?: string;
-  }
 
   interface ChangeEvent {
     target: {
@@ -70,7 +66,6 @@ const ImageForm = ({ linkContent }: ImageFormProps) => {
 
   const handleUploadTypeChange = (e: UploadTypeChangeEvent): void => {
     setUploadType(e.target.value);
-    setFormInfo({ imageContent: "" });
     setErrorMessage(""); // Reset error message on type change
   };
 

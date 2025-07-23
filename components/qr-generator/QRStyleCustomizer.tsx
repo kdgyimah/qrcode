@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { QRCodeStyle } from '@/types/qr-generator';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface QRStyleCustomizerProps {
   style: QRCodeStyle;
@@ -164,7 +165,7 @@ export function QRStyleCustomizer({ style, onStyleChange }: QRStyleCustomizerPro
               />
               {logoPreviewUrl && (
                 <div className="mt-2 flex items-center gap-3">
-                  <img
+                  <Image
                     src={logoPreviewUrl}
                     alt="Logo Preview"
                     className="w-12 h-12 object-contain border rounded"

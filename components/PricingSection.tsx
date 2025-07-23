@@ -109,10 +109,11 @@ const pricingData = {
 
 const iconColor = "text-[#7C5CFC]";
 const icons = [
-  <RiHeartsFill className={`${iconColor} w-6 h-6`} />,
-  <BiSolidCrown className={`${iconColor} w-6 h-6`} />,
-  <PiLightningFill className={`${iconColor} w-6 h-6`} />,
+  <RiHeartsFill key="heart" className={`${iconColor} w-6 h-6`} />,
+  <BiSolidCrown key="crown" className={`${iconColor} w-6 h-6`} />,
+  <PiLightningFill key="lightning" className={`${iconColor} w-6 h-6`} />,
 ];
+
 
 export default function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);

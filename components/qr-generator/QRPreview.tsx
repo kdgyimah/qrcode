@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Download, Loader2 } from 'lucide-react';
 import { QRCategory, QRFormData, QRCodeStyle } from '@/types/qr-generator';
 import { generateQRContent, generateQRCode } from '@/utils/qr-generator';
+import Image from 'next/image';
 
 interface QRPreviewProps {
   category: QRCategory;
@@ -104,7 +105,7 @@ export function QRPreview({ category, formData, style, onDownload }: QRPreviewPr
               <p className="text-sm">{error}</p>
             </div>
           ) : qrDataUrl ? (
-            <img
+            <Image
               src={qrDataUrl}
               alt="QR Code Preview"
               className="max-w-full max-h-full object-contain"

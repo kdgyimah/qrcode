@@ -65,7 +65,7 @@ const PDFForm = ({ linkContent }: PDFFormProps) => {
 
     const filePath = `pdfs/${Date.now()}-${file.name}`;
 
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from('pdf-uploads') // ← your bucket name
       .upload(filePath, file);
 

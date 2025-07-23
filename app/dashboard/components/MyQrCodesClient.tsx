@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import CreateQrButton from "@/components/myqrcodes/CreateQrButton";
-import FolderSearch from "@/components/myqrcodes/FolderSearch";
 import QrSearch from "@/components/myqrcodes/QrSearch";
 import QrTabs from "@/components/myqrcodes/QrTabs";
 import QrTable from "@/components/myqrcodes/QrCodeTable";
@@ -116,7 +115,6 @@ const mockQrData: QrData[] = [
 
 const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
   onShowDetail,
-  onShowEdit,
   handleCreateClick,
 }) => {
   const [folderName, setFolderName] = useState("");

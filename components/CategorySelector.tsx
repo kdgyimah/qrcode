@@ -14,8 +14,6 @@ import {
   CalendarDays,
   Barcode,
   ImageIcon,
-  Globe2Icon,
-  Globe2,
   Globe,
 } from "lucide-react";
 

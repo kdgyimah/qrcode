@@ -3,7 +3,6 @@
 import {
   CheckCircleIcon,
   PencilSquareIcon,
-  TrashIcon,
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/24/outline";

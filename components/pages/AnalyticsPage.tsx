@@ -26,7 +26,7 @@ const scanActivityData = [
 ];
 
 // Replace QrCodeRow with QrData mock (ensure all required fields are present)
-import { QrData, QrType, QrCategory } from "@/types/qr-generator";
+import { QrData} from "@/types/qr-generator";
 
 export const qrTableData: QrData[] = [
   {

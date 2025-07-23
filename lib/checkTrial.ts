@@ -1,12 +1,14 @@
+
+import { User } from "@/types/users";
 import dayjs from "dayjs";
 
-export const isTrialExpired = (user: any): boolean => {
+export const isTrialExpired = (user: User): boolean => {
   const start = user?.user_metadata?.trial_started_at;
   if (!start) return true;
   return dayjs().isAfter(dayjs(start).add(7, "days"));
 };
 
-export const getTrialRemaining = (user: any) => {
+export const getTrialRemaining = (user: User) => {
   const start = user?.user_metadata?.trial_started_at;
   if (!start) return null;
 

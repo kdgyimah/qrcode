@@ -25,7 +25,7 @@ interface CallFormProps {
 }
 
 const CallForm: React.FC<CallFormProps> = ({ linkContent }) => {
-  const [selectedCode, setSelectedCode] = useState<string>(''); // currently unused
+  const [selectedCode] = useState<string>(''); // currently unused
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
   const [showIcon, setShowIcon] = useState<boolean>(false);
 
