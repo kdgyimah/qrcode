@@ -4,6 +4,14 @@ import { FaFileInvoice } from "react-icons/fa";
 import { RiTeamFill } from "react-icons/ri";
 import { SlCalender } from "react-icons/sl";
 import { motion, easeOut, Variants } from "framer-motion"; // ✅ import easing function
+import { Poppins } from "next/font/google";
+
+const poppinsFont = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+  display: "swap",
+});
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 40 },
@@ -29,12 +37,13 @@ export default function Info1() {
         viewport={{ once: true }}
         className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto"
       >
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold capitalize text-gray-800 mb-4">
+        <h1 className={`sm:text-4xl md:text-5xl text-3xl font-semibold capitalize text-gray-800 mb-4 ${poppinsFont.className}`}>
           Why Choose QR GEN
         </h1>
+
         <h4 className="text-base sm:text-xl md:text-2xl text-gray-600">
-          QR GENerator helps you create, customize, download, and share QR
-          codes fast, simple, and made for everyone!
+          QR GENerator helps you create, customize, download, and share QR codes
+          fast, simple, and made for everyone!
         </h4>
       </motion.div>
 

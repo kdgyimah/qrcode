@@ -1,17 +1,28 @@
+// app/layout.tsx
+
 import type { Metadata } from "next";
-import { Inter, Roboto_Mono } from "next/font/google";
+import { Inter, Roboto_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import 'react-datepicker/dist/react-datepicker.css';
 
 const inter = Inter({
-  variable: "--font-geist-sans",
   subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 const robotoMono = Roboto_Mono({
-  variable: "--font-geist-mono",
   subsets: ["latin"],
+  variable: "--font-roboto-mono",
+  display: "swap",
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -27,14 +38,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} ${robotoMono.variable} scroll-smooth w-full min-h-screen`}
-      >
+    <html
+      lang="en"
+      className={`${inter.variable} ${robotoMono.variable} ${poppins.variable}`}
+    >
+      <body className="font-poppins scroll-smooth w-full min-h-screen">
         <Toaster position="top-right" />
         {children}
       </body>
