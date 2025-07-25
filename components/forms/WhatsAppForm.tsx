@@ -1,23 +1,33 @@
 "use client";
 
 import { useState, ChangeEvent } from "react";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
+import {
+  Box,
+  TextField,
+  FormControl,
+  InputLabel,
+  FormControlLabel,
+  Checkbox,
+  createTheme,
+  ThemeProvider,
+} from "@mui/material";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import WhatsAppImage from "../../images/whatsapp-logo.jpg"; // Adjust as necessary
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
+import WhatsAppImage from "../../images/whatsapp-logo.jpg";
+import { HandleContentCreateData } from "@/types/qr-generator";
 
+// ------------------
+// Theme
+// ------------------
 const theme = createTheme({
   typography: {
     fontFamily: '"Sen", sans-serif',
   },
 });
 
+// ------------------
+// Types
+// ------------------
 interface WhatsAppData {
   waPhoneNumber: string | undefined;
   waMessage: string;
@@ -25,9 +35,12 @@ interface WhatsAppData {
 }
 
 interface WhatsAppFormProps {
-  linkContent: (data: WhatsAppData) => void;
+  linkContent: (data: HandleContentCreateData) => void;
 }
 
+// ------------------
+// Component
+// ------------------
 const WhatsAppForm: React.FC<WhatsAppFormProps> = ({ linkContent }) => {
   const [whatsAppData, setWhatsAppData] = useState<WhatsAppData>({
     waPhoneNumber: "",
@@ -35,37 +48,31 @@ const WhatsAppForm: React.FC<WhatsAppFormProps> = ({ linkContent }) => {
     showIcon: false,
   });
 
-  const handlePhoneChange = (value: string | undefined) => {
-    setWhatsAppData((prevData) => {
-      const updated = { ...prevData, waPhoneNumber: value };
-      linkContent(updated);
-      return updated;
+  const updateForm = (updatedFields: Partial<WhatsAppData>) => {
+    const updated = { ...whatsAppData, ...updatedFields };
+    setWhatsAppData(updated);
+    linkContent({
+      type: "whatsapp",
+      data: updated,
     });
+  };
+
+  const handlePhoneChange = (value: string | undefined) => {
+    updateForm({ waPhoneNumber: value });
   };
 
   const handleMessageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setWhatsAppData((prevData) => {
-      const updated = { ...prevData, waMessage: value };
-      linkContent(updated);
-      return updated;
-    });
+    updateForm({ waMessage: e.target.value });
   };
 
   const handleIconToggle = () => {
-    setWhatsAppData((prevData) => {
-      const updated = { ...prevData, showIcon: !prevData.showIcon };
-      linkContent(updated);
-      return updated;
-    });
+    updateForm({ showIcon: !whatsAppData.showIcon });
   };
 
   const handleSendMessage = () => {
     const { waPhoneNumber, waMessage } = whatsAppData;
     if (waPhoneNumber && waMessage) {
-      const link = `https://wa.me/${waPhoneNumber}?text=${encodeURIComponent(
-        waMessage
-      )}`;
+      const link = `https://wa.me/${waPhoneNumber}?text=${encodeURIComponent(waMessage)}`;
       window.open(link, "_blank");
     }
   };
@@ -73,6 +80,7 @@ const WhatsAppForm: React.FC<WhatsAppFormProps> = ({ linkContent }) => {
   return (
     <ThemeProvider theme={theme}>
       <Box component="form" noValidate autoComplete="off">
+        {/* Icon Toggle */}
         <Box display="flex" alignItems="center" mb={1}>
           <FormControlLabel
             control={
@@ -88,13 +96,12 @@ const WhatsAppForm: React.FC<WhatsAppFormProps> = ({ linkContent }) => {
               component="img"
               src={WhatsAppImage.src}
               alt="WhatsApp Icon"
-              width={30}
-              height={30}
-              ml={1}
+              sx={{ width: 30, height: 30, ml: 1 }}
             />
           )}
         </Box>
 
+        {/* Phone Input */}
         <FormControl fullWidth variant="filled" margin="normal">
           <InputLabel shrink htmlFor="whatsapp-phone-input">
             Phone Number
@@ -108,20 +115,20 @@ const WhatsAppForm: React.FC<WhatsAppFormProps> = ({ linkContent }) => {
             required
             style={{
               width: "100%",
-              height: "120px",
               padding: "10px 12px",
               fontFamily: '"Sen", sans-serif',
               backgroundColor: "rgba(0, 0, 0, 0.06)",
               border: "none",
+              borderRadius: 4,
             }}
           />
         </FormControl>
 
+        {/* Message Input */}
         <TextField
           id="whatsapp-message-field"
           label="Message"
           variant="filled"
-          color="primary"
           multiline
           rows={3}
           name="waMessage"
@@ -132,8 +139,21 @@ const WhatsAppForm: React.FC<WhatsAppFormProps> = ({ linkContent }) => {
           fullWidth
         />
 
+        {/* Send Button */}
         <Box mt={2}>
-          <button type="button" onClick={handleSendMessage}>
+          <button
+            type="button"
+            onClick={handleSendMessage}
+            style={{
+              backgroundColor: "#25D366",
+              color: "white",
+              border: "none",
+              padding: "10px 20px",
+              fontSize: "16px",
+              cursor: "pointer",
+              borderRadius: "6px",
+            }}
+          >
             Send via WhatsApp
           </button>
         </Box>

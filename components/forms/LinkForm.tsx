@@ -1,140 +1,81 @@
 'use client';
 
-import { useState } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import '../QRInterface/QR-Interface.css';
+import { useEffect, useState } from 'react';
+import { HandleContentCreateData } from '@/types/qr-generator';
+import { Box, FormControl, FormControlLabel, Checkbox } from '@mui/material';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import IconImage from '../../images/freecall-logo.webp';
 
-const theme = createTheme({
-  typography: {
-    fontFamily: '"Sen", sans-serif',
-  },
-  components: {
-    MuiFilledInput: {
-      styleOverrides: {
-        root: {
-          borderColor: 'black',
-          '&:hover': {
-            borderColor: 'black',
-          },
-          '&.Mui-focused': {
-            borderColor: 'black',
-            backgroundColor: '#e8e8e8',
-          },
-        },
-      },
-    },
-  },
-});
-
-interface LinkFormProps {
-  linkContent: (info: {
-    url: string;
-    description: string;
-    imageUrl: string;
-  }) => void;
+export interface CallFormData {
+  phoneNumber: string;
+  showIcon: boolean;
 }
 
-const LinkForm = ({ linkContent }: LinkFormProps) => {
-  const [formInfo, setFormInfo] = useState({
-    url: '',
-    description: '',
-    imageUrl: '',
-  });
+interface CallFormProps {
+  linkContent: (data: HandleContentCreateData) => void;
+}
 
-  const [uploadType, setUploadType] = useState<'file' | 'url'>('file');
+const CallForm = ({ linkContent }: CallFormProps) => {
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [showIcon, setShowIcon] = useState<boolean>(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const updatedFormInfo = {
-      ...formInfo,
-      [name]: value,
-    };
-    setFormInfo(updatedFormInfo);
-    linkContent(updatedFormInfo);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      const updatedFormInfo = {
-        ...formInfo,
-        imageUrl,
+  useEffect(() => {
+    if (phoneNumber) {
+      const payload: HandleContentCreateData = {
+        type: 'call',
+        data: { phoneNumber, showIcon },
       };
-      setFormInfo(updatedFormInfo);
-      linkContent(updatedFormInfo);
+      linkContent(payload);
     }
-  };
-
-  const handleUploadTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUploadType(e.target.value as 'file' | 'url');
-    setFormInfo({ ...formInfo, imageUrl: '' });
-  };
+  }, [phoneNumber, showIcon, linkContent]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box className="link-form" component="form" noValidate autoComplete="off">
-        <TextField
-          id="link-field"
-          label="URL"
-          variant="filled"
-          color="primary"
-          type="text"
-          name="url"
-          placeholder="https://example.com"
-          value={formInfo.url}
-          onChange={handleChange}
-          required
+    <Box component="form" noValidate autoComplete="off">
+      <Box display="flex" alignItems="center" mb={1}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={showIcon}
+              onChange={() => setShowIcon((prev) => !prev)}
+            />
+          }
+          label="Add Call Image"
         />
-        <br />
-        <TextField
-          id="description-field"
-          label="Description"
-          variant="filled"
-          color="primary"
-          multiline
-          rows={2}
-          placeholder="Enter your text here..."
-          name="description"
-          value={formInfo.description}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <RadioGroup value={uploadType} onChange={handleUploadTypeChange} row>
-          <FormControlLabel value="file" control={<Radio />} label="Upload Image File" />
-          <FormControlLabel value="url" control={<Radio />} label="Enter Image URL" />
-        </RadioGroup>
-
-        {uploadType === 'file' ? (
-          <input
-            type="file"
-            name="imageUrl"
-            onChange={handleFileChange}
-            accept="image/*"
-          />
-        ) : (
-          <TextField
-            id="image-url-field"
-            label="Image URL"
-            variant="filled"
-            color="primary"
-            type="text"
-            name="imageUrl"
-            placeholder="https://example.com/image.jpg"
-            value={formInfo.imageUrl}
-            onChange={handleChange}
-            required
+        {showIcon && (
+          <Box
+            component="img"
+            src={IconImage.src}
+            alt="Call Icon"
+            width={30}
+            height={30}
+            ml={1}
           />
         )}
       </Box>
-    </ThemeProvider>
+
+      <FormControl fullWidth margin="normal">
+        <PhoneInput
+          id="phone-input"
+          placeholder="Enter phone number"
+          value={phoneNumber}
+          onChange={(value) => setPhoneNumber(value ?? '')}
+          defaultCountry="GH"
+          required
+          style={{
+            width: '100%',
+            height: '55px',
+            padding: '10px 12px',
+            fontFamily: '"Sen", sans-serif',
+            borderRadius: '4px',
+            backgroundColor: 'rgba(0, 0, 0, 0.06)',
+            border: 'none',
+            fontSize: '16px',
+          }}
+        />
+      </FormControl>
+    </Box>
   );
 };
 
-export default LinkForm;
+export default CallForm;

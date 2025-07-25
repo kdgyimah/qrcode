@@ -1,71 +1,72 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { FiChevronDown, FiMenu, FiX } from 'react-icons/fi'
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/superbase'
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/superbase";
+import { User } from "@supabase/supabase-js";
 
 export default function Navbar() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [showNavbar, setShowNavbar] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
-  const [user, setUser] = useState<any>(null)
-  const [dropdownOpen, setDropdownOpen] = useState(false)
-  const router = useRouter()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [user, setUser] = useState<User | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const router = useRouter();
 
-  const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev)
+  const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
   useEffect(() => {
-    let ticking = false
+    let ticking = false;
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
+      const currentScrollY = window.scrollY;
 
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setShowNavbar(currentScrollY < lastScrollY || currentScrollY < 10)
-          setLastScrollY(currentScrollY)
-          ticking = false
-        })
-        ticking = true
+          setShowNavbar(currentScrollY < lastScrollY || currentScrollY < 10);
+          setLastScrollY(currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
       }
-    }
+    };
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   useEffect(() => {
     const getSession = async () => {
-      const { data } = await supabase.auth.getSession()
-      setUser(data.session?.user || null)
-    }
+      const { data } = await supabase.auth.getSession();
+      setUser(data.session?.user || null);
+    };
 
-    getSession()
+    getSession();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(() => {
-      getSession()
-    })
+      getSession();
+    });
 
     return () => {
-      authListener?.subscription.unsubscribe()
-    }
-  }, [])
+      authListener?.subscription.unsubscribe();
+    };
+  }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    router.push('/')
-  }
+    await supabase.auth.signOut();
+    setUser(null);
+    router.push("/");
+  };
 
   return (
     <nav
       className={`fixed top-0 w-full px-6 md:px-16 py-4 z-50 transition-transform duration-300 ${
-        showNavbar ? 'translate-y-0' : '-translate-y-full'
-      } ${lastScrollY > 10 ? 'bg-white shadow-md' : 'bg-transparent'}`}
-      style={{ willChange: 'transform' }}
+        showNavbar ? "translate-y-0" : "-translate-y-full"
+      } ${lastScrollY > 10 ? "bg-white shadow-md" : "bg-transparent"}`}
+      style={{ willChange: "transform" }}
     >
       <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
         {/* Logo */}
@@ -143,7 +144,7 @@ export default function Navbar() {
                 <Image
                   src={
                     user.user_metadata?.avatar_url ||
-                    '/images/default-avatar.png'
+                    "/images/default-avatar.png"
                   }
                   alt="User"
                   width={32}
@@ -240,5 +241,5 @@ export default function Navbar() {
         </div>
       )}
     </nav>
-  )
+  );
 }

@@ -2,8 +2,10 @@ import { useState, useEffect, ChangeEvent } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import { HandleContentCreateData } from "@/types/qr-generator";
 import '../QRInterface/QR-Interface.css';
 
+// 💡 MUI Theme setup
 const theme = createTheme({
   typography: {
     fontFamily: '"Sen", sans-serif',
@@ -26,7 +28,13 @@ const theme = createTheme({
   },
 });
 
-interface ContactInfo {
+// ✅ Component props using shared type
+interface ContactFormProps {
+  linkContent: (data: HandleContentCreateData) => void;
+}
+
+// ✨ This will form the `data` payload for `type: 'contact'`
+interface ContactData {
   firstName: string;
   lastName: string;
   phone: string;
@@ -36,12 +44,8 @@ interface ContactInfo {
   jobTitle: string;
 }
 
-interface ContactFormProps {
-  linkContent: (data: ContactInfo) => void;
-}
-
 const ContactForm: React.FC<ContactFormProps> = ({ linkContent }) => {
-  const [contactInfo, setContactInfo] = useState<ContactInfo>({
+  const [contactData, setContactData] = useState<ContactData>({
     firstName: '',
     lastName: '',
     phone: '',
@@ -51,13 +55,18 @@ const ContactForm: React.FC<ContactFormProps> = ({ linkContent }) => {
     jobTitle: '',
   });
 
+  // 🔁 Push QR payload on change
   useEffect(() => {
-    linkContent(contactInfo);
-  }, [contactInfo, linkContent]);
+    const payload: HandleContentCreateData = {
+      type: 'contact',
+      data: contactData,
+    };
+    linkContent(payload);
+  }, [contactData, linkContent]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setContactInfo((prev) => ({
+    setContactData((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -84,7 +93,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ linkContent }) => {
           autoComplete="off"
           sx={{ display: 'flex', flexDirection: 'column', gap: '15px', width: '100%' }}
         >
-          {(Object.keys(contactInfo) as (keyof ContactInfo)[]).map((field) => (
+          {(Object.keys(contactData) as (keyof ContactData)[]).map((field) => (
             <TextField
               key={field}
               id={`${field}-field`}
@@ -92,7 +101,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ linkContent }) => {
               variant="filled"
               color="primary"
               name={field}
-              value={contactInfo[field]}
+              value={contactData[field]}
               onChange={handleChange}
               required={requiredFields.includes(field)}
             />

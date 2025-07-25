@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import CategoryField from "./CategoryField";
 import "./QR-Interface.css";
 import QROutputInterface from "./QROutputInterface";
 import ScrollCategoryOption from "./ScrollCategoryOption";
-import Frames from "./Frames";
 import FormModal from "../qrinterface/ConfirmationModal";
 import ConfirmationModal from "./ConfirmationModal";
 import type { Gradient } from "qr-code-styling";
+import { HandleContentCreateData } from "@/types/qr-generator";
 
 interface CategoryItem {
   label: string;
@@ -54,32 +54,47 @@ interface WhatsappData {
 
 interface QrStyle {
   dotsOptions: {
-    type: "dots" | "square" | "rounded" | "classy" | "classy-rounded" | "extra-rounded" | "dot" ;
+    type:
+      | "dots"
+      | "square"
+      | "rounded"
+      | "classy"
+      | "classy-rounded"
+      | "extra-rounded"
+      | "dot";
     color: string;
     gradient?: Gradient;
   };
   cornersSquareOptions: {
-    type: "dots" | "square" | "rounded" | "classy" | "classy-rounded" | "extra-rounded" | "dot" ;
+    type:
+      | "dots"
+      | "square"
+      | "rounded"
+      | "classy"
+      | "classy-rounded"
+      | "extra-rounded"
+      | "dot";
     color: string;
     gradient?: Gradient;
   };
   cornersDotOptions: {
-    type: "dots" | "square" | "rounded" | "classy" | "classy-rounded" | "extra-rounded" | "dot" ;
+    type:
+      | "dots"
+      | "square"
+      | "rounded"
+      | "classy"
+      | "classy-rounded"
+      | "extra-rounded"
+      | "dot";
     color: string;
     gradient?: Gradient;
   };
 }
 
-type HandleContentCreateData =
-  | ContentData
-  | PdfData
-  | ImageData
-  | ContactInfo
-  | SmsData
-  | WhatsappData;
-
 const QRInterface = () => {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(
+    null
+  );
   const [tempCategory, setTempCategory] = useState<CategoryItem | null>(null);
   const [showModal, setShowModal] = useState(false);
 
@@ -109,7 +124,7 @@ const QRInterface = () => {
     waMessage: "",
   });
 
-  const [frame, setFrame] = useState<string | null>(null);
+
   const [qrStyle, setQrStyle] = useState<QrStyle>({
     dotsOptions: { type: "dots", color: "#726e6e" },
     cornersSquareOptions: { type: "square", color: "#160101" },
@@ -161,11 +176,10 @@ const QRInterface = () => {
     setTempCategory(null);
   };
 
-  const frameHandler = (frameUrl: string) => {
-    setFrame(frameUrl);
-  };
 
-  const handleContentCreate = (data: HandleContentCreateData) => {
+  const handleContentCreate = (payload: HandleContentCreateData) => {
+    const { data } = payload;
+
     switch (selectedCategory?.label) {
       case "Contact":
         setContactInfo(data as ContactInfo);
@@ -180,10 +194,15 @@ const QRInterface = () => {
         setPdfData(data as PdfData);
         break;
       case "Image":
-        setImageData(data as ImageData);
+        setImageData({ imageContent: (data as ImageData).imageContent ?? "" });
         break;
       default:
-        setContent(data as ContentData);
+        setContent({
+          url: (data as ContentData).url ?? "",
+          description: (data as ContentData).description ?? "",
+          imageUrl: (data as ContentData).imageUrl ?? "",
+          showIcon: (data as ContentData).showIcon ?? false,
+        });
     }
   };
 
@@ -215,7 +234,6 @@ const QRInterface = () => {
           onStyleChange={setQrStyle}
         />
 
-        <Frames onsetFrame={frameHandler} />
 
         {(selectedCategory?.label === "Contact"
           ? contactInfo.firstName
@@ -224,7 +242,10 @@ const QRInterface = () => {
         )}
 
         {showModal && (
-          <ConfirmationModal onDiscard={handleDiscard} onCancel={handleCancel} />
+          <ConfirmationModal
+            onDiscard={handleDiscard}
+            onCancel={handleCancel}
+          />
         )}
       </div>
     </section>

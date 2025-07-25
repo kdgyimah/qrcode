@@ -8,6 +8,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import { HandleContentCreateData } from '@/types/qr-generator';
 
 const theme = createTheme({
   typography: {
@@ -15,9 +16,8 @@ const theme = createTheme({
   },
 });
 
-// Define the type for the props
 interface SMSFormProps {
-  linkContent: (data: { phoneNumber: string; smsMessage: string }) => void;
+  linkContent: (data: HandleContentCreateData) => void;
 }
 
 const SMSForm = ({ linkContent }: SMSFormProps) => {
@@ -26,18 +26,24 @@ const SMSForm = ({ linkContent }: SMSFormProps) => {
     smsMessage: '',
   });
 
-  // Phone number change handler
   const handlePhoneChange = (value: string | undefined) => {
     const phone = value ?? '';
-    setSMSData((prevData) => ({ ...prevData, phoneNumber: phone }));
-    linkContent({ ...smsData, phoneNumber: phone });
+    const updatedData = {
+      phoneNumber: phone,
+      smsMessage: smsData.smsMessage,
+    };
+    setSMSData(updatedData);
+    linkContent({ type: 'sms', data: updatedData });
   };
 
-  // Text field change handler
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setSMSData((prevData) => ({ ...prevData, smsMessage: value }));
-    linkContent({ ...smsData, smsMessage: value });
+    const updatedData = {
+      phoneNumber: smsData.phoneNumber,
+      smsMessage: value,
+    };
+    setSMSData(updatedData);
+    linkContent({ type: 'sms', data: updatedData });
   };
 
   return (

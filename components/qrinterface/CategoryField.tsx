@@ -1,5 +1,7 @@
 'use client';
 
+import { FC } from "react";
+
 import LinkForm from '../forms/LinkForm';
 import CallForm from '../forms/CallForm';
 import ContactForm from '../forms/ContactForm';
@@ -9,40 +11,43 @@ import WhatsAppForm from '../forms/WhatsAppForm';
 import PDFForm from '../forms/PDFForm';
 import ImageForm from '../forms/ImageForm';
 
+import { HandleContentCreateData } from "@/types/qr-generator";
+
+// This is the common interface every form uses
+interface FormProps {
+  linkContent: (data: HandleContentCreateData) => void;
+}
+
 interface Category {
   label: string;
 }
 
-
-import type { HandleContentCreateData } from '@/types/qr-generator'; // Adjust the path as needed
-
 interface CategoryFieldProps {
   selectedCategory?: Category;
-  onContentCreate: (content: HandleContentCreateData) => void;
+  onContentCreate: (data: HandleContentCreateData) => void;
 }
+
+const formMap: Record<string, FC<FormProps>> = {
+  link: LinkForm,
+  call: CallForm,
+  contact: ContactForm,
+  email: EmailForm,
+  pdf: PDFForm,
+  sms: SMSForm,
+  whatsapp: WhatsAppForm,
+
+  image: ImageForm,
+  
+  
+};
 
 export default function CategoryField({
   selectedCategory,
   onContentCreate,
+
 }: CategoryFieldProps) {
   const key = selectedCategory?.label?.toLowerCase();
-
-  const formMap: Record<string, React.ComponentType<{ linkContent: (data: any) => void }>> = {
-    link: LinkForm,
-    call: CallForm,
-    contact: ContactForm,
-    mail: EmailForm,
-    sms: SMSForm,
-    whatsapp: WhatsAppForm,
-    pdf: PDFForm,
-    image: ImageForm,
-  };
-
   const FormComponent = key ? formMap[key] : undefined;
-
-  console.log('🔍 Selected Category:', selectedCategory?.label);
-  console.log('🔍 Lookup Key:', key);
-  console.log('🔍 FormComponent:', FormComponent);
 
   return (
     <div className="bg-white shadow-lg p-3 rounded-lg">

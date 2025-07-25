@@ -1,11 +1,37 @@
-import { useState, ChangeEvent } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import EmailImage from '../../images/email.png'; // Adjust path as needed
+"use client";
 
+import { useState, ChangeEvent } from "react";
+import {
+  Box,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  createTheme,
+  ThemeProvider,
+} from "@mui/material";
+import EmailImage from "../../images/email.png";
+import { HandleContentCreateData } from "@/types/qr-generator";
+
+// --------------------
+// Define form data type
+// --------------------
+interface EmailFormData {
+  receiverEmail: string;
+  subject: string;
+  message: string;
+  showIcon: boolean;
+}
+
+// --------------------
+// Component props
+// --------------------
+interface EmailFormProps {
+  linkContent: (data: HandleContentCreateData) => void;
+}
+
+// --------------------
+// MUI custom theme
+// --------------------
 const theme = createTheme({
   typography: {
     fontFamily: '"Sen", sans-serif',
@@ -14,13 +40,13 @@ const theme = createTheme({
     MuiFilledInput: {
       styleOverrides: {
         root: {
-          borderColor: 'black',
-          '&:hover': {
-            borderColor: 'black',
+          borderColor: "black",
+          "&:hover": {
+            borderColor: "black",
           },
-          '&.Mui-focused': {
-            borderColor: 'black',
-            backgroundColor: '#e8e8e8',
+          "&.Mui-focused": {
+            borderColor: "black",
+            backgroundColor: "#e8e8e8",
           },
         },
       },
@@ -28,103 +54,99 @@ const theme = createTheme({
   },
 });
 
-interface EmailFormData {
-  receiverEmail: string;
-  subject: string;
-  message: string;
-  showIcon?: boolean;
-}
-
-interface EmailFormProps {
-  linkContent: (data: EmailFormData) => void;
-}
-
+// --------------------
+// EmailForm component
+// --------------------
 const EmailForm: React.FC<EmailFormProps> = ({ linkContent }) => {
-  const [formInfo, setFormInfo] = useState<EmailFormData>({
-    receiverEmail: '',
-    subject: '',
-    message: '',
+  const [formData, setFormData] = useState<EmailFormData>({
+    receiverEmail: "",
+    subject: "",
+    message: "",
+    showIcon: false,
   });
 
-  const [showEmailIcon, setShowEmailIcon] = useState<boolean>(false);
+  const updateForm = (updatedFields: Partial<EmailFormData>) => {
+    const updatedData = { ...formData, ...updatedFields };
+    setFormData(updatedData);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    linkContent({
+      type: "mail",
+      data: updatedData,
+    });
+  };
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    const updatedFormInfo: EmailFormData = {
-      ...formInfo,
-      [name]: value,
-      showIcon: showEmailIcon,
-    };
-    setFormInfo(updatedFormInfo);
-    linkContent(updatedFormInfo);
+    updateForm({ [name]: value } as Partial<EmailFormData>);
   };
 
   const handleIconToggle = () => {
-    const newShowIcon = !showEmailIcon;
-    setShowEmailIcon(newShowIcon);
-    const updatedFormInfo: EmailFormData = {
-      ...formInfo,
-      showIcon: newShowIcon,
-    };
-    setFormInfo(updatedFormInfo);
-    linkContent(updatedFormInfo);
+    updateForm({ showIcon: !formData.showIcon });
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Box component="form" noValidate autoComplete="off">
-        <Box display="flex" alignItems="center" mb={1}>
+        {/* Icon Toggle */}
+        <Box display="flex" alignItems="center" mb={2}>
           <FormControlLabel
-            control={<Checkbox checked={showEmailIcon} onChange={handleIconToggle} />}
+            control={
+              <Checkbox
+                checked={formData.showIcon}
+                onChange={handleIconToggle}
+              />
+            }
             label="Add Icon"
           />
-          {showEmailIcon && (
-           <Box component="img" src={EmailImage.src} alt="Icon" width={30} height={30} ml={1} />
-
+          {formData.showIcon && (
+            <Box
+              component="img"
+              src={EmailImage.src}
+              alt="Email Icon"
+              sx={{ width: 30, height: 30, ml: 1 }}
+            />
           )}
         </Box>
 
+        {/* Receiver Email */}
         <TextField
-          id="receiver-email"
           label="Receiver Email"
           variant="filled"
-          color="primary"
           type="email"
           name="receiverEmail"
-          placeholder="example@domain.com"
-          value={formInfo.receiverEmail}
+          value={formData.receiverEmail}
           onChange={handleChange}
-          required
+          placeholder="example@domain.com"
           fullWidth
+          required
           margin="normal"
         />
 
+        {/* Subject */}
         <TextField
-          id="subject"
           label="Subject"
           variant="filled"
-          color="primary"
-          type="text"
           name="subject"
-          value={formInfo.subject}
+          value={formData.subject}
           onChange={handleChange}
-          required
           fullWidth
+          required
           margin="normal"
         />
 
+        {/* Message */}
         <TextField
-          id="message"
           label="Message"
           variant="filled"
-          color="primary"
+          name="message"
+          value={formData.message}
+          onChange={handleChange}
           multiline
           rows={4}
-          name="message"
-          value={formInfo.message}
-          onChange={handleChange}
-          required
           fullWidth
+          required
           margin="normal"
         />
       </Box>

@@ -1,5 +1,5 @@
-// QR code type: either static or dynamic
-export type QrType = "static" | "dynamic";
+// // QR code type: either static or dynamic
+// export type QrType = "static" | "dynamic";
 
 // Available QR code categories
 export type QrCategory =
@@ -86,9 +86,42 @@ export interface ChartData {
   value: number;
 }
 
-// Define the HandleContentCreateData type here or adjust as needed
-export type HandleContentCreateData = {
-  // Example fields, adjust according to your actual usage
-  type: string;
-  value: string;
+export type QrType = 
+  | 'link'
+  | 'call'
+  | 'contact'
+  | 'mail'
+  | 'sms'
+  | 'whatsapp'
+  | 'pdf'
+  | 'image'
+  | 'video'
+  | 'app'
+
+
+export interface HandleContentCreateData {
+  type: QrType;
+  data: Record<string, any>;
 };
+
+export interface FormProps<T> {
+  onContentCreate: (data: T) => void;
+}
+
+// Form data structure
+export interface EmailFormData {
+  receiverEmail: string;
+  subject: string;
+  message: string;
+  showIcon?: boolean;
+}
+ 
+export interface WhatsAppData {
+  waPhoneNumber: string | undefined;
+  waMessage: string;
+  showIcon: boolean;
+}
+
+export interface PDFFormProps {
+  linkContent: (info: { pdfContent: string; uploadType?: string }) => void;
+}

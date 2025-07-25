@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
@@ -7,6 +7,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+
+import { HandleContentCreateData } from "@/types/qr-generator";
 import IconImage from '../../images/freecall-logo.webp';
 
 const theme = createTheme({
@@ -15,33 +17,35 @@ const theme = createTheme({
   },
 });
 
-interface LinkContentProps {
-  phoneNumber: string;
-  showIcon: boolean;
-}
-
 interface CallFormProps {
-  linkContent: (data: LinkContentProps) => void;
+  linkContent: (data: HandleContentCreateData) => void;
 }
 
 const CallForm: React.FC<CallFormProps> = ({ linkContent }) => {
-  const [selectedCode] = useState<string>(''); // currently unused
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
   const [showIcon, setShowIcon] = useState<boolean>(false);
 
+  // 🧠 Update the parent with structured QR content
+  useEffect(() => {
+    if (!phoneNumber) return;
+
+    const payload: HandleContentCreateData = {
+      type: 'call',
+      data: {
+        phoneNumber,
+        showIcon,
+      },
+    };
+
+    linkContent(payload);
+  }, [phoneNumber, showIcon, linkContent]);
+
   const handlePhoneChange = (value: string | undefined) => {
     setPhoneNumber(value);
-    if (linkContent && value) {
-      linkContent({ phoneNumber: `${selectedCode}${value}`, showIcon });
-    }
   };
 
   const handleIconToggle = () => {
-    const newShowIcon = !showIcon;
-    setShowIcon(newShowIcon);
-    if (linkContent && phoneNumber) {
-      linkContent({ phoneNumber: `${selectedCode}${phoneNumber}`, showIcon: newShowIcon });
-    }
+    setShowIcon((prev) => !prev);
   };
 
   return (
@@ -53,8 +57,14 @@ const CallForm: React.FC<CallFormProps> = ({ linkContent }) => {
             label="Add Call Image"
           />
           {showIcon && (
-            <Box component="img" src={IconImage.src} alt="WhatsApp Icon" width={30} height={30} ml={1} />
-
+            <Box
+              component="img"
+              src={IconImage.src}
+              alt="Call Icon"
+              width={30}
+              height={30}
+              ml={1}
+            />
           )}
         </Box>
 

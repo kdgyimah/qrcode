@@ -1,16 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { supabase } from '@/lib/superbase';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Button from '@mui/material/Button';
-import '../QRInterface/QR-Interface.css';
+import { HandleContentCreateData } from '@/types/qr-generator';
+import {
+  Box,
+  TextField,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Button,
+  createTheme,
+  ThemeProvider,
+} from '@mui/material';
 
+// Theme
 const theme = createTheme({
   typography: {
     fontFamily: '"Sen", sans-serif',
@@ -31,106 +35,140 @@ const theme = createTheme({
   },
 });
 
-interface PDFFormProps {
-  linkContent: (info: { pdfContent: string; uploadType?: string }) => void;
+// Use unified interface
+interface FormProps {
+  linkContent: (data: HandleContentCreateData) => void;
 }
 
-const PDFForm = ({ linkContent }: PDFFormProps) => {
-  const [formInfo, setFormInfo] = useState({ pdfContent: '' });
-  const [uploadType, setUploadType] = useState('file');
+// Component
+const PDFForm: React.FC<FormProps> = ({ linkContent }) => {
+  const [pdfContent, setPdfContent] = useState('');
+  const [uploadType, setUploadType] = useState<'file' | 'url'>('file');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormInfo({ ...formInfo, [name]: value });
+  const updatePdfContent = (content: string, type = uploadType) => {
+    setPdfContent(content);
+    linkContent({
+      type: 'pdf',
+      data: {
+        pdfContent: content,
+        uploadType: type,
+      },
+    });
   };
 
-  const handleUploadTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUploadType(e.target.value);
-    setFormInfo({ pdfContent: '' });
+  const handleUploadTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const selectedType = e.target.value as 'file' | 'url';
+    setUploadType(selectedType);
+    setPdfContent('');
     setErrorMessage('');
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+    updatePdfContent(e.target.value);
+  };
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Get current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      setErrorMessage("You must be logged in to upload files.");
+      setErrorMessage('You must be logged in to upload files.');
       return;
     }
 
     const filePath = `pdfs/${Date.now()}-${file.name}`;
-
-    const { error } = await supabase.storage
-      .from('pdf-uploads') // ← your bucket name
+    const { error: uploadError } = await supabase.storage
+      .from('pdf-uploads')
       .upload(filePath, file);
 
-    if (error) {
-      console.error(error);
-      setErrorMessage("Error uploading file: " + error.message);
+    if (uploadError) {
+      console.error(uploadError);
+      setErrorMessage('Error uploading file: ' + uploadError.message);
       return;
     }
 
-    const { data: urlData } = supabase
-      .storage
+    const { data: urlData } = supabase.storage
       .from('pdf-uploads')
       .getPublicUrl(filePath);
 
-    const publicUrl = urlData.publicUrl;
-
-    setFormInfo({ pdfContent: publicUrl });
-    linkContent({ pdfContent: publicUrl, uploadType });
+    updatePdfContent(urlData.publicUrl, 'file');
+    setErrorMessage('');
   };
 
   const handleGenerateQR = () => {
-    linkContent({ ...formInfo, uploadType });
+    if (!pdfContent.trim()) {
+      setErrorMessage('Please provide a valid PDF file or URL.');
+      return;
+    }
+    updatePdfContent(pdfContent, uploadType);
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Box className='pdf-form' component="form" noValidate autoComplete="off">
+      <Box component="form" noValidate autoComplete="off">
+        {/* Error */}
         {errorMessage && (
-          <div className="tw-bg-red-500 tw-text-white tw-p-3 tw-rounded tw-mb-4">
+          <Box
+            sx={{
+              backgroundColor: '#f44336',
+              color: '#fff',
+              padding: 2,
+              borderRadius: 1,
+              marginBottom: 2,
+            }}
+          >
             {errorMessage}
-          </div>
+          </Box>
         )}
 
+        {/* Upload Type */}
         <RadioGroup value={uploadType} onChange={handleUploadTypeChange} row>
-          <FormControlLabel value="file" control={<Radio />} label="Upload PDF File" />
-          <FormControlLabel value="url" control={<Radio />} label="Enter PDF URL" />
+          <FormControlLabel
+            value="file"
+            control={<Radio />}
+            label="Upload PDF File"
+          />
+          <FormControlLabel
+            value="url"
+            control={<Radio />}
+            label="Enter PDF URL"
+          />
         </RadioGroup>
 
+        {/* Input Field */}
         {uploadType === 'file' ? (
           <input
             type="file"
-            name="pdfContent"
-            onChange={handleFileChange}
             accept="application/pdf"
+            onChange={handleFileChange}
+            style={{ marginTop: '16px' }}
           />
         ) : (
           <TextField
-            id="pdf-url-field"
             label="PDF URL"
             variant="filled"
-            color="primary"
-            type="text"
-            name="pdfContent"
+            type="url"
             placeholder="https://example.com/document.pdf"
-            value={formInfo.pdfContent}
-            onChange={handleChange}
+            value={pdfContent}
+            onChange={handleUrlChange}
             required
+            fullWidth
+            margin="normal"
           />
         )}
 
+        {/* Submit Button */}
         <Button
           variant="contained"
           color="primary"
           onClick={handleGenerateQR}
-          style={{ marginTop: '10px' }}
+          sx={{ mt: 2 }}
         >
           Generate QR Code
         </Button>

@@ -6,4 +6,7 @@ export interface UserMetadata {
 
 export interface User {
   user_metadata?: UserMetadata;
+  id: string;
+  email?: string;
+  // Add any other relevant fields returned by Supabase
 }
