@@ -87,6 +87,7 @@ export interface ChartData {
 }
 
 export type QrType = 
+
   | 'link'
   | 'call'
   | 'contact'
@@ -125,3 +126,12 @@ export interface WhatsAppData {
 export interface PDFFormProps {
   linkContent: (info: { pdfContent: string; uploadType?: string }) => void;
 }
+
+export interface LayoutProps {
+  children?: React.ReactNode;
+  // params in LayoutProps should also be a plain object
+  params: {
+    id: string; // Assuming your dynamic segment is 'id'
+  };
+}
+

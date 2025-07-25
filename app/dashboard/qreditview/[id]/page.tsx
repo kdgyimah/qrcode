@@ -40,8 +40,9 @@ async function fetchQrById(id: string) {
   return allQrData.find(q => q.id === id) || null;
 }
 
-export default async function QreditViewPage({ params }: { params: { id: string } }) {
-  const qr = await fetchQrById(params.id);
+export default async function QreditViewPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const qr = await fetchQrById(id);
   if (!qr) return <div className="p-8 text-red-500">QR Code not found.</div>;
 
   // Header as in the DetailView
@@ -82,6 +83,8 @@ export default async function QreditViewPage({ params }: { params: { id: string 
             <Image
               src={qr.qrImage}
               alt="QR Code"
+              width={192}
+              height={192}
               className="w-48 h-48 object-contain mb-6"
             />
             <button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-2 flex items-center justify-center gap-2 font-medium transition">
