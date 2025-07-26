@@ -6,7 +6,7 @@ const allQrData: QrData[] = [
   {
     id: "1",
     name: "Product Launch",
-    type: "link" as QrType,              // ✅ Must match your defined QrType union
+    type: "link" as QrType,
     folder: "Marketing",
     created: "2025-05-01",
     scans: 152,
@@ -18,14 +18,16 @@ const allQrData: QrData[] = [
     visits: 200,
     lastModified: "2025-05-21",
     qrImage: "/qr1-image.png",
-    category: "link" as QrCategory,     // ✅ Must match your defined QrCategory union      
+    category: "link" as QrCategory,
   },
   // Add more items as needed
 ];
 
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
-
-export default async function QrDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function QrDetailPage({ params }: PageProps) {
   const { id } = await params;
   const qr = allQrData.find(q => q.id === id);
   if (!qr) return <div className="p-8 text-red-500">QR Code not found.</div>;
