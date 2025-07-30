@@ -7,10 +7,10 @@ import { motion } from "framer-motion";
 export default function Hero() {
   return (
     <section
-      className="relative h-[95vh] w-full bg-cover bg-center overflow-hidden"
+      className="relative h-auto min-h-[95vh] w-full bg-cover bg-center overflow-hidden"
       style={{ backgroundImage: 'url("/images/heroig.jpg")' }}
     >
-      {/* Animated Right Hero Image */}
+      {/* Desktop Hero Image (absolute, right) */}
       <motion.div
         initial={{ opacity: 0, x: 100 }}
         animate={{ opacity: 1, x: 0 }}
@@ -27,8 +27,9 @@ export default function Hero() {
       </motion.div>
 
       {/* Text Content */}
-      <div className="relative z-10 h-full flex items-center ml-10 px-6 md:px-16">
-        <div className="max-w-2xl ">
+      <div className="relative z-10 flex flex-col items-start justify-start pt-16 md:justify-center min-h-[95vh] px-6 md:px-16">
+
+        <div className="max-w-2xl">
           <motion.h4
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -62,28 +63,51 @@ export default function Hero() {
           </motion.h5>
 
           {/* Buttons */}
-          <div className=" mt-10">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="space-x-4"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="space-x-4 mt-10"
+          >
+            <Link
+              href="/signup"
+              className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-blue-700 transition"
             >
-              <Link
-                href="/signup"
-                className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-blue-700 transition"
-              >
-                Get Started
-              </Link>
-              <Link
-                href="/featurepage"
-                className="border border-blue-600 font-semibold text-black px-6 py-3 rounded-md hover:bg-white transition"
-              >
-                Learn More
-              </Link>
-            </motion.div>
-          </div>
+              Get Started
+            </Link>
+            <Link
+              href="/featurepage"
+              className="border border-blue-600 font-semibold text-black px-6 py-3 rounded-md hover:bg-white transition"
+            >
+              Learn More
+            </Link>
+          </motion.div>
         </div>
+
+        {/* Mobile Hero Image (below text) */}
+  <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8 }}
+  className="block md:hidden mt-10 px-4 w-full flex justify-center overflow-x-visible"
+>
+  <div className="relative h-[500px] w-full max-w-[400px] drop-shadow-2xl scale-[2.2] origin-center -translate-x-20">
+    <Image
+      src="/images/rightheroimg.png"
+      alt="Mobile Hero QR Image"
+      fill
+      className="object-contain"
+      priority
+    />
+  </div>
+</motion.div>
+
+
+
+
+
+
+
       </div>
     </section>
   );
