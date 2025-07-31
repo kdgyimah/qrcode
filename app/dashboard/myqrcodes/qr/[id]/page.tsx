@@ -23,11 +23,7 @@ const allQrData: QrData[] = [
   // Add more items as needed
 ];
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default async function QrDetailPage({ params }: PageProps) {
+export default async function QrDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const qr = allQrData.find(q => q.id === id);
   if (!qr) return <div className="p-8 text-red-500">QR Code not found.</div>;

@@ -5,8 +5,13 @@
 const nextConfig = {
   reactStrictMode: true, // optional but recommended
   images: {
-    domains: [
-      "lh3.googleusercontent.com", // allow Google profile pics
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 

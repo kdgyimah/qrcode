@@ -108,6 +108,8 @@ export function QRPreview({ category, formData, style, onDownload }: QRPreviewPr
             <Image
               src={qrDataUrl}
               alt="QR Code Preview"
+              width={192}
+              height={192}
               className="max-w-full max-h-full object-contain"
             />
           ) : (
