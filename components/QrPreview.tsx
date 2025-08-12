@@ -123,23 +123,28 @@ export default function QrPreview({ category, formData, ready, design }: Props) 
   }, [design.logo]);
 
   useEffect(() => {
-    const generate = async () => {
-      const value = getQRValue(category, formData);
-      if (ready && value) {
-        const url = await QRCode.toDataURL(value, {
-          color: {
-            dark: design.color,
-            light: '#ffffff'
-          },
-          margin: 2
-        });
-        setQrSrc(url);
-      } else {
-        setQrSrc('');
-      }
-    };
+  const generate = async () => {
+    const value = getQRValue(category, formData);
+    if (ready && value) {
+      const url = await QRCode.toDataURL(value, {
+        color: {
+          dark: design.color,
+          light: '#ffffff'
+        },
+        margin: 2
+      });
+      setQrSrc(url);
+    } else {
+      setQrSrc('');
+    }
+  };
+
+  // Only generate if `ready` is true and `formData` is valid
+  if (ready && formData) {
     generate();
-  }, [formData, category, ready, design.color]);
+  }
+}, [formData, category, ready, design.color]);
+
 
   const isActive = ready && !!qrSrc;
 

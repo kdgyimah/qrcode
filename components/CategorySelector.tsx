@@ -39,7 +39,7 @@ export default function CategorySelector({
   const categoryList: CategoryOption[] = [
     { id: "link", name: "Link", icon: <Globe size={28} /> },
     { id: "call", name: "Call", icon: <Phone size={28} /> },
-    { id: "mail", name: "Email", icon: <Mail size={28} /> },
+    { id: "mail", name: "Mail", icon: <Mail size={28} /> },
     { id: "sms", name: "SMS", icon: <MessageSquareText size={28} /> },
     { id: "whatsapp", name: "WhatsApp", icon: <MessageCircle size={28} /> },
     { id: "wifi", name: "WiFi", icon: <Wifi size={28} /> },

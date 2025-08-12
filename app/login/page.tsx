@@ -52,7 +52,7 @@ export default function LoginPage() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-200 via-white to-blue-300 opacity-90 backdrop-blur-md" />
+      <div className="absolute inset-0 -z-20 bg-gradient-to-br from-blue-200 via-white to-blue-300 opacity-90" />
 
       <div className="mb-6">
         <Image

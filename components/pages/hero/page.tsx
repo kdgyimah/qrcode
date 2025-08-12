@@ -27,7 +27,7 @@ export default function Hero() {
       </motion.div>
 
       {/* Text Content */}
-      <div className="relative z-10 flex flex-col items-start justify-start pt-16 md:justify-center min-h-[95vh] px-6 md:px-16">
+      <div className="relative z-10 flex flex-col items-start justify-start pt-16 md:justify-center min-h-[95vh] px-8 md:px-16"> {/* Adjusted padding here */}
 
         <div className="max-w-2xl">
           <motion.h4
@@ -85,29 +85,22 @@ export default function Hero() {
         </div>
 
         {/* Mobile Hero Image (below text) */}
-  <motion.div
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.8 }}
-  className="block md:hidden mt-10 px-4 w-full flex justify-center overflow-x-visible"
->
-  <div className="relative h-[500px] w-full max-w-[400px] drop-shadow-2xl scale-[2.2] origin-center -translate-x-20">
-    <Image
-      src="/images/rightheroimg.png"
-      alt="Mobile Hero QR Image"
-      fill
-      className="object-contain"
-      priority
-    />
-  </div>
-</motion.div>
-
-
-
-
-
-
-
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="block md:hidden mt-10 px-4 w-full flex justify-center overflow-x-visible"
+        >
+          <div className="relative h-[500px] w-full max-w-[400px] drop-shadow-2xl scale-[2.2] origin-center -translate-x-20">
+            <Image
+              src="/images/rightheroimg.png"
+              alt="Mobile Hero QR Image"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+        </motion.div>
       </div>
     </section>
   );
