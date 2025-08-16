@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { QRCategory, QRFormData, QRCodeStyle } from "@/types/qr-generator";
+import { QRCategory, AnyQRFormData, QRCodeStyle } from "@/types/qr-generator";
 import { CategoryGrid } from "@/components/qr-generator/CategoryGrid";
 import { QRForm } from "@/components/qr-generator/QRForm";
 import { DownloadModal } from "@/components/qr-generator/DownloadModal";
@@ -15,7 +15,7 @@ export default function QRGeneratorPage({ onBack }: QRGeneratorPageProps) {
   >("categories");
 
   const [selectedCategory, setSelectedCategory] = useState<QRCategory | null>(null);
-  const [formData, setFormData] = useState<QRFormData>({});
+  const [formData, setFormData] = useState<AnyQRFormData>({});
   const [qrStyle, setQrStyle] = useState<QRCodeStyle>({
     shape: "square",
     backgroundColor: "#FFFFFF",
@@ -39,7 +39,7 @@ export default function QRGeneratorPage({ onBack }: QRGeneratorPageProps) {
     }
   };
 
-  const handleGenerateQR = (data: QRFormData, style: QRCodeStyle) => {
+  const handleGenerateQR = (data: AnyQRFormData, style: QRCodeStyle) => {
     setFormData(data);
     setQrStyle(style);
     setCurrentStep("download");

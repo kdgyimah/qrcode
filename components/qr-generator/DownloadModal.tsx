@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { QRFormData, QRCodeStyle } from '@/types/qr-generator';
+import { AnyQRFormData, QRCodeStyle } from '@/types/qr-generator';
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import { Card, CardContent } from '@/components/ui/card';
 interface DownloadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  data: QRFormData;
+  data: AnyQRFormData;
   style: QRCodeStyle;
   categoryName: string;
 }

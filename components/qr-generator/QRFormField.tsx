@@ -1,194 +1,406 @@
-// components/qr-generator/QRFormField.tsx
 'use client';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { QRCategory, QRFormData } from '@/types/qr-generator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { QRCategory, AnyQRFormData } from '@/types/qr-generator';
 
 interface QRFormFieldProps {
   category: QRCategory;
-  formData: QRFormData;
+  formData: AnyQRFormData;
   onInputChange: (field: string, value: string | boolean | File | null) => void;
 }
 
-export function QRFormField({ category, formData, onInputChange }: QRFormFieldProps) {
-  const renderFormFields = () => {
-    switch (category.id) {
-      case 'website':
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="url">Website URL</Label>
-              <Input
-                id="url"
-                type="url"
-                placeholder="https://example.com"
-                value={formData.url as string || ''}
-                onChange={(e) => onInputChange('url', e.target.value)}
-                required
-              />
-            </div>
-          </div>
-        );
-      
-      case 'call':
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="+1 (555) 123-4567"
-                value={formData.phone as string || ''}
-                onChange={(e) => onInputChange('phone', e.target.value)}
-                required
-              />
-            </div>
-          </div>
-        );
+// --- Helper components ---
+const TextInput = ({
+  id,
+  label,
+  value,
+  placeholder,
+  type = 'text',
+  required = false,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value?: string;
+  placeholder?: string;
+  type?: string;
+  required?: boolean;
+  onChange: (val: string) => void;
+}) => (
+  <div>
+    <Label htmlFor={id}>{label}</Label>
+    <Input
+      id={id}
+      type={type}
+      placeholder={placeholder}
+      value={value || ''}
+      required={required}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  </div>
+);
 
-      case 'mail':
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="contact@example.com"
-                value={formData.email as string || ''}
-                onChange={(e) => onInputChange('email', e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="subject">Subject</Label>
-              <Input
-                id="subject"
-                placeholder="Email subject"
-                value={formData.subject as string || ''}
-                onChange={(e) => onInputChange('subject', e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="body">Message</Label>
-              <Textarea
-                id="body"
-                placeholder="Email message"
-                value={formData.body as string || ''}
-                onChange={(e) => onInputChange('body', e.target.value)}
-                rows={4}
-              />
-            </div>
-          </div>
-        );
+const TextAreaInput = ({
+  id,
+  label,
+  value,
+  placeholder,
+  rows = 3,
+  required = false,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value?: string;
+  placeholder?: string;
+  rows?: number;
+  required?: boolean;
+  onChange: (val: string) => void;
+}) => (
+  <div>
+    <Label htmlFor={id}>{label}</Label>
+    <Textarea
+      id={id}
+      placeholder={placeholder}
+      value={value || ''}
+      rows={rows}
+      required={required}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  </div>
+);
 
-      case 'sms':
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="+1 (555) 123-4567"
-                value={formData.phone as string || ''}
-                onChange={(e) => onInputChange('phone', e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="message">Message</Label>
-              <Textarea
-                id="message"
-                placeholder="SMS message"
-                value={formData.message as string || ''}
-                onChange={(e) => onInputChange('message', e.target.value)}
-                rows={3}
-              />
-            </div>
-          </div>
-        );
+const SelectInput = ({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value?: string;
+  options: { label: string; value: string }[];
+  onChange: (val: string) => void;
+}) => (
+  <div>
+    <Label>{label}</Label>
+    <Select value={value || options[0]?.value} onValueChange={onChange}>
+      <SelectTrigger>
+        <SelectValue placeholder={`Select ${label}`} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((opt) => (
+          <SelectItem key={opt.value} value={opt.value}>
+            {opt.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  </div>
+);
 
-      case 'wifi':
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="ssid">WiFi Network Name (SSID)</Label>
-              <Input
-                id="ssid"
-                placeholder="My WiFi Network"
-                value={formData.ssid as string || ''}
-                onChange={(e) => onInputChange('ssid', e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="WiFi password"
-                value={formData.password as string || ''}
-                onChange={(e) => onInputChange('password', e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="security">Security Type</Label>
-              <Select 
-                value={formData.security as string || 'WPA'}
-                onValueChange={(value) => onInputChange('security', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select security type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="WPA">WPA/WPA2</SelectItem>
-                  <SelectItem value="WEP">WEP</SelectItem>
-                  <SelectItem value="nopass">No Password</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        );
+// --- Helper to safely get field value ---
+function getFieldValue(formData: AnyQRFormData, field: string): string {
+  return field in formData ? (formData as any)[field] : '';
+}
 
-      case 'text':
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="text">Text Content</Label>
-              <Textarea
-                id="text"
-                placeholder="Enter your text here"
-                value={formData.text as string || ''}
-                onChange={(e) => onInputChange('text', e.target.value)}
-                rows={4}
-                required
-              />
-            </div>
-          </div>
-        );
+export function QRFormField({
+  category,
+  formData,
+  onInputChange,
+}: QRFormFieldProps) {
+  const { id } = category;
 
-      default:
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="content">Content</Label>
-              <Input
-                id="content"
-                placeholder={`Enter ${category.name.toLowerCase()} details`}
-                value={formData.content as string || ''}
-                onChange={(e) => onInputChange('content', e.target.value)}
-                required
-              />
-            </div>
-          </div>
-        );
-    }
-  };
+  switch (id) {
+    case 'link':
+      return (
+        <TextInput
+          id="url"
+          label="Website URL"
+          placeholder="https://example.com"
+          value={getFieldValue(formData, 'url')}
+          required
+          onChange={(val) => onInputChange('url', val)}
+        />
+      );
 
-  return <div>{renderFormFields()}</div>;
+    case 'call':
+      return (
+        <TextInput
+          id="phone"
+          label="Phone Number"
+          placeholder="+1 (555) 123-4567"
+          value={getFieldValue(formData, 'phone')}
+          required
+          onChange={(val) => onInputChange('phone', val)}
+        />
+      );
+
+    case 'mail':
+      return (
+        <>
+          <TextInput
+            id="email"
+            label="Email Address"
+            placeholder="contact@example.com"
+            value={getFieldValue(formData, 'email')}
+            required
+            onChange={(val) => onInputChange('email', val)}
+          />
+          <TextInput
+            id="subject"
+            label="Subject"
+            placeholder="Email subject"
+            value={getFieldValue(formData, 'subject')}
+            onChange={(val) => onInputChange('subject', val)}
+          />
+          <TextAreaInput
+            id="body"
+            label="Message"
+            placeholder="Email message"
+            rows={4}
+            value={getFieldValue(formData, 'message') || getFieldValue(formData, 'body')}
+            onChange={(val) => onInputChange('message', val)}
+          />
+        </>
+      );
+
+    case 'sms':
+      return (
+        <>
+          <TextInput
+            id="phone"
+            label="Phone Number"
+            placeholder="+1 (555) 123-4567"
+            value={getFieldValue(formData, 'phone')}
+            required
+            onChange={(val) => onInputChange('phone', val)}
+          />
+          <TextAreaInput
+            id="message"
+            label="Message"
+            placeholder="SMS message"
+            rows={3}
+            value={getFieldValue(formData, 'message')}
+            onChange={(val) => onInputChange('message', val)}
+          />
+        </>
+      );
+
+    case 'whatsapp':
+      return (
+        <>
+          <TextInput
+            id="waPhone"
+            label="WhatsApp Phone Number"
+            placeholder="+1 (555) 123-4567"
+            value={getFieldValue(formData, 'waPhone')}
+            required
+            onChange={(val) => onInputChange('waPhone', val)}
+          />
+          <TextAreaInput
+            id="waBody"
+            label="Message"
+            placeholder="WhatsApp message"
+            value={getFieldValue(formData, 'waBody')}
+            onChange={(val) => onInputChange('waBody', val)}
+          />
+        </>
+      );
+
+    case 'wifi':
+      return (
+        <>
+          <TextInput
+            id="ssid"
+            label="WiFi Network Name (SSID)"
+            placeholder="My WiFi Network"
+            value={getFieldValue(formData, 'ssid')}
+            required
+            onChange={(val) => onInputChange('ssid', val)}
+          />
+          <TextInput
+            id="password"
+            type="password"
+            label="Password"
+            placeholder="WiFi password"
+            value={getFieldValue(formData, 'password')}
+            onChange={(val) => onInputChange('password', val)}
+          />
+          <SelectInput
+            label="Security Type"
+            value={getFieldValue(formData, 'encryption') || 'WPA'}
+            options={[
+              { label: 'WPA/WPA2', value: 'WPA' },
+              { label: 'WEP', value: 'WEP' },
+              { label: 'No Password', value: 'None' },
+            ]}
+            onChange={(val) => onInputChange('encryption', val)}
+          />
+        </>
+      );
+
+    case 'image':
+      return (
+        <TextInput
+          id="imageUrl"
+          label="Image URL"
+          placeholder="https://example.com/image.jpg"
+          value={getFieldValue(formData, 'imageUrl')}
+          onChange={(val) => onInputChange('imageUrl', val)}
+        />
+      );
+
+    case 'video':
+      return (
+        <TextInput
+          id="videoUrl"
+          label="Video URL"
+          placeholder="https://example.com/video.mp4"
+          value={getFieldValue(formData, 'videoUrl')}
+          onChange={(val) => onInputChange('videoUrl', val)}
+        />
+      );
+
+    case 'bulkqr':
+      return (
+        <TextAreaInput
+          id="bulkList"
+          label="Bulk QR List"
+          placeholder="Enter one entry per line"
+          rows={6}
+          value={getFieldValue(formData, 'bulkList')}
+          onChange={(val) => onInputChange('bulkList', val)}
+        />
+      );
+
+    case 'app':
+      return (
+        <TextInput
+          id="appUrl"
+          label="App URL"
+          placeholder="https://example.com/app"
+          value={getFieldValue(formData, 'appUrl')}
+          onChange={(val) => onInputChange('appUrl', val)}
+        />
+      );
+
+    case 'social':
+      return (
+        <TextInput
+          id="socialUrl"
+          label="Social Media URL"
+          placeholder="https://twitter.com/username"
+          value={getFieldValue(formData, 'socialUrl')}
+          onChange={(val) => onInputChange('socialUrl', val)}
+        />
+      );
+
+    case 'event':
+      return (
+        <>
+          <TextInput
+            id="eventTitle"
+            label="Event Title"
+            value={getFieldValue(formData, 'eventTitle')}
+            onChange={(val) => onInputChange('eventTitle', val)}
+          />
+          <TextInput
+            id="eventStart"
+            label="Start Date/Time"
+            value={getFieldValue(formData, 'eventStart')}
+            onChange={(val) => onInputChange('eventStart', val)}
+          />
+          <TextInput
+            id="eventEnd"
+            label="End Date/Time"
+            value={getFieldValue(formData, 'eventEnd')}
+            onChange={(val) => onInputChange('eventEnd', val)}
+          />
+          <TextInput
+            id="eventLocation"
+            label="Location"
+            value={getFieldValue(formData, 'eventLocation')}
+            onChange={(val) => onInputChange('eventLocation', val)}
+          />
+          <TextAreaInput
+            id="eventDesc"
+            label="Description"
+            value={getFieldValue(formData, 'eventDesc')}
+            onChange={(val) => onInputChange('eventDesc', val)}
+          />
+        </>
+      );
+
+    case 'barcode2d':
+      return (
+        <TextInput
+          id="barcodeValue"
+          label="Barcode Value"
+          value={getFieldValue(formData, 'barcodeValue')}
+          onChange={(val) => onInputChange('barcodeValue', val)}
+        />
+      );
+
+    case 'contact':
+      return (
+        <>
+          <TextInput
+            id="firstName"
+            label="First Name"
+            value={getFieldValue(formData, 'firstName')}
+            onChange={(val) => onInputChange('firstName', val)}
+          />
+          <TextInput
+            id="lastName"
+            label="Last Name"
+            value={getFieldValue(formData, 'lastName')}
+            onChange={(val) => onInputChange('lastName', val)}
+          />
+          <TextInput
+            id="phone"
+            label="Phone"
+            value={getFieldValue(formData, 'phone')}
+            onChange={(val) => onInputChange('phone', val)}
+          />
+          <TextInput
+            id="email"
+            label="Email"
+            value={getFieldValue(formData, 'email')}
+            onChange={(val) => onInputChange('email', val)}
+          />
+        </>
+      );
+
+    case 'pdf':
+      return (
+        <TextInput
+          id="pdfUrl"
+          label="PDF URL"
+          placeholder="https://example.com/file.pdf"
+          value={getFieldValue(formData, 'pdfUrl')}
+          onChange={(val) => onInputChange('pdfUrl', val)}
+        />
+      );
+
+    default:
+      return (
+        <TextInput
+          id="content"
+          label="Content"
+          placeholder={`Enter ${category.name.toLowerCase()} details`}
+          value={getFieldValue(formData, 'content')}
+          required
+          onChange={(val) => onInputChange('content', val)}
+        />
+      );
+  }
 }

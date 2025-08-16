@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, ChangeEvent } from "react";
-import { uploadImageAndGetURL } from "../../lib/uploadImage";
+import { uploadImageAndGetURL } from "@/lib/uploadImage";
 import { supabase } from "@/lib/superbase";
 import {
   Box,
@@ -13,11 +13,12 @@ import {
   createTheme,
   ThemeProvider,
 } from "@mui/material";
-import { HandleContentCreateData } from "@/types/qr-generator";
+import type { FormProps } from "@/types/qr-generator";
+import type { ImageFormData } from "@/types/qr-generator";
 
-// ------------------
+// --------------------------------------------------
 // Theme
-// ------------------
+// --------------------------------------------------
 const theme = createTheme({
   typography: {
     fontFamily: '"Sen", sans-serif',
@@ -40,39 +41,40 @@ const theme = createTheme({
   },
 });
 
-
-// Types
-interface ImageFormProps {
-  linkContent: (info: HandleContentCreateData) => void;
-}
-
-
-// Component001
-const ImageForm: React.FC<ImageFormProps> = ({ linkContent }) => {
-  const [imageContent, setImageContent] = useState<string>("");
-  const [uploadType, setUploadType] = useState<"file" | "url">("file");
-  const [errorMessage, setErrorMessage] = useState<string>("");
+// --------------------------------------------------
+// Component
+// --------------------------------------------------
+export const ImageForm: React.FC<FormProps<ImageFormData>> = ({
+  formData,
+  errors,
+  onChange,
+  onContentCreate,
+}) => {
+  const [uploadType, setUploadType] = useState<"file" | "url">(
+    formData.uploadType || "file"
+  );
+  const [errorMessage, setErrorMessage] = useState("");
 
   const updateImageContent = (content: string, type = uploadType) => {
-    setImageContent(content);
-    linkContent({
-      type: "image",
-      data: {
-        imageContent: content,
-        uploadType: type,
-      },
+    onContentCreate({
+      ...formData,
+      imageUrl: content,
+      uploadType: type,
     });
   };
 
   const handleUploadTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedType = e.target.value as "file" | "url";
     setUploadType(selectedType);
-    setImageContent("");
+    onChange("uploadType", selectedType);
+    updateImageContent("");
     setErrorMessage("");
   };
 
   const handleUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
-    updateImageContent(e.target.value);
+    const value = e.target.value;
+    onChange("imageUrl", value);
+    updateImageContent(value);
   };
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +94,10 @@ const ImageForm: React.FC<ImageFormProps> = ({ linkContent }) => {
 
     try {
       const downloadURL = await uploadImageAndGetURL(file);
+
+      onChange("file", file);
       updateImageContent(downloadURL, "file");
+
       setErrorMessage("");
     } catch (err) {
       const message =
@@ -103,11 +108,11 @@ const ImageForm: React.FC<ImageFormProps> = ({ linkContent }) => {
   };
 
   const handleGenerateQR = () => {
-    if (!imageContent.trim()) {
+    if (!formData.imageUrl?.trim()) {
       setErrorMessage("Please provide an image URL or upload a file.");
       return;
     }
-    updateImageContent(imageContent, uploadType);
+    updateImageContent(formData.imageUrl, uploadType);
   };
 
   return (
@@ -155,12 +160,15 @@ const ImageForm: React.FC<ImageFormProps> = ({ linkContent }) => {
             label="Image URL"
             variant="filled"
             type="url"
-            value={imageContent}
+            name="imageUrl"
+            value={formData.imageUrl || ""}
             onChange={handleUrlChange}
             placeholder="https://example.com/image.jpg"
             fullWidth
             required
             margin="normal"
+            error={!!errors.imageUrl}
+            helperText={errors.imageUrl}
           />
         )}
 
@@ -177,5 +185,3 @@ const ImageForm: React.FC<ImageFormProps> = ({ linkContent }) => {
     </ThemeProvider>
   );
 };
-
-export default ImageForm;

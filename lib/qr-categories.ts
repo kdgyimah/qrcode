@@ -2,7 +2,7 @@ import { QRCategory } from '@/types/qr-generator';
 
 export const QR_CATEGORIES: QRCategory[] = [
   {
-    id: 'website',
+    id: 'link',
     name: 'Website',
     icon: 'Globe',
     description: 'Link to any website',
@@ -72,14 +72,14 @@ export const QR_CATEGORIES: QRCategory[] = [
     color: 'bg-gray-500'
   },
   {
-    id: 'vcard',
+    id: 'contact',
     name: 'VCard',
     icon: 'CreditCard',
     description: 'Save contact with one tap',
     color: 'bg-teal-500'
   },
   {
-    id: 'social-media',
+    id: 'social',
     name: 'Social Media',
     icon: 'Share2',
     description: 'Link to my website',
@@ -93,21 +93,21 @@ export const QR_CATEGORIES: QRCategory[] = [
     color: 'bg-cyan-500'
   },
   {
-    id: 'event-info',
+    id: 'event',
     name: 'Event Info',
     icon: 'Calendar',
     description: 'Link to my website',
     color: 'bg-violet-500'
   },
   {
-    id: 'location',
+    id: 'barcode2d',
     name: 'Location',
     icon: 'MapPin',
     description: 'Link to any location',
     color: 'bg-emerald-500'
   },
   {
-    id: 'text',
+    id: 'call',
     name: 'Text',
     icon: 'Type',
     description: 'Display plain text',

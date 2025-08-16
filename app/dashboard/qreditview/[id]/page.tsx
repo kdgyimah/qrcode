@@ -2,7 +2,7 @@ import QrEditView from "@/app/dashboard/components/QrEditView";
 import { ArrowDownToLine, Edit2, Share2, Trash2 } from "lucide-react";
 import Image from "next/image";
 
-import type { QrData, QrCategory, QrType } from "@/types/qr-generator";
+import type { QrData, QRCategory, QrType } from "@/types/qr-generator";
 
 const mockQr: QrData = {
   id: "123",
@@ -13,7 +13,7 @@ const mockQr: QrData = {
   lastModified: "2025-01-02T12:00:00.000Z",
   qrImage: "/qr.png",
   type: "Dynamic" as QrType,
-  category: "link" as QrCategory,
+  category: "link",
   scans: 42,
   lastScan: "2025-01-02T10:00:00.000Z",
   status: "Active",
@@ -22,7 +22,6 @@ const mockQr: QrData = {
   visits: 100,
   // Optional fields:
   qrCodeUrl: "/cdn/qrs/123.png",
-  data: { link: "https://example.com" },
   style: {
     shape: "rounded",
     backgroundColor: "#ffffff",

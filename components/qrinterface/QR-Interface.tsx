@@ -5,204 +5,94 @@ import CategoryField from "./CategoryField";
 import "./QR-Interface.css";
 import QROutputInterface from "./QROutputInterface";
 import ScrollCategoryOption from "./ScrollCategoryOption";
-import FormModal from "../qrinterface/ConfirmationModal";
 import ConfirmationModal from "./ConfirmationModal";
-import type { Gradient } from "qr-code-styling";
-import { HandleContentCreateData } from "@/types/qr-generator";
 
-interface CategoryItem {
-  label: string;
-  value: string;
-  icon?: React.ReactElement;
-  color?: string;
-}
-
-interface ContentData {
-  url: string;
-  description: string;
-  imageUrl: string;
-  showIcon: boolean;
-}
-
-interface PdfData {
-  pdfContent: string;
-}
-
-interface ImageData {
-  imageContent: string;
-}
-
-interface ContactInfo {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string;
-  address: string;
-  company: string;
-  jobTitle: string;
-}
-
-interface SmsData {
-  phone: string;
-  message: string;
-}
-
-interface WhatsappData {
-  waPhoneNumber: string;
-  waMessage: string;
-}
-
-interface QrStyle {
-  dotsOptions: {
-    type:
-      | "dots"
-      | "square"
-      | "rounded"
-      | "classy"
-      | "classy-rounded"
-      | "extra-rounded"
-      | "dot";
-    color: string;
-    gradient?: Gradient;
-  };
-  cornersSquareOptions: {
-    type:
-      | "dots"
-      | "square"
-      | "rounded"
-      | "classy"
-      | "classy-rounded"
-      | "extra-rounded"
-      | "dot";
-    color: string;
-    gradient?: Gradient;
-  };
-  cornersDotOptions: {
-    type:
-      | "dots"
-      | "square"
-      | "rounded"
-      | "classy"
-      | "classy-rounded"
-      | "extra-rounded"
-      | "dot";
-    color: string;
-    gradient?: Gradient;
-  };
-}
+import {
+  QRCategory,
+  AnyQRFormData,
+  QRCodeStyle,
+} from "@/types/qr-generator";
+import { generateQRContent } from "@/utils/qr-generator";
+import QRCodeStyling from "qr-code-styling";
 
 const QRInterface = () => {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(
-    null
-  );
-  const [tempCategory, setTempCategory] = useState<CategoryItem | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<QRCategory>();
+  const [formData, setFormData] = useState<AnyQRFormData>({} as AnyQRFormData);
+
+  const [qrStyle, setQrStyle] = useState<QRCodeStyle>({
+    shape: "square",
+    backgroundColor: "#ffffff",
+    foregroundColor: "#000000",
+    logo: null,
+    logoSize: 20,
+  });
+
+  const [qrPreview, setQrPreview] = useState<string>("");
+
   const [showModal, setShowModal] = useState(false);
+  const [tempCategory, setTempCategory] = useState<QRCategory>();
 
-  const [content, setContent] = useState<ContentData>({
-    url: "",
-    description: "",
-    imageUrl: "",
-    showIcon: false,
-  });
-
-  const [pdfData, setPdfData] = useState<PdfData>({ pdfContent: "" });
-  const [imageData, setImageData] = useState<ImageData>({ imageContent: "" });
-
-  const [contactInfo, setContactInfo] = useState<ContactInfo>({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    email: "",
-    address: "",
-    company: "",
-    jobTitle: "",
-  });
-
-  const [smsData, setSmsData] = useState<SmsData>({ phone: "", message: "" });
-  const [whatsappData, setWhatsappData] = useState<WhatsappData>({
-    waPhoneNumber: "",
-    waMessage: "",
-  });
-
-
-  const [qrStyle, setQrStyle] = useState<QrStyle>({
-    dotsOptions: { type: "dots", color: "#726e6e" },
-    cornersSquareOptions: { type: "square", color: "#160101" },
-    cornersDotOptions: { type: "square", color: "#635858" },
-  });
-
-  const hasUnsavedData = () => {
-    return (
-      Object.values(content).some(Boolean) ||
-      Object.values(pdfData).some(Boolean) ||
-      Object.values(imageData).some(Boolean) ||
-      Object.values(contactInfo).some(Boolean) ||
-      Object.values(smsData).some(Boolean) ||
-      Object.values(whatsappData).some(Boolean)
+  // 🔹 Check if current form has unsaved values
+  const hasUnsavedData = () =>
+    formData &&
+    Object.values(formData).some(
+      (val) => val !== "" && val !== null && val !== undefined
     );
-  };
 
-  const handleCategorySelected = (categoryItem: CategoryItem) => {
+  const handleCategorySelected = (category: QRCategory) => {
     if (hasUnsavedData()) {
-      setTempCategory(categoryItem);
+      setTempCategory(category);
       setShowModal(true);
     } else {
-      setSelectedCategory(categoryItem);
+      setSelectedCategory(category);
+      setFormData({} as AnyQRFormData);
     }
   };
 
   const handleDiscard = () => {
-    setContent({ url: "", description: "", imageUrl: "", showIcon: false });
-    setPdfData({ pdfContent: "" });
-    setImageData({ imageContent: "" });
-    setContactInfo({
-      firstName: "",
-      lastName: "",
-      phone: "",
-      email: "",
-      address: "",
-      company: "",
-      jobTitle: "",
-    });
-    setSmsData({ phone: "", message: "" });
-    setWhatsappData({ waPhoneNumber: "", waMessage: "" });
+    setFormData({} as AnyQRFormData);
     setSelectedCategory(tempCategory);
-    setTempCategory(null);
+    setTempCategory(undefined);
     setShowModal(false);
   };
 
   const handleCancel = () => {
     setShowModal(false);
-    setTempCategory(null);
+    setTempCategory(undefined);
   };
 
+  // 🔹 Called by CategoryField to update form data + generate preview
+  const handleContentCreate = async (data: AnyQRFormData) => {
+    setFormData(data);
 
-  const handleContentCreate = (payload: HandleContentCreateData) => {
-    const { data } = payload;
+    if (selectedCategory) {
+      const content = generateQRContent(selectedCategory, data);
 
-    switch (selectedCategory?.label) {
-      case "Contact":
-        setContactInfo(data as ContactInfo);
-        break;
-      case "SMS":
-        setSmsData(data as SmsData);
-        break;
-      case "WhatsApp":
-        setWhatsappData(data as WhatsappData);
-        break;
-      case "PDF":
-        setPdfData(data as PdfData);
-        break;
-      case "Image":
-        setImageData({ imageContent: (data as ImageData).imageContent ?? "" });
-        break;
-      default:
-        setContent({
-          url: (data as ContentData).url ?? "",
-          description: (data as ContentData).description ?? "",
-          imageUrl: (data as ContentData).imageUrl ?? "",
-          showIcon: (data as ContentData).showIcon ?? false,
+      if (content) {
+        const qr = new QRCodeStyling({
+          width: 300,
+          height: 300,
+          data: content,
+          margin: 2,
+          dotsOptions: {
+            color: qrStyle.foregroundColor,
+          },
+          backgroundOptions: {
+            color: qrStyle.backgroundColor,
+          },
+          image: typeof qrStyle.logo === "string" ? qrStyle.logo : undefined,
+          imageOptions: {
+            crossOrigin: "anonymous",
+            margin: 2,
+            imageSize: qrStyle.logoSize ? qrStyle.logoSize / 100 : 0.2, // percentage → decimal
+          },
         });
+
+        const dataUrl = await qr.getRawData("png");
+        if (dataUrl) {
+          setQrPreview(URL.createObjectURL(new Blob([], { type: "image/png" })));
+        }
+      }
     }
   };
 
@@ -212,40 +102,18 @@ const QRInterface = () => {
         <ScrollCategoryOption onCategorySelect={handleCategorySelected} />
 
         <CategoryField
-          selectedCategory={selectedCategory ?? undefined}
+          selectedCategory={selectedCategory}
           onContentCreate={handleContentCreate}
+          formData={formData}
         />
 
         <QROutputInterface
-          content={
-            selectedCategory?.label === "Contact"
-              ? contactInfo
-              : selectedCategory?.label === "SMS"
-              ? smsData
-              : selectedCategory?.label === "WhatsApp"
-              ? whatsappData
-              : selectedCategory?.label === "Image"
-              ? imageData
-              : selectedCategory?.label === "PDF"
-              ? pdfData
-              : content
-          }
-          qrStyle={qrStyle}
-          onStyleChange={setQrStyle}
+          qrImage={qrPreview}
+          
         />
 
-
-        {(selectedCategory?.label === "Contact"
-          ? contactInfo.firstName
-          : content.url) && (
-          <FormModal onDiscard={handleDiscard} onCancel={handleCancel} />
-        )}
-
         {showModal && (
-          <ConfirmationModal
-            onDiscard={handleDiscard}
-            onCancel={handleCancel}
-          />
+          <ConfirmationModal onDiscard={handleDiscard} onCancel={handleCancel} />
         )}
       </div>
     </section>

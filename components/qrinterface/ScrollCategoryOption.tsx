@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 import InsertLinkSharpIcon from "@mui/icons-material/InsertLinkSharp";
 import CallSharpIcon from "@mui/icons-material/CallSharp";
@@ -11,21 +11,24 @@ import EmailSharpIcon from "@mui/icons-material/EmailSharp";
 import TextsmsSharpIcon from "@mui/icons-material/TextsmsSharp";
 import PictureAsPdfSharpIcon from "@mui/icons-material/PictureAsPdfSharp";
 import ImageSharpIcon from "@mui/icons-material/ImageSharp";
-import type { Category } from "@/types/Category";
 
+import type { Category } from "@/types/qr-generator"; // ✅ uses the union: "link" | "sms" | ...
+
+// Each selectable item in the scrollable category bar
 interface CategoryItem {
-  value: Category;
+  value: Category;           // strict to union type
   label: string;
   icon: React.ReactElement;
 }
 
 interface ScrollCategoryOptionProps {
-  onCategorySelect: (item: CategoryItem) => void;
+  onCategorySelect: (item: Category) => void; // returns union value only
 }
 
 const ScrollCategoryOption = ({ onCategorySelect }: ScrollCategoryOptionProps) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
+  // ✅ All available items mapped to `Category` union type
   const items: CategoryItem[] = [
     { value: "link", label: "Link", icon: <InsertLinkSharpIcon className="icons" /> },
     { value: "call", label: "Call", icon: <CallSharpIcon className="icons" /> },
@@ -37,21 +40,22 @@ const ScrollCategoryOption = ({ onCategorySelect }: ScrollCategoryOptionProps) =
     { value: "image", label: "Image", icon: <ImageSharpIcon className="icons" /> },
   ];
 
-  const handleCategoryClick = (item: CategoryItem, selectedObjectIndex: number) => {
-    setActiveIndex(selectedObjectIndex);
-    onCategorySelect(item);
-    console.log(`item selected label is: ${item.label} with index: ${selectedObjectIndex}`);
+  // Handle click and propagate selected category
+  const handleCategoryClick = (item: CategoryItem, index: number) => {
+    setActiveIndex(index);
+    onCategorySelect(item.value); // ✅ only send union string
+    console.log(`Selected: ${item.label} (index ${index})`);
   };
 
   return (
     <div
-      className="bg-white p-2 shadow-lg text-white qr-interface-item"
+      className="bg-white p-2 shadow-lg qr-interface-item"
       style={{ backgroundColor: "#fff" }}
     >
       <div className="scroller snaps-inline">
         {items.map((item, i) => (
           <div
-            key={i}
+            key={item.value}
             className={`scroller-item ${activeIndex === i ? "active" : ""}`}
             onClick={() => handleCategoryClick(item, i)}
           >

@@ -15,44 +15,83 @@ import {
   Barcode,
   ImageIcon,
   Globe,
+  Link,
+  Share2,
+  Smartphone,
+  Calendar,
+  User,
+  Grid,
 } from "lucide-react";
 
 import type { ReactElement } from "react";
-import type { Category } from "@/types/Category"; // ✅ Using your string union
+import type { Category, QRCategory } from "@/types/qr-generator";
 
-// Define structure for local display, but only pass Category as selected/onSelect
+// Define structure for local display
 interface CategoryOption {
   id: Category;
   name: string;
   icon: ReactElement;
+  color?: string; // Optional color from QRCategory
 }
 
 interface CategorySelectorProps {
   selected: Category;
   onSelect: (category: Category) => void;
+  categories?: QRCategory[]; // Optional: use provided categories or fallback to default
 }
 
 export default function CategorySelector({
   selected,
   onSelect,
+  categories,
 }: CategorySelectorProps) {
-  const categoryList: CategoryOption[] = [
-    { id: "link", name: "Link", icon: <Globe size={28} /> },
-    { id: "call", name: "Call", icon: <Phone size={28} /> },
-    { id: "mail", name: "Mail", icon: <Mail size={28} /> },
-    { id: "sms", name: "SMS", icon: <MessageSquareText size={28} /> },
-    { id: "whatsapp", name: "WhatsApp", icon: <MessageCircle size={28} /> },
-    { id: "wifi", name: "WiFi", icon: <Wifi size={28} /> },
-    { id: "image", name: "Image", icon: <ImageIcon size={28} /> },
-    { id: "video", name: "Video", icon: <Video size={28} /> },
-    { id: "bulkqr", name: "Bulk QR", icon: <QrCode size={28} /> },
-    { id: "app", name: "App", icon: <AppWindow size={28} /> },
-    { id: "social", name: "Social Media", icon: <Users size={28} /> },
-    { id: "event", name: "Event", icon: <CalendarDays size={28} /> },
-    { id: "barcode2d", name: "2D Barcode", icon: <Barcode size={28} /> },
-    { id: "pdf", name: "PDF", icon: <FileText size={28} /> },
-    { id: "contact", name: "Contact", icon: <Users size={28} /> },
+  // Icon mapping for consistent display
+  const iconMap: Record<Category, ReactElement> = {
+    link: <Link size={28} />,
+    call: <Phone size={28} />,
+    mail: <Mail size={28} />,
+    sms: <MessageSquareText size={28} />,
+    whatsapp: <MessageCircle size={28} />,
+    wifi: <Wifi size={28} />,
+    image: <ImageIcon size={28} />,
+    video: <Video size={28} />,
+    bulkqr: <Grid size={28} />,
+    app: <Smartphone size={28} />,
+    social: <Share2 size={28} />,
+    event: <Calendar size={28} />,
+    barcode2d: <Barcode size={28} />,
+    contact: <User size={28} />,
+    pdf: <FileText size={28} />,
+  };
+
+  // Default category list (fallback if categories prop not provided)
+  const defaultCategoryList: CategoryOption[] = [
+    { id: "link", name: "Link", icon: iconMap.link },
+    { id: "call", name: "Call", icon: iconMap.call },
+    { id: "mail", name: "Mail", icon: iconMap.mail },
+    { id: "sms", name: "SMS", icon: iconMap.sms },
+    { id: "whatsapp", name: "WhatsApp", icon: iconMap.whatsapp },
+    { id: "wifi", name: "WiFi", icon: iconMap.wifi },
+    { id: "image", name: "Image", icon: iconMap.image },
+    { id: "video", name: "Video", icon: iconMap.video },
+    { id: "bulkqr", name: "Bulk QR", icon: iconMap.bulkqr },
+    { id: "app", name: "App", icon: iconMap.app },
+    { id: "social", name: "Social Media", icon: iconMap.social },
+    { id: "event", name: "Event", icon: iconMap.event },
+    { id: "barcode2d", name: "2D Barcode", icon: iconMap.barcode2d },
+    { id: "contact", name: "Contact", icon: iconMap.contact },
+    { id: "pdf", name: "PDF", icon: iconMap.pdf },
   ];
+
+  // Use provided categories or fall back to default
+  const categoryList: CategoryOption[] = categories
+    ? categories.map((cat) => ({
+        id: cat.id as Category,
+        name: cat.name,
+        icon: iconMap[cat.id as Category] || <QrCode size={28} />,
+        color: cat.color,
+      }))
+    : defaultCategoryList;
 
   return (
     <div className="bg-white shadow-lg p-4 rounded-sm">

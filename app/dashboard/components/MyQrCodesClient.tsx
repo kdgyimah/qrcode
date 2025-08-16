@@ -63,7 +63,7 @@ const mockQrData: QrData[] = [
     id: "qr-002",
     name: "Contact QR",
     type: "dynamic",
-    category: "vcard",
+    category: "contact",
     link: "https://mycrm.com/vcard?id=123",
     folder: "Contacts",
     created: "2025-06-15",

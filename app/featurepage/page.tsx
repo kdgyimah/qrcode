@@ -11,6 +11,7 @@ import { ProductSection } from "@/components/featurep/ProductSection";
 import FAQPage from "@/components/pages/faqpage/page";
 import Info3 from "@/components/pages/info3/page";
 
+
 export default function AboutPage() {
   return (
     <main className="bg-white min-h-screen flex flex-col">
@@ -23,6 +24,7 @@ export default function AboutPage() {
         <FeatureInfoSection />
         <FeatureStaticDynamicSection />
         <ProductSection />
+      
         <FAQPage />
         <Info3 />
       </div>

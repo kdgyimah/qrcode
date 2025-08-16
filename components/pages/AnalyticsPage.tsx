@@ -6,7 +6,8 @@ import SummaryStats from "../analytics/SummaryStats";
 import ScanActivityChart from "../analytics/ScanActivityChart";
 import PieStats from "../analytics/PieStats";
 import QrCodesTable from "../myqrcodes/QrCodeTable";
-import { ChartData } from "@/types/qr-generator"; // ✅ Import ChartData
+
+import { QrData, AnyQRFormData, ChartData } from "@/types/qr-generator";
 
 // --- Mock Data ---
 const summaryData = [
@@ -25,15 +26,13 @@ const scanActivityData = [
   { date: "Apr 6", scans: 170 },
 ];
 
-// Replace QrCodeRow with QrData mock (ensure all required fields are present)
-import { QrData} from "@/types/qr-generator";
-
+// ✅ Strongly typed mock QR data
 export const qrTableData: QrData[] = [
   {
     id: "1",
     name: "QR for Events",
-    type: "Dynamic",                      // QrType
-    category: "link",                     // QrCategory
+    type: "dynamic", // ✅ matches QrType
+    category: "event", // ✅ matches Category union
     link: "https://example.com/event",
     folder: "Events",
     created: "2024-03-01",
@@ -45,23 +44,29 @@ export const qrTableData: QrData[] = [
     description: "QR code for event entry",
     tags: ["event", "entry", "qr"],
     qrImage: "/images/sample-qr.png",
-    qrCodeUrl: "https://cdn.example.com/qrs/qr1.png", // Optional
+    qrCodeUrl: "https://cdn.example.com/qrs/qr1.png",
     data: {
-      eventName: "Tech Conference",
-      location: "Nigeria"
-    },
+      type: "event",
+      data: {
+        eventTitle: "Annual Tech Conference",
+        eventStart: "2024-06-01",
+        eventEnd: "2024-06-03",
+        eventLocation: "Lagos, Nigeria",
+        eventDesc: "A gathering for innovators and tech enthusiasts.",
+      },
+    } as AnyQRFormData,
     style: {
       shape: "square",
       backgroundColor: "#ffffff",
       foregroundColor: "#000000",
       logo: null,
       logoSize: 20,
-    }
+    },
   },
   {
     id: "2",
     name: "Feedback QR",
-    type: "Static",
+    type: "static", // ✅ corrected (was `QrType: "QrType"`)
     category: "link",
     link: "https://example.com/feedback",
     folder: "Surveys",
@@ -75,15 +80,16 @@ export const qrTableData: QrData[] = [
     tags: ["feedback", "form"],
     qrImage: "/images/sample-qr.png",
     data: {
-      formId: "fb123"
-    },
+      type: "link",
+      data: { url: "https://example.com/feedback" },
+    } as AnyQRFormData,
     style: {
       shape: "circle",
       backgroundColor: "#f9f9f9",
       foregroundColor: "#1f2937",
       logo: null,
       logoSize: 25,
-    }
+    },
   },
 ];
 
@@ -128,9 +134,7 @@ export default function AnalyticsPage() {
         search={topSearch}
         setSearch={setTopSearch}
         dateRange={dateRange}
-        onDateClick={() => {
-          _setDateRange("Mar 1 - Apr 1, 2024");
-        }}
+        onDateClick={() => _setDateRange("Mar 1 - Apr 1, 2024")}
       />
 
       {/* Stat cards */}
@@ -166,9 +170,7 @@ export default function AnalyticsPage() {
       {/* Table */}
       <QrCodesTable
         data={qrTableData}
-        onRowClick={(qr) => {
-          console.log("QR code clicked:", qr);
-        }}
+        onRowClick={(qr) => console.log("QR code clicked:", qr)}
         search={tableSearch}
         setSearch={setTableSearch}
       />

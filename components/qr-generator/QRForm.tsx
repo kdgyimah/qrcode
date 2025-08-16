@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { QRCategory, QRFormData, QRCodeStyle } from '@/types/qr-generator';
+import { QRCategory, AnyQRFormData, QRCodeStyle } from '@/types/qr-generator';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { QRFormField } from './QRFormField';
@@ -11,11 +11,11 @@ import { QRPreview } from './QRPreview';
 interface QRFormProps {
   category: QRCategory;
   onBack: () => void;
-  onGenerate: (data: QRFormData, style: QRCodeStyle) => void;
+  onGenerate: (data: AnyQRFormData, style: QRCodeStyle) => void;
 }
 
 export function QRForm({ category, onBack, onGenerate }: QRFormProps) {
-  const [formData, setFormData] = useState<QRFormData>({});
+  const [formData, setFormData] = useState<AnyQRFormData>({});
   const [style, setStyle] = useState<QRCodeStyle>({
     shape: 'square',
     backgroundColor: '#FFFFFF',

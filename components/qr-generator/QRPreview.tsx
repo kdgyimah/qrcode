@@ -1,54 +1,50 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Download, Loader2 } from 'lucide-react';
-import { QRCategory, QRFormData, QRCodeStyle } from '@/types/qr-generator';
-import { generateQRContent, generateQRCode } from '@/utils/qr-generator';
-import Image from 'next/image';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Download, Loader2 } from "lucide-react";
+import { QRCategory, AnyQRFormData, QRCodeStyle } from "@/types/qr-generator";
+import { generateQRContent, generateQRCode } from "@/utils/qr-generator";
+import Image from "next/image";
+import { inputBase } from "@/constants/styles";
 
 interface QRPreviewProps {
   category: QRCategory;
-  formData: QRFormData;
+  formData: AnyQRFormData;
   style: QRCodeStyle;
   onDownload: () => void;
 }
 
 export function QRPreview({ category, formData, style, onDownload }: QRPreviewProps) {
-  const [qrDataUrl, setQrDataUrl] = useState<string>('');
+  const [qrDataUrl, setQrDataUrl] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     let objectUrl: string | undefined;
 
     const generatePreview = async () => {
-      const content = generateQRContent(category, formData);
-
-      if (!content.trim()) {
-        setQrDataUrl('');
-        setError('');
-        return;
-      }
-
-      setIsGenerating(true);
-      setError('');
-
       try {
-        const logoUrl =
-          style.logo instanceof File ? URL.createObjectURL(style.logo) : null;
+        const content = generateQRContent(category, formData);
+
+        if (!content.trim()) {
+          setQrDataUrl("");
+          setError("");
+          return;
+        }
+
+        setIsGenerating(true);
+        setError("");
+
+        const logoUrl = style.logo instanceof File ? URL.createObjectURL(style.logo) : null;
         objectUrl = logoUrl || undefined;
 
-        const dataUrl = await generateQRCode(
-          content,
-          { ...style, logo: logoUrl || null },
-          200
-        );
+        const dataUrl = await generateQRCode(content, { ...style, logo: logoUrl || null }, 200);
 
         setQrDataUrl(dataUrl);
       } catch (err) {
-        console.error('QR generation error:', err);
-        setError('Failed to generate QR code');
+        console.error("QR generation error:", err);
+        setError("Failed to generate QR code");
       } finally {
         setIsGenerating(false);
       }
@@ -66,18 +62,13 @@ export function QRPreview({ category, formData, style, onDownload }: QRPreviewPr
 
     try {
       const content = generateQRContent(category, formData);
-      const logoUrl =
-        style.logo instanceof File ? URL.createObjectURL(style.logo) : null;
+      const logoUrl = style.logo instanceof File ? URL.createObjectURL(style.logo) : null;
 
-      const highResDataUrl = await generateQRCode(
-        content,
-        { ...style, logo: logoUrl || null },
-        512
-      );
+      const highResDataUrl = await generateQRCode(content, { ...style, logo: logoUrl || null }, 512);
 
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = highResDataUrl;
-      link.download = `qr-code-${category.name.toLowerCase()}.png`;
+      link.download = `qr-code-${category.id.toLowerCase()}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -86,7 +77,7 @@ export function QRPreview({ category, formData, style, onDownload }: QRPreviewPr
 
       onDownload();
     } catch (err) {
-      console.error('Download error:', err);
+      console.error("Download error:", err);
     }
   };
 
@@ -124,7 +115,7 @@ export function QRPreview({ category, formData, style, onDownload }: QRPreviewPr
 
       <Button
         onClick={handleDownload}
-        className="w-full bg-blue-600 hover:bg-blue-700"
+        className={`${inputBase} w-full bg-blue-600 hover:bg-blue-700`}
         size="lg"
         disabled={!qrDataUrl || isGenerating}
       >

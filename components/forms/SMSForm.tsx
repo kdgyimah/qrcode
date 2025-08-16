@@ -1,91 +1,65 @@
-'use client';
+import React from "react";
+import { SmsFormData, FormProps } from "@/types/qr-generator";
+import { PhoneInput } from "@/components/PhoneInput";
+import { Label } from "@/components/ui/label";
+import { ErrorText } from "@/components/ui/error-text";
+import { inputBase } from "@/constants/styles";
 
-import { useState } from 'react';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import PhoneInput from 'react-phone-number-input';
-import 'react-phone-number-input/style.css';
-import { HandleContentCreateData } from '@/types/qr-generator';
-
-const theme = createTheme({
-  typography: {
-    fontFamily: '"Sen", sans-serif',
-  },
-});
-
-interface SMSFormProps {
-  linkContent: (data: HandleContentCreateData) => void;
-}
-
-const SMSForm = ({ linkContent }: SMSFormProps) => {
-  const [smsData, setSMSData] = useState({
-    phoneNumber: '',
-    smsMessage: '',
-  });
-
-  const handlePhoneChange = (value: string | undefined) => {
-    const phone = value ?? '';
-    const updatedData = {
-      phoneNumber: phone,
-      smsMessage: smsData.smsMessage,
-    };
-    setSMSData(updatedData);
-    linkContent({ type: 'sms', data: updatedData });
+export const SmsForm: React.FC<FormProps<SmsFormData>> = ({ 
+  formData, 
+  errors, 
+  onChange,
+  onPhoneChange,
+  onContentCreate 
+}) => {
+  const handlePhoneChange = (value: string) => {
+    if (onPhoneChange) {
+      // Use the specialized phone handler if available
+      onPhoneChange('phone', value);
+    } else {
+      // Fallback to regular onChange
+      onChange('phone', value);
+    }
   };
 
-  const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target;
-    const updatedData = {
-      phoneNumber: smsData.phoneNumber,
-      smsMessage: value,
-    };
-    setSMSData(updatedData);
-    linkContent({ type: 'sms', data: updatedData });
+    onChange('message', value);
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box component="form" noValidate autoComplete="off">
-        <FormControl fullWidth variant="filled" margin="normal">
-          <InputLabel shrink htmlFor="phone-input">Phone Number</InputLabel>
-          <PhoneInput
-            id="phone-input"
-            placeholder="eg: +233 544112245"
-            value={smsData.phoneNumber}
-            onChange={handlePhoneChange}
-            defaultCountry="GH"
-            required
-            style={{
-              width: '100%',
-              height: '120px',
-              padding: '10px 12px',
-              fontFamily: '"Sen", sans-serif',
-              backgroundColor: 'rgba(0, 0, 0, 0.06)',
-              border: 'none',
-            }}
-          />
-        </FormControl>
-
-        <TextField
-          id="message-field"
-          label="Message"
-          variant="filled"
-          color="primary"
-          multiline
-          rows={3}
-          name="smsMessage"
-          placeholder="Enter your message here..."
-          value={smsData.smsMessage}
-          onChange={handleMessageChange}
-          required
-          fullWidth
+    <>
+      <div>
+        <PhoneInput
+          name="phone"
+          value={formData.phone || ""}
+          onChange={handlePhoneChange}
+          error={errors.phone}
+          label="Recipient Phone"
         />
-      </Box>
-    </ThemeProvider>
+      </div>
+
+      <div>
+        <Label htmlFor="message">Message</Label>
+        <textarea
+          id="message"
+          name="message"
+          value={formData.message || ""}
+          placeholder="SMS content"
+          onChange={handleMessageChange}
+          rows={3}
+          className={`${inputBase} resize-none ${errors.message ? "border-red-500" : ""}`}
+          aria-invalid={!!errors.message}
+          aria-describedby={errors.message ? "message-error" : undefined}
+          maxLength={160} // SMS character limit
+        />
+        {errors.message && <ErrorText>{errors.message}</ErrorText>}
+        
+        {/* Character counter */}
+        <div className="text-sm text-gray-500 mt-1">
+          {(formData.message || "").length}/160 characters
+        </div>
+      </div>
+    </>
   );
 };
-
-export default SMSForm;

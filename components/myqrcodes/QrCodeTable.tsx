@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { MoreHorizontal, X, Trash, Download, Eye, Copy } from "lucide-react";
 import Image from "next/image";
 import PaginationBar from "@/components/PaginationBar";
 import { QrData } from "@/types/qr-generator";
 
-// ✅ Accept `data` prop from parent
 interface QrTableProps {
   data: QrData[];
   onRowClick: (qr: QrData) => void;
@@ -17,7 +16,7 @@ interface QrTableProps {
 
 function getCategoryLabel(qr: QrData) {
   switch (qr.category) {
-    case "email":
+    case "mail":
       return <span className="text-xs text-blue-600">{qr.link}</span>;
     case "pdf":
       return (
@@ -45,7 +44,13 @@ function getCategoryLabel(qr: QrData) {
   }
 }
 
-export default function QrTable({ data, onRowClick, onRowEdit }: QrTableProps) {
+export default function QrTable({
+  data,
+  onRowClick,
+  onRowEdit,
+  search = "",
+  setSearch,
+}: QrTableProps) {
   const [selected, setSelected] = useState<string[]>([]);
 
   const handleSelect = (id: string) => {
@@ -56,13 +61,37 @@ export default function QrTable({ data, onRowClick, onRowEdit }: QrTableProps) {
 
   const allSelected = selected.length === data.length;
 
-  const total = 20;
+  // --- Filter data based on search ---
+  const filteredData = useMemo(() => {
+    if (!search) return data;
+    return data.filter(
+      (qr) =>
+        qr.name.toLowerCase().includes(search.toLowerCase()) ||
+        qr.folder.toLowerCase().includes(search.toLowerCase()) ||
+        qr.category.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [data, search]);
+
+  const total = filteredData.length;
   const perPage = 8;
   const showingStart = 1;
   const showingEnd = Math.min(perPage, total);
 
   return (
     <div className="relative overflow-x-auto">
+      {/* Search Input */}
+      {setSearch && (
+        <div className="mb-2">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name, folder, or category..."
+            className="w-full p-2 border rounded focus:outline-none focus:ring focus:border-blue-400"
+          />
+        </div>
+      )}
+
       <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden">
         <thead className="bg-white text-sm text-gray-600">
           <tr>
@@ -71,7 +100,7 @@ export default function QrTable({ data, onRowClick, onRowEdit }: QrTableProps) {
                 type="checkbox"
                 checked={allSelected}
                 onChange={() =>
-                  setSelected(allSelected ? [] : data.map((qr) => qr.id))
+                  setSelected(allSelected ? [] : filteredData.map((qr) => qr.id))
                 }
                 aria-label="Select all"
                 className="accent-blue-600 w-4 h-4 rounded"
@@ -89,7 +118,7 @@ export default function QrTable({ data, onRowClick, onRowEdit }: QrTableProps) {
           </tr>
         </thead>
         <tbody>
-          {data.map((qr) => (
+          {filteredData.map((qr) => (
             <tr
               key={qr.id}
               className={`border-t text-sm bg-white transition cursor-pointer hover:bg-blue-50 ${
@@ -182,12 +211,7 @@ export default function QrTable({ data, onRowClick, onRowEdit }: QrTableProps) {
         </div>
       )}
 
-      <PaginationBar
-        showingStart={showingStart}
-        showingEnd={showingEnd}
-        total={total}
-        page={1}
-      />
+      <PaginationBar showingStart={showingStart} showingEnd={showingEnd} total={total} page={1} />
     </div>
   );
 }

@@ -18,7 +18,6 @@ export default function SearchBar({
   className = '',
 }: SearchBarProps) {
   const [query, setQuery] = useState(initialValue);
-  const [setIsFocused] = useState(false);
 
   const handleSubmit = useCallback(
     (e: FormEvent) => {
@@ -30,7 +29,6 @@ export default function SearchBar({
 
   const clear = useCallback(() => {
     setQuery('');
-    // optionally refocus
   }, []);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -40,10 +38,10 @@ export default function SearchBar({
   return (
     <form
       onSubmit={handleSubmit}
-      className={`flex items-center w-[300px] max-w-xl overflow-hidden rounded-sm border border-gray-300 bg-white shadow-sm focus-within:ring-0 focus-within:ring-gray-300 ${className}`}
+      className={`flex items-center w-full sm:w-[300px] max-w-xl overflow-hidden rounded-sm border border-gray-300 bg-white shadow-sm focus-within:ring-0 focus-within:ring-gray-300 ${className}`}
       aria-label="Search form"
     >
-      <div className="flex items-center px-4 flex-1 min-w-0">
+      <div className="flex items-center px-3 flex-1 min-w-0">
         <Search className="w-5 h-5 text-gray-400 flex-shrink-0" aria-hidden="true" />
         <input
           type="text"
@@ -51,7 +49,7 @@ export default function SearchBar({
           onChange={handleChange}
           placeholder={placeholder}
           aria-label="Search input"
-          className="ml-2 w-full bg-transparent outline-none placeholder:text-gray-400 text-gray-800 text-base min-w-0"
+          className="ml-2 flex-1 bg-transparent outline-none placeholder:text-gray-400 text-gray-800 text-sm sm:text-base"
         />
         {query && (
           <button
@@ -67,7 +65,7 @@ export default function SearchBar({
 
       <button
         type="submit"
-        className="ml-auto bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-r-sm flex-shrink-0"
+        className="ml-auto bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 sm:px-6 py-2 sm:py-3 rounded-r-sm flex-shrink-0 text-sm sm:text-base"
         aria-label="Search"
       >
         Search

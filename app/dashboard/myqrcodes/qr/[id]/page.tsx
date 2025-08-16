@@ -1,5 +1,5 @@
 import QrDetail from "@/app/dashboard/components/QrDetail";
-import type { QrData, QrType, QrCategory } from "@/types/qr-generator";
+import type { QrData, QrType, QRCategory } from "@/types/qr-generator";
 
 // Simulate fetching QR detail (replace with real fetch logic)
 const allQrData: QrData[] = [
@@ -18,7 +18,7 @@ const allQrData: QrData[] = [
     visits: 200,
     lastModified: "2025-05-21",
     qrImage: "/qr1-image.png",
-    category: "link" as QrCategory,
+    category: "link",
   },
   // Add more items as needed
 ];
