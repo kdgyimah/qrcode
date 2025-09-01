@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { ErrorText } from "@/components/ui/error-text";
 import { inputBase } from "@/constants/styles";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export const VideoForm: React.FC<FormProps<VideoFormData>> = ({
   formData,
@@ -46,11 +47,6 @@ export const VideoForm: React.FC<FormProps<VideoFormData>> = ({
     return null;
   }, [videoUrl, isValidUrl]);
 
-  // Validation state
-  const isValid = useMemo(() => {
-    return videoUrl.trim().length > 0 && isValidUrl(videoUrl);
-  }, [videoUrl, isValidUrl]);
-
   // Change handler
   const handleVideoUrlChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,14 +75,8 @@ export const VideoForm: React.FC<FormProps<VideoFormData>> = ({
 // Subcomponents
 function FormHeader() {
   return (
-    <div className="flex items-center gap-3 mb-4">
-      <div className="p-2 bg-red-100 rounded-lg">
-        <Video className="w-5 h-5 text-red-600" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-gray-900">Video QR Code</h3>
-        <p className="text-sm text-gray-600">Share any video link</p>
-      </div>
+    <div className="">
+    
     </div>
   );
 }
@@ -111,7 +101,7 @@ function VideoUrlInput({ videoUrl, error, onChange }: VideoUrlInputProps) {
           className={cn(
             inputBase,
             "pr-10",
-            error && "border-red-500 bg-red-50"
+            error && "border-gray-300 bg-white"
           )}
           aria-invalid={!!error}
           aria-describedby={error ? "videoUrl-error" : undefined}
@@ -131,7 +121,7 @@ function VideoPreview({ previewUrl }: { previewUrl: string }) {
     <div className="mt-4">
       <Label>Preview</Label>
       <div className="relative rounded-lg overflow-hidden border border-gray-200">
-        <img
+        <Image
           src={previewUrl}
           alt="Video thumbnail"
           className="w-full h-32 object-cover"

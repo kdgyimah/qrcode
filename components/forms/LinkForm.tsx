@@ -8,7 +8,6 @@ export const LinkForm: React.FC<FormProps<LinkFormData>> = ({
   formData, 
   errors, 
   onChange, 
-  onContentCreate 
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,7 +24,7 @@ export const LinkForm: React.FC<FormProps<LinkFormData>> = ({
         value={formData.url || ""}
         placeholder="https://example.com"
         onChange={handleChange}
-        className={`${inputBase} ${errors.url ? "border-red-500" : ""}`}
+        className={`${inputBase} ${errors.url ? "border-gray-300 bg-white" : ""}`}
         aria-invalid={!!errors.url}
         aria-describedby={errors.url ? "url-error" : undefined}
       />

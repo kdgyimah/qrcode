@@ -7,7 +7,6 @@ import type {
   QRCategory,
   Category,
   AnyQRFormData,
-  QRFormDataByCategory,
   QRCodeStyle,
   LinkFormData,
   CallFormData,

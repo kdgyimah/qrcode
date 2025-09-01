@@ -1,6 +1,6 @@
 // data/qrCategories.ts
 import { FaLink, FaPhone, FaEnvelope, FaSms, FaWhatsapp, FaImage, FaVideo, FaAppStoreIos, FaWifi, FaFilePdf, FaUser } from 'react-icons/fa';
-import { SiFacebook, SiInstagram } from 'react-icons/si';
+import { SiFacebook} from 'react-icons/si';
 
 export const qrCategories = [
   { key: 'link', name: 'Link', icon: FaLink },

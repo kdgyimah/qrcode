@@ -129,11 +129,11 @@ export default function QRFormRenderer({
 
   return (
     <div className="mt-8 w-full max-w-xl">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+      <h2 className="text-xl font-semibold text-gray-800 mb-4 ">
         Enter Content for {category.name}
       </h2>
-      <div className="rounded-2xl p-6 border border-gray-200 bg-white shadow-sm space-y-6">
-        {renderForm()}
+      <div className="rounded-2xl p-6  border-gray-200  space-y-6">
+        {renderForm() }
       </div>
     </div>
   );

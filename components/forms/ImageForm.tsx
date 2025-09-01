@@ -158,12 +158,13 @@ export const ImageForm: React.FC<FormProps<ImageFormData>> = ({
         ) : (
           <TextField
             label="Image URL"
-            variant="filled"
+            
             type="url"
             name="imageUrl"
             value={formData.imageUrl || ""}
             onChange={handleUrlChange}
             placeholder="https://example.com/image.jpg"
+            className="border-gray-300 bg-white"
             fullWidth
             required
             margin="normal"

@@ -1,3 +1,6 @@
+import type { DotTypes, Gradient } from "qr-code-styling";
+
+
 // ===================
 // QR code type: either static or dynamic
 // ===================
@@ -101,7 +104,10 @@ export interface QRCodeStyle {
   foregroundColor: string;
   logo?: File | string | null;
   logoSize?: number;
+  
 }
+
+
 
 // ===================
 // Complete QR code record used in app/database
@@ -150,7 +156,9 @@ export interface FormProps<T> {
   errors: Partial<Record<keyof T, string>>;
   onChange: <K extends keyof T>(field: K, value: T[K]) => void;
   onPhoneChange?: <K extends keyof T>(field: K, value: string) => void;
+  onValidityChange?: (isValid: boolean) => void; // 🔥 added
 }
+
 
 // ===================
 // Layout props
@@ -173,4 +181,77 @@ interface QrCodesTableProps {
   onRowClick?: (qr: QrData) => void;
   search?: string;
   setSearch?: React.Dispatch<React.SetStateAction<string>>;
+}
+
+
+
+type DotType =
+  | "dots"
+  | "rounded"
+  | "classy"
+  | "classy-rounded"
+  | "square"
+  | "extra-rounded"
+  | "dot";
+
+type QRStyleOptions = {
+  type: DotType;
+  color: string;
+  gradient?: Gradient;
+  
+};
+
+export interface QRStyle {
+  dotsOptions: QRStyleOptions;
+  cornersSquareOptions: QRStyleOptions;
+  cornersDotOptions: QRStyleOptions;
+}
+
+export type QRFrameStyle = {
+  dotsOptions?: {
+    type?: DotTypes;
+    color?: string;
+    gradient?: Gradient;
+    roundSize?: boolean;
+  };
+  cornersSquareOptions?: {
+    type?: DotType;
+    color?: string;
+    gradient?: Gradient;
+  };
+  cornersDotOptions?: {
+    type?: DotType;
+    color?: string;
+    gradient?: Gradient;
+  };
+};
+
+export interface QROutputInterfaceProps {
+  content: {
+    phoneNumber?: string;
+    waPhoneNumber?: string;
+    smsMessage?: string;
+    waMessage?: string;
+    showIcon?: boolean;
+    firstName?: string;
+    lastName?: string;
+    pdfTitle?: string;
+    pdfAuthor?: string;
+    pdfMessage?: string;
+    pdfImage?: string;
+    url?: string;
+    description?: string;
+    email?: string;
+    receiverEmail?: string;
+    subject?: string;
+    message?: string;
+    address?: string;
+    company?: string;
+    jobTitle?: string;
+    imageUrl?: string;
+    pdfContent?: string;
+    imageContent?: string;
+  };
+  qrStyle: QRStyle;
+  onStyleChange: React.Dispatch<React.SetStateAction<QRStyle>>; // ✅ FIXED
 }

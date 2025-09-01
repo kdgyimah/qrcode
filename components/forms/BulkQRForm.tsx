@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo } from "react";
-import { Grid, Download, Upload, FileText } from "lucide-react";
+import { Download, Upload} from "lucide-react";
 import type { FormProps, BulkQRFormData } from "@/types/qr-generator";
 import { Label } from "@/components/ui/label";
 import { ErrorText } from "@/components/ui/error-text";
@@ -88,7 +88,6 @@ mailto:contact@example.com`;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <FormHeader />
 
       <BulkListInput
         bulkList={formData.bulkList ?? ""}
@@ -104,28 +103,11 @@ mailto:contact@example.com`;
         <PreviewSection previewItems={previewItems} itemCount={itemCount} />
       )}
 
-      <TipsSection />
-
-      <SubmitButton isValid={isValid} itemCount={itemCount} />
+      {/* <TipsSection /> */}
     </form>
   );
 }
 
-/* ----------------- SUBCOMPONENTS ------------------ */
-
-function FormHeader() {
-  return (
-    <div className="flex items-center gap-3 mb-4">
-      <div className="p-2 bg-gray-100 rounded-lg">
-        <Grid className="w-5 h-5 text-gray-600" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-gray-900">Bulk QR Codes</h3>
-        <p className="text-sm text-gray-600">Generate multiple QR codes at once</p>
-      </div>
-    </div>
-  );
-}
 
 interface BulkListInputProps {
   bulkList: string;
@@ -145,7 +127,7 @@ function BulkListInput({
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <Label htmlFor="bulkList">URLs/Content List *</Label>
+        <Label htmlFor="bulkList">Generate multiple QR codes at once</Label>
         <button
           type="button"
           onClick={onDownloadTemplate}
@@ -165,7 +147,7 @@ function BulkListInput({
         className={cn(
           inputBase,
           "font-mono text-sm",
-          errors.bulkList && "border-red-300 bg-red-50"
+          errors.bulkList && "border-gray-300 bg-white"
         )}
         required
       />
@@ -246,46 +228,23 @@ function PreviewSection({
   );
 }
 
-function TipsSection() {
-  return (
-    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-      <div className="flex items-start gap-2">
-        <FileText className="w-4 h-4 text-yellow-600 mt-0.5" />
-        <div>
-          <h4 className="text-sm font-medium text-yellow-900 mb-1">
-            Bulk Generation Tips
-          </h4>
-          <ul className="text-sm text-yellow-700 space-y-1">
-            <li>• Each line creates one QR code</li>
-            <li>• Supports URLs, phone numbers, emails</li>
-            <li>• Empty lines are ignored</li>
-            <li>• Large lists may take time to process</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SubmitButton({
-  isValid,
-  itemCount,
-}: {
-  isValid: boolean;
-  itemCount: number;
-}) {
-  return (
-    <button
-      type="submit"
-      disabled={!isValid}
-      className={cn(
-        "w-full py-3 px-4 rounded-lg font-medium transition-colors",
-        isValid
-          ? "bg-gray-600 text-white hover:bg-gray-700 focus:ring-2 focus:ring-gray-500"
-          : "bg-gray-200 text-gray-400 cursor-not-allowed"
-      )}
-    >
-      Generate Bulk QR Codes ({itemCount})
-    </button>
-  );
-}
+// function TipsSection() {
+//   return (
+//     <div className="bg-blue-100 border border-yellow-200 rounded-lg p-4">
+//       <div className="flex items-start gap-2">
+//         <FileText className="w-4 h-4 text-yellow-600 mt-0.5" />
+//         <div>
+//           <h4 className="text-sm font-medium text-yellow-900  mb-1">
+//             Bulk Generation Tips
+//           </h4>
+//           <ul className="text-sm text-yellow-700 space-y-1">
+//             <li>• Each line creates one QR code</li>
+//             <li>• Supports URLs, phone numbers, emails</li>
+//             <li>• Empty lines are ignored</li>
+//             <li>• Large lists may take time to process</li>
+//           </ul>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }

@@ -45,7 +45,6 @@ export const PdfForm: React.FC<FormProps<PdfFormData>> = ({
 
   return (
     <div className="space-y-6">
-      <FormHeader />
 
       <UploadTypeSelector
         selectedType={uploadType}
@@ -76,19 +75,6 @@ export const PdfForm: React.FC<FormProps<PdfFormData>> = ({
 };
 
 // Extracted components for better organization
-function FormHeader() {
-  return (
-    <div className="flex items-center gap-3 mb-4">
-      <div className="p-2 bg-red-100 rounded-lg">
-        <FileText className="w-5 h-5 text-red-700" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-gray-900">PDF QR Code</h3>
-        <p className="text-sm text-gray-600">Share PDF documents</p>
-      </div>
-    </div>
-  );
-}
 
 interface UploadTypeSelectorProps {
   selectedType: "url" | "file";
@@ -119,7 +105,7 @@ function UploadTypeSelector({ selectedType, onTypeChange }: UploadTypeSelectorPr
             value="file"
             checked={selectedType === "file"}
             onChange={() => onTypeChange("file")}
-            className="text-blue-600"
+            className="text-blue-600 "
           />
           <Upload className="w-4 h-4" />
           <span className="text-sm">Upload File</span>
@@ -147,7 +133,7 @@ function UrlInput({ url, error, onChange }: UrlInputProps) {
         placeholder="https://example.com/document.pdf"
         className={cn(
           inputBase,
-          error && "border-red-500 bg-red-50"
+          error && " border-gray-300 bg-white"
         )}
         aria-invalid={!!error}
         aria-describedby={error ? "pdfUrl-error" : undefined}
@@ -157,7 +143,7 @@ function UrlInput({ url, error, onChange }: UrlInputProps) {
         <ErrorText>{error}</ErrorText>
       )}
       <p className="mt-1 text-xs text-gray-500">
-        Direct link to PDF file that's publicly accessible
+        Direct link to PDF file that&apos;s publicly accessible
       </p>
     </div>
   );

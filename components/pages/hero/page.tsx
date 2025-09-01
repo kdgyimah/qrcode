@@ -27,14 +27,14 @@ export default function Hero() {
       </motion.div>
 
       {/* Text Content */}
-      <div className="relative z-10 flex flex-col items-start justify-start pt-16 md:justify-center min-h-[95vh] px-8 md:px-16"> {/* Adjusted padding here */}
+      <div className="relative z-10 flex flex-col items-start justify-start mb-10 pt-16 md:justify-center min-h-[95vh] px-8 md:px-16"> {/* Adjusted padding here */}
 
-        <div className="max-w-2xl">
+        <div className="max-w-2xl p-12 mb-16">
           <motion.h4
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-blue-950 text-lg md:text-xl mb-2"
+            className=" text-lg md:text-xl mb-2 text-blue-800"
           >
             Get Success Together!
           </motion.h4>
@@ -46,7 +46,7 @@ export default function Hero() {
             className="text-4xl md:text-6xl font-semibold text-black leading-tight mb-4"
           >
             Create Your Own <br />
-            <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-green-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-700 via-blue-500 to-green-500 bg-clip-text text-transparent">
               QR Codes
             </span>{" "}
             instantly
@@ -96,7 +96,7 @@ export default function Hero() {
               src="/images/rightheroimg.png"
               alt="Mobile Hero QR Image"
               fill
-              className="object-contain"
+              className="object-scale-down"
               priority
             />
           </div>

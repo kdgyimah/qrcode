@@ -1,5 +1,5 @@
 import QrDetail from "@/app/dashboard/components/QrDetail";
-import type { QrData, QrType, QRCategory } from "@/types/qr-generator";
+import type { QrData, QrType } from "@/types/qr-generator";
 
 // Simulate fetching QR detail (replace with real fetch logic)
 const allQrData: QrData[] = [

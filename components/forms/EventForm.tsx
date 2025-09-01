@@ -45,8 +45,6 @@ export const EventForm: React.FC<FormProps<EventFormData>> = ({
 
   return (
     <div className="space-y-6">
-      <FormHeader />
-
       <div className="space-y-4">
         <EventTitleInput
           title={formData?.eventTitle ?? ""}
@@ -80,28 +78,12 @@ export const EventForm: React.FC<FormProps<EventFormData>> = ({
         <EventPreview formData={formData} formatDate={formatDateForDisplay} />
       )}
 
-      <EventTips />
+      {/* <EventTips /> */}
     </div>
   );
 };
 
 /* ---------- Subcomponents ---------- */
-
-function FormHeader() {
-  return (
-    <div className="flex items-center gap-3 mb-4">
-      <div className="p-2 bg-orange-100 rounded-lg">
-        <Calendar className="w-5 h-5 text-orange-600" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-gray-900">Event QR Code</h3>
-        <p className="text-sm text-gray-600">
-          Create calendar event invitations
-        </p>
-      </div>
-    </div>
-  );
-}
 
 function EventTitleInput({
   title,
@@ -121,7 +103,7 @@ function EventTitleInput({
         value={title}
         onChange={onChange}
         placeholder="Annual Conference 2024"
-        className={cn(inputBase, error && "border-red-500 bg-red-50")}
+        className={cn(inputBase, error && "border-gray-300 bg-white")}
         aria-invalid={!!error}
         aria-describedby={error ? "eventTitle-error" : undefined}
         required
@@ -158,7 +140,7 @@ function DateTimeSection({
           id="eventStart"
           value={startDate}
           onChange={onStartChange}
-          className={cn(inputBase, startError && "border-red-500 bg-red-50")}
+          className={cn(inputBase, startError && "border-gray-300 bg-white")}
           aria-invalid={!!startError}
           aria-describedby={startError ? "eventStart-error" : undefined}
           required
@@ -176,7 +158,7 @@ function DateTimeSection({
           id="eventEnd"
           value={endDate}
           onChange={onEndChange}
-          className={cn(inputBase, endError && "border-red-500 bg-red-50")}
+          className={cn(inputBase, endError && "border-gray-300 bg-white")}
           aria-invalid={!!endError}
           aria-describedby={endError ? "eventEnd-error" : undefined}
         />
@@ -207,7 +189,7 @@ function LocationInput({
         value={location}
         onChange={onChange}
         placeholder="123 Main St, City, State or Virtual Meeting"
-        className={cn(inputBase, error && "border-red-500 bg-red-50")}
+        className={cn(inputBase, error && "border-gray-300 bg-white")}
         aria-invalid={!!error}
         aria-describedby={error ? "eventLocation-error" : undefined}
       />
@@ -237,12 +219,12 @@ function DescriptionInput({
         onChange={onChange}
         placeholder="Event details, agenda, special instructions..."
         rows={4}
-        className={cn(inputBase, error && "border-red-500 bg-red-50")}
+        className={cn(inputBase, error && "border-gray-300 bg-white")}
         aria-invalid={!!error}
         aria-describedby={error ? "eventDesc-error" : undefined}
       />
       {error && <ErrorText>{error}</ErrorText>}
-      <p className="mt-1 text-xs text-gray-500">
+      <p className="mt-1 text-xs text-gray-500 ">
         {description.length}/500 characters
       </p>
     </div>
@@ -295,19 +277,19 @@ function EventPreview({
   );
 }
 
-function EventTips() {
-  return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-      <h4 className="text-sm font-medium text-blue-900 mb-2">
-        Calendar Event Tips
-      </h4>
-      <ul className="text-sm text-blue-700 space-y-1">
-        <li>• QR code will generate a calendar event (.ics file)</li>
-        <li>• Works with most calendar apps (Google, Outlook, Apple)</li>
-        <li>• Include timezone-specific times for accuracy</li>
-        <li>• Virtual events: add meeting links in description</li>
-        <li>• Physical events: include full address for GPS</li>
-      </ul>
-    </div>
-  );
-}
+// function EventTips() {
+//   return (
+//     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+//       <h4 className="text-sm font-medium text-blue-900 mb-2">
+//         Calendar Event Tips
+//       </h4>
+//       <ul className="text-sm text-blue-700 space-y-1">
+//         <li>• QR code will generate a calendar event (.ics file)</li>
+//         <li>• Works with most calendar apps (Google, Outlook, Apple)</li>
+//         <li>• Include timezone-specific times for accuracy</li>
+//         <li>• Virtual events: add meeting links in description</li>
+//         <li>• Physical events: include full address for GPS</li>
+//       </ul>
+//     </div>
+//   );
+

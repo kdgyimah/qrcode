@@ -48,7 +48,7 @@ export const WhatsAppForm: React.FC<FormProps<WhatsAppFormData>> = ({
           placeholder="WhatsApp message (optional)"
           onChange={handleMessageChange}
           rows={3}
-          className={`${inputBase} resize-none ${errors.waBody ? "border-red-500" : ""}`}
+          className={`${inputBase} resize-none ${errors.waBody ? "border-gray-300 bg-white" : ""}`}
           aria-invalid={!!errors.waBody}
           aria-describedby={errors.waBody ? "waBody-error" : undefined}
         />

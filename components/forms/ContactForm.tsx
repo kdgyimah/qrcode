@@ -53,7 +53,6 @@ export const ContactForm: React.FC<FormProps<ContactFormData>> = ({
 
   return (
     <div className="space-y-6">
-      <FormHeader />
       
       <div className="space-y-4">
         <PersonalInfoSection
@@ -94,25 +93,13 @@ export const ContactForm: React.FC<FormProps<ContactFormData>> = ({
 
       {isValid && <ContactPreview formData={formData} />}
       
-      <ContactTips />
+      {/* <ContactTips /> */}
     </div>
   );
 };
 
 // Extracted components for better organization
-function FormHeader() {
-  return (
-    <div className="flex items-center gap-3 mb-4">
-      <div className="p-2 bg-teal-100 rounded-lg">
-        <User className="w-5 h-5 text-teal-600" />
-      </div>
-      <div>
-        <h3 className="font-semibold text-gray-900">Contact QR Code</h3>
-        <p className="text-sm text-gray-600">Create vCard contact information</p>
-      </div>
-    </div>
-  );
-}
+
 
 interface PersonalInfoSectionProps {
   formData: ContactFormData;
@@ -146,7 +133,7 @@ function PersonalInfoSection({
             placeholder="John"
             className={cn(
               inputBase,
-              errors.firstName && "border-red-500 bg-red-50"
+              errors.firstName && "border-gray-300 bg-white"
             )}
             aria-invalid={!!errors.firstName}
             required={requiredFields.has('firstName')}
@@ -212,10 +199,10 @@ function ContactInfoSection({
             id="phone"
             value={formData.phone || ''}
             onChange={onPhoneChange}
-            placeholder="+1 (555) 123-4567"
+            placeholder="+233 (555) 123-4567"
             className={cn(
               inputBase,
-              errors.phone && "border-red-500 bg-red-50"
+              errors.phone && "border-gray-300 bg-white"
             )}
             aria-invalid={!!errors.phone}
             required={requiredFields.has('phone')}
@@ -233,10 +220,10 @@ function ContactInfoSection({
             id="mobile"
             value={formData.mobile || ''}
             onChange={onMobileChange}
-            placeholder="+1 (555) 987-6543"
+            placeholder="+233 (555) 987-6543"
             className={cn(
               inputBase,
-              errors.mobile && "border-red-500 bg-red-50"
+              errors.mobile && "border-gray-300 bg-white"
             )}
             aria-invalid={!!errors.mobile}
           />
@@ -256,7 +243,7 @@ function ContactInfoSection({
             placeholder="john.doe@example.com"
             className={cn(
               inputBase,
-              errors.email && "border-red-500 bg-red-50"
+              errors.email && "border-gray-300 bg-white"
             )}
             aria-invalid={!!errors.email}
             required={requiredFields.has('email')}
@@ -274,7 +261,7 @@ function ContactInfoSection({
             placeholder="https://example.com"
             className={cn(
               inputBase,
-              errors.website && "border-red-500 bg-red-50"
+              errors.website && "border-gray-300 bg-white"
             )}
             aria-invalid={!!errors.website}
           />
@@ -313,10 +300,10 @@ function ProfessionalInfoSection({
             id="organization"
             value={formData.organization || ''}
             onChange={onOrganizationChange}
-            placeholder="Acme Corporation"
+            placeholder="Despite Group of Companies"
             className={cn(
               inputBase,
-              errors.organization && "border-red-500 bg-red-50"
+              errors.organization && "border-gray-300 bg-white"
             )}
             aria-invalid={!!errors.organization}
           />
@@ -333,10 +320,10 @@ function ProfessionalInfoSection({
             id="jobTitle"
             value={formData.jobTitle || ''}
             onChange={onJobTitleChange}
-            placeholder="Software Engineer"
+            placeholder="General Manager"
             className={cn(
               inputBase,
-              errors.jobTitle && "border-red-500 bg-red-50"
+              errors.jobTitle && "border-gray-300 bg-white"
             )}
             aria-invalid={!!errors.jobTitle}
           />
@@ -399,7 +386,7 @@ function AddressSection({
               id="city"
               value={formData.city || ''}
               onChange={onCityChange}
-              placeholder="New York"
+              placeholder="Accra"
               className={cn(
                 inputBase,
                 errors.city && "border-red-500 bg-red-50"
@@ -416,7 +403,7 @@ function AddressSection({
               id="state"
               value={formData.state || ''}
               onChange={onStateChange}
-              placeholder="NY"
+              placeholder="Greater Accra "
               className={cn(
                 inputBase,
                 errors.state && "border-red-500 bg-red-50"
@@ -433,7 +420,7 @@ function AddressSection({
               id="zip"
               value={formData.zip || ''}
               onChange={onZipChange}
-              placeholder="10001"
+              placeholder="00233"
               className={cn(
                 inputBase,
                 errors.zip && "border-red-500 bg-red-50"
@@ -451,7 +438,7 @@ function AddressSection({
             id="country"
             value={formData.country || ''}
             onChange={onCountryChange}
-            placeholder="United States"
+            placeholder="Ghana"
             className={cn(
               inputBase,
               errors.country && "border-red-500 bg-red-50"
@@ -504,19 +491,19 @@ function ContactPreview({ formData }: { formData: ContactFormData }) {
   );
 }
 
-function ContactTips() {
-  return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-      <h4 className="text-sm font-medium text-blue-900 mb-2">
-        vCard Contact Tips
-      </h4>
-      <ul className="text-sm text-blue-700 space-y-1">
-        <li>• QR code creates a vCard (.vcf) file</li>
-        <li>• Compatible with all major contact apps</li>
-        <li>• Required: First name, last name, phone, email</li>
-        <li>• Optional fields enhance contact completeness</li>
-        <li>• Perfect for business cards and networking</li>
-      </ul>
-    </div>
-  );
-}
+// function ContactTips() {
+//   return (
+//     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+//       <h4 className="text-sm font-medium text-blue-900 mb-2">
+//         vCard Contact Tips
+//       </h4>
+//       <ul className="text-sm text-blue-700 space-y-1">
+//         <li>• QR code creates a vCard (.vcf) file</li>
+//         <li>• Compatible with all major contact apps</li>
+//         <li>• Required: First name, last name, phone, email</li>
+//         <li>• Optional fields enhance contact completeness</li>
+//         <li>• Perfect for business cards and networking</li>
+//       </ul>
+//     </div>
+//   );
+// }

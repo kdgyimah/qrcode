@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SmsFormData, FormProps } from "@/types/qr-generator";
 import { PhoneInput } from "@/components/PhoneInput";
 import { Label } from "@/components/ui/label";
@@ -10,22 +10,26 @@ export const SmsForm: React.FC<FormProps<SmsFormData>> = ({
   errors, 
   onChange,
   onPhoneChange,
-  onContentCreate 
+  onValidityChange,
 }) => {
   const handlePhoneChange = (value: string) => {
     if (onPhoneChange) {
-      // Use the specialized phone handler if available
-      onPhoneChange('phone', value);
+      onPhoneChange("phone", value);
     } else {
-      // Fallback to regular onChange
-      onChange('phone', value);
+      onChange("phone", value);
     }
   };
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target;
-    onChange('message', value);
+    onChange("message", value);
   };
+
+  // 🔑 Tell parent when form is valid
+  useEffect(() => {
+    const valid = Boolean(formData.phone && formData.message);
+    onValidityChange?.(valid);
+  }, [formData, onValidityChange]);
 
   return (
     <>
@@ -48,7 +52,7 @@ export const SmsForm: React.FC<FormProps<SmsFormData>> = ({
           placeholder="SMS content"
           onChange={handleMessageChange}
           rows={3}
-          className={`${inputBase} resize-none ${errors.message ? "border-red-500" : ""}`}
+          className={`${inputBase} resize-none ${errors.message ? "border-gray-300 bg-white" : ""}`}
           aria-invalid={!!errors.message}
           aria-describedby={errors.message ? "message-error" : undefined}
           maxLength={160} // SMS character limit

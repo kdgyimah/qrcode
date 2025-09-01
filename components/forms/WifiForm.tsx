@@ -14,8 +14,9 @@ export function WifiForm({
         <input
           type="text"
           value={formData.ssid || ""}
+          placeholder="Enter SSID"
           onChange={(e) => onChange("ssid", e.target.value)}
-          className="mt-1 block w-full border rounded p-2"
+          className="mt-1 block w-full border rounded p-2 border-gray-300 bg-white"
         />
         {errors.ssid && <p className="text-red-500 text-sm">{errors.ssid}</p>}
       </div>
@@ -26,8 +27,9 @@ export function WifiForm({
         <input
           type="text"
           value={formData.password || ""}
+          placeholder="Enter Password"
           onChange={(e) => onChange("password", e.target.value)}
-          className="mt-1 block w-full border rounded p-2"
+          className="mt-1 block w-full border rounded p-2 border-gray-300 bg-white"
         />
         {errors.password && (
           <p className="text-red-500 text-sm">{errors.password}</p>

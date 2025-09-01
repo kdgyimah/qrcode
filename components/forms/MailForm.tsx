@@ -8,7 +8,6 @@ export const MailForm: React.FC<FormProps<MailFormData>> = ({
   formData, 
   errors, 
   onChange,
-  onContentCreate 
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -26,7 +25,7 @@ export const MailForm: React.FC<FormProps<MailFormData>> = ({
           value={formData.email || ""}
           placeholder="recipient@example.com"
           onChange={handleChange}
-          className={`${inputBase} ${errors.email ? "border-red-500" : ""}`}
+          className={`${inputBase} ${errors.email ? "border-gray-300 bg-white" : ""}`}
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? "email-error" : undefined}
           required
@@ -43,7 +42,7 @@ export const MailForm: React.FC<FormProps<MailFormData>> = ({
           value={formData.subject || ""}
           placeholder="Email subject"
           onChange={handleChange}
-          className={`${inputBase} ${errors.subject ? "border-red-500" : ""}`}
+          className={`${inputBase} ${errors.subject ? "border-gray-300 bg-white" : ""}`}
           aria-invalid={!!errors.subject}
           aria-describedby={errors.subject ? "subject-error" : undefined}
         />
@@ -59,7 +58,7 @@ export const MailForm: React.FC<FormProps<MailFormData>> = ({
           placeholder="Email content"
           onChange={handleChange}
           rows={4}
-          className={`${inputBase} resize-none ${errors.message ? "border-red-500" : ""}`}
+          className={`${inputBase} resize-none ${errors.message ? "border-gray-300 bg-white" : ""}`}
           aria-invalid={!!errors.message}
           aria-describedby={errors.message ? "message-error" : undefined}
         />

@@ -2,7 +2,7 @@ import QrEditView from "@/app/dashboard/components/QrEditView";
 import { ArrowDownToLine, Edit2, Share2, Trash2 } from "lucide-react";
 import Image from "next/image";
 
-import type { QrData, QRCategory, QrType } from "@/types/qr-generator";
+import type { QrData, QrType } from "@/types/qr-generator";
 
 const mockQr: QrData = {
   id: "123",

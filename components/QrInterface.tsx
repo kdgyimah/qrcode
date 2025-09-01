@@ -62,7 +62,7 @@ const initialFormData: QRFormDataByCategory = {
 // Category definitions with full QRCategory interface
 const qrCategories: QRCategory[] = [
   { id: "link", name: "Website URL", description: "Share any website link", icon: "Link", color: "bg-blue-600" },
-  { id: "call", name: "Phone Call", description: "Make a phone call", icon: "Phone", color: "bg-green-600" },
+  { id: "call", name: "Call", description: "Make a phone call", icon: "Phone", color: "bg-green-600" },
   { id: "mail", name: "Email", description: "Send an email", icon: "Mail", color: "bg-red-600" },
   { id: "sms", name: "SMS", description: "Send a text message", icon: "MessageSquare", color: "bg-yellow-600" },
   { id: "whatsapp", name: "WhatsApp", description: "Send WhatsApp message", icon: "MessageCircle", color: "bg-green-500" },
@@ -153,12 +153,12 @@ export default function QrInterface() {
   return (
     <div
       id="qr-interface"
-      className="bg-blue-50 px-4 md:px-8 scroll-mt-20 py-8"
+      className="bg-slate-100 px-4 md:px-8 scroll-mt-20 py-8"
     >
-      <div className="py-2 flex justify-center md:justify-start md:pl-8">
+      <div className="py-1 flex justify-center ml-4 md:justify-start md:pl-8">
         <SearchBar
           onSearch={handleSearch}
-          className="w-full max-w-xs sm:max-w-sm md:max-w-md"
+          className="w-full h-[40px] max-w-xs sm:max-w-sm md:max-w-md"
         />
       </div>
 

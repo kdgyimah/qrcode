@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { Smartphone, Apple, Play, ExternalLink } from "lucide-react";
+import { Apple, Play, ExternalLink } from "lucide-react";
 import type { FormProps, AppFormData } from "@/types/qr-generator";
 
 type AppStore = "ios" | "android" | "both" | "custom";
@@ -12,8 +11,6 @@ export function AppForm({
   errors,
   onContentCreate,
 }: FormProps<AppFormData>) {
-  const [appStore, setAppStore] = useState<AppStore>("ios");
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if ((formData.appUrl ?? "").trim()) {
@@ -85,16 +82,6 @@ export function AppForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 bg-indigo-100 rounded-lg">
-          <Smartphone className="w-5 h-5 text-indigo-600" />
-        </div>
-        <div>
-          <h3 className="font-semibold text-gray-900">App Store QR Code</h3>
-          <p className="text-sm text-gray-600">Link to app downloads</p>
-        </div>
-      </div>
-
       <div className="space-y-4">
         <div>
           <label
@@ -111,9 +98,7 @@ export function AppForm({
               onChange={(e) => handleAppUrlChange(e.target.value)}
               placeholder="https://apps.apple.com/app/id123456789 or https://play.google.com/store/apps/details?id=com.example.app"
               className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors ${
-                errors.appUrl
-                  ? "border-red-300 bg-red-50"
-                  : "border-gray-300"
+                errors.appUrl ? "border-gray-300 bg-white" : "border-gray-300"
               }`}
               required
             />
@@ -149,6 +134,7 @@ export function AppForm({
                 </div>
                 <div className="text-xs text-gray-500">iOS Apps</div>
               </div>
+
             </button>
             <button
               type="button"
@@ -207,18 +193,6 @@ export function AppForm({
           </div>
         </div>
       </div>
-
-      <button
-        type="submit"
-        disabled={!isValid}
-        className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-          isValid
-            ? "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
-            : "bg-gray-200 text-gray-400 cursor-not-allowed"
-        }`}
-      >
-        Generate App QR Code
-      </button>
     </form>
   );
 }

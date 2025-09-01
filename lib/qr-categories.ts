@@ -16,13 +16,6 @@ export const QR_CATEGORIES: QRCategory[] = [
     color: 'bg-green-500'
   },
   {
-    id: 'contact',
-    name: 'Contact',
-    icon: 'User',
-    description: 'Link to my Contact',
-    color: 'bg-purple-500'
-  },
-  {
     id: 'mail',
     name: 'Mail',
     icon: 'Mail',
@@ -106,11 +99,4 @@ export const QR_CATEGORIES: QRCategory[] = [
     description: 'Link to any location',
     color: 'bg-emerald-500'
   },
-  {
-    id: 'call',
-    name: 'Text',
-    icon: 'Type',
-    description: 'Display plain text',
-    color: 'bg-slate-500'
-  }
 ];

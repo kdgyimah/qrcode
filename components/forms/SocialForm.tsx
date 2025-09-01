@@ -96,7 +96,6 @@ const socialPlatforms: Record<SocialPlatform, PlatformConfig> = {
 };
 
 export const SocialForm: React.FC<FormProps<SocialFormData>> = ({
-  formData,
   errors,
   onChange,
 }) => {

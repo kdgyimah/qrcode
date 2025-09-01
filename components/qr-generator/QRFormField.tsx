@@ -109,7 +109,8 @@ const SelectInput = ({
 
 // --- Helper to safely get field value ---
 function getFieldValue(formData: AnyQRFormData, field: string): string {
-  return field in formData ? (formData as any)[field] : '';
+  const value = (formData as Record<string, unknown>)[field];
+  return typeof value === "string" ? value : "";
 }
 
 export function QRFormField({
