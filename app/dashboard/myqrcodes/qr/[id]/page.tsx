@@ -1,4 +1,4 @@
-import QrDetail from "@/app/dashboard/components/QrDetail";
+import QrDetail from "@/components/QrDetail";
 import type { QrData, QrType } from "@/types/qr-generator";
 
 // Simulate fetching QR detail (replace with real fetch logic)
@@ -23,9 +23,13 @@ const allQrData: QrData[] = [
   // Add more items as needed
 ];
 
-export default async function QrDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function QrDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
-  const qr = allQrData.find(q => q.id === id);
+  const qr = allQrData.find((q) => q.id === id);
   if (!qr) return <div className="p-8 text-red-500">QR Code not found.</div>;
   return <QrDetail qr={qr} onClose={() => {}} />;
 }

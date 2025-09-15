@@ -11,26 +11,24 @@ import { ProductSection } from "@/components/featurep/ProductSection";
 import FAQPage from "@/components/pages/faqpage/page";
 import Info3 from "@/components/pages/info3/page";
 
-
 export default function AboutPage() {
   return (
-    <main className="bg-white min-h-screen flex flex-col">
-      {/* Navbar */}
+    <div className="min-h-screen bg-white">
+      {/* Fixed Navbar */}
       <Navbar />
 
-      {/* Content Sections */}
-      <div className="flex flex-col w-full overflow-hidden pt-16">
+      {/* Main Content - scrollable */}
+      <main className="w-full">
         <FeatureHero />
         <FeatureInfoSection />
         <FeatureStaticDynamicSection />
         <ProductSection />
-      
         <FAQPage />
         <Info3 />
-      </div>
+      </main>
 
       {/* Footer */}
       <Footer />
-    </main>
+    </div>
   );
 }

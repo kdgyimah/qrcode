@@ -20,14 +20,14 @@ export default function Hero() {
         <Image
           src="/images/rightheroimg.png"
           alt="Right Hero Image"
-          width={700}
-          height={700}
-          className="object-contain"
+          width={600}
+          height={600}
+          className="object-contain pointer-events-none"
         />
       </motion.div>
 
       {/* Text Content */}
-      <div className="relative z-10 flex flex-col items-start justify-start mb-10 pt-16 md:justify-center min-h-[95vh] px-8 md:px-16"> {/* Adjusted padding here */}
+      <div className="relative z-10 flex flex-col items-start justify-start mb-10 pt-12 md:justify-center min-h-[95vh] px-2 md:px-12"> {/* Adjusted padding here */}
 
         <div className="max-w-2xl p-12 mb-16">
           <motion.h4
@@ -67,7 +67,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="space-x-4 mt-10"
+            className="flex flex-row  sm:flex-row gap-4 mt-10"
           >
             <Link
               href="/signup"
@@ -96,7 +96,7 @@ export default function Hero() {
               src="/images/rightheroimg.png"
               alt="Mobile Hero QR Image"
               fill
-              className="object-scale-down"
+              className="object-scale-down pointer-events-none"
               priority
             />
           </div>

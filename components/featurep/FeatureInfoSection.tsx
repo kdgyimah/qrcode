@@ -50,17 +50,17 @@ const cards = [
 
 export default function FeatureInfoSection() {
   return (
-    <section className="bg-gray-50 flex justify-center w-full px-4">
+    <section className="bg-gray-50 flex justify-center w-full px-4 py-12 md:py-16">
       <div className="flex flex-col w-full items-center max-w-[1280px]">
         {/* Heading */}
-        <div className="text-center mb-8 mt-12 md:mb-12 max-w-3xl px-4">
+        <div className="text-center mb-8 md:mb-12 max-w-3xl px-4">
           <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold capitalize text-gray-800 mb-6 md:mb-10 leading-tight">
             Powerful Features To Build, Share & Track QR codes
           </h1>
         </div>
 
         {/* Cards Grid */}
-        <div className="w-full max-w-[1148px] h-[850px] pt-[60px] mx-auto grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-[40px] gap-y-[50px] px-6 sm:px-6 overflow-y-auto">
+        <div className="w-full max-w-[1148px] pt-[60px] mx-auto grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-[40px] gap-y-[50px] px-6 sm:px-6 pb-12">
           {cards.map((card) => (
             <div
               key={card.title}

@@ -77,6 +77,7 @@ export default function Navbar() {
             width={150}
             height={40}
             className="max-w-[150px] h-auto"
+            priority
           />
         </div>
 

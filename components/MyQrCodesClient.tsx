@@ -26,7 +26,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { QrData } from "@/types/qr-generator";
-import QrEditView from "@/app/dashboard/components/QrEditView";
+import QrEditView from "@/components/QrEditView";
 
 interface MyQrCodesClientProps {
   onShowDetail: (qr: QrData) => void;
@@ -323,7 +323,7 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
           <QrEditView
             qr={editQr}
             availableFolders={availableFolderNames}
-            onClose={() => setEditQr(null)} 
+            onClose={() => setEditQr(null)}
             onSaved={(updatedQr) => {
               setEditQr(null);
 

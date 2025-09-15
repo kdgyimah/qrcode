@@ -1,13 +1,12 @@
-// lib/supabase.ts
-'use client';
+"use client";
 
-import { createBrowserClient } from '@supabase/ssr';
+import { createBrowserClient } from "@supabase/ssr";
 
-// Optional: Define types (recommended for better DX)
-import type { Database } from '@/types/supabase'; // Optional if you generated types from Supabase
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  throw new Error("Missing Supabase environment variables");
+}
 
-// Main browser-side Supabase client
-export const supabase = createBrowserClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+export const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );

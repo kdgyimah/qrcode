@@ -92,14 +92,31 @@ export default function QrInterface() {
   const [formReady, setFormReady] = useState(false);
   const [design, setDesign] = useState<DesignConfig>(initialDesign);
   const [, setValidationErrors] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Create category lookup map
   const categoryMap = useMemo(() => {
     return new Map(qrCategories.map(cat => [cat.id as Category, cat]));
   }, []);
 
+  // Filter categories based on search query
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return qrCategories;
+    }
+    
+    const norm = searchQuery.trim().toLowerCase();
+    return qrCategories.filter((c) => 
+      c.id.toLowerCase().includes(norm) || 
+      c.name.toLowerCase().includes(norm) ||
+      c.description.toLowerCase().includes(norm)
+    );
+  }, [searchQuery]);
+
   const handleSearch = useCallback(
     (q: string) => {
+      setSearchQuery(q);
+      
       const norm = q.trim().toLowerCase();
       if (!norm) return;
       
@@ -168,7 +185,7 @@ export default function QrInterface() {
           <CategorySelector 
             selected={selectedCategory.id as Category} 
             onSelect={handleCategorySelect}
-            categories={qrCategories}
+            categories={filteredCategories}
           />
           
           <QrFormRenderer

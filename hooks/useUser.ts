@@ -1,11 +1,11 @@
-// hooks/useUser.ts
 "use client";
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/superbase";
+import type { User, Session, AuthChangeEvent } from "@supabase/supabase-js";
 
 export function useUser() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -15,9 +15,11 @@ export function useUser() {
 
     fetchUser();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (event: AuthChangeEvent, session: Session | null) => {
+        setUser(session?.user ?? null);
+      }
+    );
 
     return () => listener?.subscription.unsubscribe();
   }, []);

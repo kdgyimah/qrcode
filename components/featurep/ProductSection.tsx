@@ -54,43 +54,48 @@ export function ProductSection() {
   ];
 
   return (
-    <section className="w-full bg-white py-16 px-20">
+    <section className="w-full bg-white py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8 xl:px-20">
       <div className="max-w-7xl mx-auto">
         {/* Section Heading */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+        <div className="text-center mb-8 sm:mb-10 lg:mb-12 px-4 sm:px-0">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
             Built For Every Purpose
           </h2>
-          <p className="text-gray-600 text-base mt-2">
+          <p className="text-gray-600 text-sm sm:text-base mt-2 sm:mt-3 max-w-2xl mx-auto">
             QR code solutions tailored to fit any need or industry.
           </p>
         </div>
 
         {/* Grid Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {blogPosts.map((post) => (
             <article
               key={post.id}
-              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.01] transition-all duration-300"
+              className="bg-white rounded-lg sm:rounded-xl shadow-md overflow-hidden hover:shadow-lg hover:scale-[1.01] transition-all duration-300 mx-auto w-full max-w-sm sm:max-w-none"
             >
               {/* Image */}
-              <div className="h-48 sm:h-56 w-full overflow-hidden">
+              <div className="h-40 sm:h-48 lg:h-56 w-full overflow-hidden">
                 <Image
                   src={post.imageUrl}
                   alt={post.title}
                   width={400}
                   height={250}
                   className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  priority={post.id <= 3} // Prioritize first 3 images for LCP
                 />
               </div>
 
               {/* Content */}
-              <div className="p-6">
-                <p className="text-sm text-gray-400 mb-1">{post.date}</p>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <div className="p-4 sm:p-5 lg:p-6">
+                <p className="text-xs sm:text-sm text-gray-400 mb-1 sm:mb-2">
+                  {post.date}
+                </p>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3 leading-tight">
                   {post.title}
                 </h3>
-                <p className="text-gray-600 text-sm">{post.excerpt}</p>
+                <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+                  {post.excerpt}
+                </p>
               </div>
             </article>
           ))}

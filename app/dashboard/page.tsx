@@ -14,9 +14,9 @@ import ApiIntegrationPage from "@/components/pages/ApiIntegrationPage";
 import SettingsPage from "@/app/dashboard/settings/SettingsPage";
 import SupportPage from "@/components/pages/SupportPage";
 
-import QrDetailView from "@/app/dashboard/components/QrDetail";
-import QrEditView from "@/app/dashboard/components/QrEditView";
-import MyQrCodesClient from "./components/MyQrCodesClient";
+import QrDetailView from "@/components/QrDetail";
+import QrEditView from "@/components/QrEditView";
+import MyQrCodesClient from "../../components/MyQrCodesClient";
 import QRGeneratorPage from "@/components/qr-generator/QRGeneratorPage";
 import type { QrData } from "@/types/qr-generator";
 import { useUser } from "@/hooks/useUser";
@@ -146,22 +146,22 @@ export default function DashboardPage() {
   }
 
   return (
-  <>
-    <div className="flex h-screen">
-      <Sidebar
-        open={sidebarOpen}
-        setOpen={setSidebarOpen}
-        onNavigate={setActiveView}
-      />
-      <div className="flex-1 flex flex-col">
-        <Header setSidebarOpen={setSidebarOpen} onLogout={handleLogout} />
-        <main className="flex-1 overflow-y-auto p-6 bg-gray-100 relative">
-          {renderMainContent()}
-        </main>
+    <>
+      <div className="flex h-screen">
+        <Sidebar
+          open={sidebarOpen}
+          setOpen={setSidebarOpen}
+          onNavigate={setActiveView}
+        />
+        <div className="flex-1 flex flex-col">
+          <Header setSidebarOpen={setSidebarOpen} onLogout={handleLogout} />
+          <main className="flex-1 overflow-y-auto p-6 bg-gray-100 relative">
+            {renderMainContent()}
+          </main>
+        </div>
       </div>
-    </div>
 
-    {!loading && user?.user_metadata?.trial_started_at && <TrialModal />}
-  </>
-);
+      {!loading && user?.user_metadata?.trial_started_at && <TrialModal />}
+    </>
+  );
 }
