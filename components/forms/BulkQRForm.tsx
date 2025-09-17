@@ -152,7 +152,7 @@ function BulkListInput({
         required
       />
 
-      {errors.bulkList && <ErrorText>{errors.bulkList}</ErrorText>}
+      {errors.bulkList && <ErrorText id="message error">{errors.bulkList}</ErrorText>}
 
       <div className="flex items-center justify-between mt-2">
         <p className="text-xs text-gray-500">

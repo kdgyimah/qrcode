@@ -26,13 +26,12 @@ const scanActivityData = [
   { date: "Apr 6", scans: 170 },
 ];
 
-// ✅ Strongly typed mock QR data
 export const qrTableData: QrData[] = [
   {
     id: "1",
     name: "QR for Events",
-    type: "dynamic", // ✅ matches QrType
-    category: "event", // ✅ matches Category union
+    type: "dynamic",
+    category: "event",
     link: "https://example.com/event",
     folder: "Events",
     created: "2024-03-01",
@@ -66,7 +65,7 @@ export const qrTableData: QrData[] = [
   {
     id: "2",
     name: "Feedback QR",
-    type: "static", // ✅ corrected (was `QrType: "QrType"`)
+    type: "static",
     category: "link",
     link: "https://example.com/feedback",
     folder: "Surveys",
@@ -94,19 +93,15 @@ export const qrTableData: QrData[] = [
 ];
 
 export default function AnalyticsPage() {
-  // Page/global state
   const [topSearch, setTopSearch] = useState("");
   const [dateRange, _setDateRange] = useState("Feb 1 - Mar 1, 2024");
 
-  // Chart filters state
   const [filterQr, setFilterQr] = useState("All QR Codes");
   const [sortBy, setSortBy] = useState("Date");
   const [chartDateRange, setChartDateRange] = useState("Last 30 days");
 
-  // Table search state
   const [tableSearch, setTableSearch] = useState("");
 
-  // ✅ Chart data with proper ChartData[] typing
   const osData: ChartData[] = [
     { name: "iOS", value: 50 },
     { name: "Android", value: 30 },
@@ -128,52 +123,62 @@ export default function AnalyticsPage() {
   ];
 
   return (
-    <div className="w-full">
-      {/* Top bar: search + date */}
-      <TopBar
-        search={topSearch}
-        setSearch={setTopSearch}
-        dateRange={dateRange}
-        onDateClick={() => _setDateRange("Mar 1 - Apr 1, 2024")}
-      />
+    <div className="w-full space-y-6 px-2 sm:px-4">
+      {/* Top bar */}
+      <div className="w-full">
+        <TopBar
+          search={topSearch}
+          setSearch={setTopSearch}
+          dateRange={dateRange}
+          onDateClick={() => _setDateRange("Mar 1 - Apr 1, 2024")}
+        />
+      </div>
 
-      {/* Stat cards */}
-      <SummaryStats stats={summaryData} />
+      {/* Stat cards grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <SummaryStats stats={summaryData} />
+      </div>
 
-      {/* QR Code scan activities chart + filters */}
-      <ScanActivityChart
-        data={scanActivityData}
-        filterQr={filterQr}
-        setFilterQr={setFilterQr}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        chartDateRange={chartDateRange}
-        setChartDateRange={setChartDateRange}
-        qrOptions={[
-          "All QR Codes",
-          "QR for Events",
-          "Promo QR",
-          "Product QR",
-          "Website QR",
-        ]}
-        sortOptions={["Date", "Scans"]}
-        dateOptions={["Last 7 Days", "Last 30 Days", "Custom"]}
-      />
+      {/* Scan Activity Chart */}
+      <div className="w-full">
+        <ScanActivityChart
+          data={scanActivityData}
+          filterQr={filterQr}
+          setFilterQr={setFilterQr}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          chartDateRange={chartDateRange}
+          setChartDateRange={setChartDateRange}
+          qrOptions={[
+            "All QR Codes",
+            "QR for Events",
+            "Promo QR",
+            "Product QR",
+            "Website QR",
+          ]}
+          sortOptions={["Date", "Scans"]}
+          dateOptions={["Last 7 Days", "Last 30 Days", "Custom"]}
+        />
+      </div>
 
-      {/* Pie stats */}
-      <PieStats
-        osData={osData}
-        countryData={countryData}
-        deviceTypeData={deviceTypeData}
-      />
+      {/* Pie Stats (stack on small, row on lg) */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        <PieStats
+          osData={osData}
+          countryData={countryData}
+          deviceTypeData={deviceTypeData}
+        />
+      </div>
 
-      {/* Table */}
-      <QrCodesTable
-        data={qrTableData}
-        onRowClick={(qr) => console.log("QR code clicked:", qr)}
-        search={tableSearch}
-        setSearch={setTableSearch}
-      />
+      {/* QR Table (scrollable on small screens) */}
+      <div className="w-full overflow-x-auto">
+        <QrCodesTable
+          data={qrTableData}
+          onRowClick={(qr) => console.log("QR code clicked:", qr)}
+          search={tableSearch}
+          setSearch={setTableSearch}
+        />
+      </div>
     </div>
   );
 }

@@ -99,6 +99,19 @@ export default function QrInterface() {
     return new Map(qrCategories.map(cat => [cat.id as Category, cat]));
   }, []);
 
+  // Compute suggestions based on query
+const suggestions = useMemo(() => {
+  if (!searchQuery.trim()) return [];
+  const norm = searchQuery.toLowerCase();
+  return qrCategories
+    .filter((c) =>
+      c.id.toLowerCase().includes(norm) ||
+      c.name.toLowerCase().includes(norm) ||
+      c.description.toLowerCase().includes(norm)
+    )
+    .map((c) => c.name); // only show names in suggestions
+}, [searchQuery]);
+
   // Filter categories based on search query
   const filteredCategories = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -175,6 +188,7 @@ export default function QrInterface() {
       <div className="py-1 flex justify-center ml-4 md:justify-start md:pl-8">
         <SearchBar
           onSearch={handleSearch}
+          suggestions={suggestions}
           className="w-full h-[40px] max-w-xs sm:max-w-sm md:max-w-md"
         />
       </div>

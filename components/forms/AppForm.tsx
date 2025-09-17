@@ -1,6 +1,7 @@
 "use client";
 
-import { Apple, Play, ExternalLink } from "lucide-react";
+import { useState } from "react";
+import { ExternalLink } from "lucide-react";
 import type { FormProps, AppFormData } from "@/types/qr-generator";
 
 type AppStore = "ios" | "android" | "both" | "custom";
@@ -8,26 +9,29 @@ type AppStore = "ios" | "android" | "both" | "custom";
 export function AppForm({
   formData,
   onChange,
-  errors,
   onContentCreate,
 }: FormProps<AppFormData>) {
+  const [touched, setTouched] = useState(false);
+  const [appId, setAppId] = useState("");
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched(true);
     if ((formData.appUrl ?? "").trim()) {
       onContentCreate({
         ...formData,
-        appUrl: formData.appUrl ?? "", // ensure it's always a string
+        appUrl: formData.appUrl ?? "",
       });
     }
   };
 
   const handleAppUrlChange = (value: string) => {
+    if (!touched) setTouched(true);
     onChange("appUrl", value);
   };
 
   const generateAppUrl = (store: AppStore, appId: string) => {
     if (!appId.trim()) return "";
-
     switch (store) {
       case "ios":
         return `https://apps.apple.com/app/id${appId}`;
@@ -35,19 +39,6 @@ export function AppForm({
         return `https://play.google.com/store/apps/details?id=${appId}`;
       default:
         return appId;
-    }
-  };
-
-  const handleQuickGenerate = (store: AppStore) => {
-    const appId = prompt(
-      store === "ios"
-        ? "Enter App Store ID (numbers only, e.g., 1234567890):"
-        : "Enter Package Name (e.g., com.example.app):"
-    );
-
-    if (appId) {
-      const url = generateAppUrl(store, appId);
-      handleAppUrlChange(url);
     }
   };
 
@@ -76,13 +67,25 @@ export function AppForm({
     return "Custom App Link";
   };
 
-  const appUrl = formData.appUrl ?? ""; // default to empty string
-  const isValid = appUrl.trim() !== "" && isValidUrl(appUrl);
+  const appUrl = formData.appUrl ?? "";
+  const isEmpty = appUrl.trim() === "";
+  const isValid = !isEmpty && isValidUrl(appUrl);
   const detectedStore = isValid ? detectAppStore(appUrl) : "";
+
+  // dynamic error message
+  let dynamicError: string | null = null;
+  if (touched) {
+    if (isEmpty) {
+      dynamicError = "This field is required.";
+    } else if (!isValid) {
+      dynamicError = "Please enter a valid URL.";
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
+        {/* App URL Field */}
         <div>
           <label
             htmlFor="appUrl"
@@ -96,9 +99,10 @@ export function AppForm({
               id="appUrl"
               value={appUrl}
               onChange={(e) => handleAppUrlChange(e.target.value)}
+              onBlur={() => setTouched(true)}
               placeholder="https://apps.apple.com/app/id123456789 or https://play.google.com/store/apps/details?id=com.example.app"
               className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors ${
-                errors.appUrl ? "border-gray-300 bg-white" : "border-gray-300"
+                dynamicError ? "border-red-500" : "border-gray-300"
               }`}
               required
             />
@@ -106,10 +110,12 @@ export function AppForm({
               <ExternalLink className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             )}
           </div>
-          {errors.appUrl && (
-            <p className="mt-1 text-sm text-red-600">{errors.appUrl}</p>
+          {/* Dynamic validation message */}
+          {dynamicError && (
+            <p className="mt-1 text-sm text-red-600">{dynamicError}</p>
           )}
-          {detectedStore && (
+          {/* Success message */}
+          {detectedStore && !dynamicError && (
             <p className="mt-1 text-sm text-green-600 flex items-center gap-1">
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
               {detectedStore} detected
@@ -117,79 +123,37 @@ export function AppForm({
           )}
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-3">
-            Quick Generate
+        {/* Quick Generate App Links */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Quick Generate by App ID
           </label>
-          <div className="grid grid-cols-2 gap-3">
+          <input
+            type="text"
+            placeholder="Enter App ID (e.g. com.example.app or 123456789)"
+            value={appId}
+            onChange={(e) => setAppId(e.target.value)}
+            className="w-full px-4 py-2 border rounded-lg border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+          <div className="flex gap-2 flex-wrap">
             <button
               type="button"
-              onClick={() => handleQuickGenerate("ios")}
-              className="flex items-center gap-2 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-3 py-1.5 text-sm rounded-lg bg-gray-100 hover:bg-gray-200"
+              onClick={() =>
+                handleAppUrlChange(generateAppUrl("ios", appId))
+              }
             >
-              <Apple className="w-5 h-5 text-gray-600" />
-              <div className="text-left">
-                <div className="text-sm font-medium text-gray-900">
-                  App Store
-                </div>
-                <div className="text-xs text-gray-500">iOS Apps</div>
-              </div>
-
+              iOS App Store
             </button>
             <button
               type="button"
-              onClick={() => handleQuickGenerate("android")}
-              className="flex items-center gap-2 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-3 py-1.5 text-sm rounded-lg bg-gray-100 hover:bg-gray-200"
+              onClick={() =>
+                handleAppUrlChange(generateAppUrl("android", appId))
+              }
             >
-              <Play className="w-5 h-5 text-gray-600" />
-              <div className="text-left">
-                <div className="text-sm font-medium text-gray-900">
-                  Google Play
-                </div>
-                <div className="text-xs text-gray-500">Android Apps</div>
-              </div>
+              Google Play
             </button>
-          </div>
-          <p className="mt-2 text-xs text-gray-500">
-            Click to quickly generate store URLs with App ID or Package Name
-          </p>
-        </div>
-
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-blue-900 mb-2">
-            Supported App Stores
-          </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-blue-700">
-            <div className="flex items-center gap-2">
-              <Apple className="w-4 h-4" />
-              <span>Apple App Store</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Play className="w-4 h-4" />
-              <span>Google Play Store</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ExternalLink className="w-4 h-4" />
-              <span>Microsoft Store</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <ExternalLink className="w-4 h-4" />
-              <span>Custom App Links</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">
-            URL Examples
-          </h4>
-          <div className="space-y-1 text-xs text-gray-600 font-mono">
-            <div>iOS: https://apps.apple.com/app/id1234567890</div>
-            <div>
-              Android:
-              https://play.google.com/store/apps/details?id=com.example.app
-            </div>
-            <div>Direct APK: https://example.com/app.apk</div>
           </div>
         </div>
       </div>

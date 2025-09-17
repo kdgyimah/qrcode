@@ -65,7 +65,7 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 w-full px-6 md:px-16 py-4 z-50 transition-transform duration-300 ${
         showNavbar ? "translate-y-0" : "-translate-y-full"
-      } ${lastScrollY > 10 ? "bg-white shadow-md" : "bg-transparent"}`}
+      } ${lastScrollY > 10 ? "bg-white shadow-md" : "bg-white"}`}
       style={{ willChange: "transform" }}
     >
       <div className="flex items-center justify-between w-full max-w-7xl mx-auto">

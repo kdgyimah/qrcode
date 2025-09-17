@@ -1,23 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaGoogle } from "react-icons/fa";
 import { supabase } from "@/lib/superbase";
 import { toast } from "react-hot-toast";
+import BackArrow from "@/components/BackArrow";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  // ✅ Auto-redirect if user is already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        router.replace("/dashboard");
+      }
+    };
+    checkSession();
+  }, [router]);
+
+  // ✅ Email/password login
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -25,8 +36,6 @@ export default function LoginPage() {
     });
 
     if (error) {
-      console.error("Login failed:", error);
-      setError(error.message);
       toast.error(error.message);
       setLoading(false);
       return;
@@ -36,24 +45,31 @@ export default function LoginPage() {
     router.push("/dashboard");
   };
 
+  // ✅ Google login
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
+        redirectTo: `${window.location.origin}/dashboard`,
       },
     });
 
     if (error) {
-      setError(error.message);
       toast.error(error.message);
     }
   };
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden">
+      {/* Background gradient */}
       <div className="absolute inset-0 -z-20 bg-gradient-to-br from-blue-200 via-white to-blue-300 opacity-90" />
 
+      {/* Back button */}
+      <div className="absolute top-4 left-6">
+        <BackArrow />
+      </div>
+
+      {/* Logo */}
       <div className="mb-6">
         <Image
           src="/logos/qrlogo.svg"
@@ -64,9 +80,11 @@ export default function LoginPage() {
         />
       </div>
 
+      {/* Login Card */}
       <div className="w-full md:w-[30%] bg-white rounded-lg shadow-lg p-8 space-y-6">
         <h2 className="text-xl font-semibold text-gray-800">Sign In</h2>
 
+        {/* Google login button */}
         <button
           onClick={handleGoogleLogin}
           className="w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-md hover:bg-gray-50 transition"
@@ -75,15 +93,20 @@ export default function LoginPage() {
           <span>Sign in with Google</span>
         </button>
 
+        {/* Divider */}
         <div className="flex items-center gap-4">
           <hr className="flex-grow border-gray-300" />
           <span className="text-sm text-gray-500">or</span>
           <hr className="flex-grow border-gray-300" />
         </div>
 
+        {/* Email/password login form */}
         <form onSubmit={handleEmailLogin} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Email
             </label>
             <input
@@ -98,7 +121,10 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Password
             </label>
             <input
@@ -112,8 +138,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
-
           <button
             type="submit"
             disabled={loading}
@@ -123,6 +147,7 @@ export default function LoginPage() {
           </button>
         </form>
 
+        {/* Signup link */}
         <p className="text-sm text-center text-gray-600">
           Don’t have an account?{" "}
           <a href="/signup" className="text-blue-600 hover:underline">

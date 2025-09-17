@@ -192,7 +192,7 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
         </div>
       )}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <Dialog open={openDialog} onOpenChange={setOpenDialog}>
           <DialogTrigger asChild>
             <button
@@ -201,10 +201,11 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
                 setEditingIndex(null);
                 setOpenDialog(true);
               }}
-              className="w-[232px] h-[119px] border border-gray-300 rounded-lg flex flex-col justify-center items-center text-blue-600 bg-white"
+              className="border border-gray-300 rounded-xl flex flex-col justify-center items-center text-blue-600 bg-white 
+                 py-6 px-4 shadow-sm hover:shadow-md transition cursor-pointer"
             >
-              <FaFolder size={40} />
-              <span className="mt-2 font-medium">New Folder</span>
+              <FaFolder size={36} />
+              <span className="mt-2 font-medium text-sm">New Folder</span>
             </button>
           </DialogTrigger>
 
@@ -251,24 +252,29 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
           </DialogContent>
         </Dialog>
 
+        {/* Folder Cards */}
         {filteredFolders.map((folder, index) => (
           <div
             key={index}
             onClick={() => setSelectedFolder(folder.name)}
-            className={`cursor-pointer w-[232px] h-[119px] border border-gray-200 shadow-sm bg-white flex flex-col justify-between ${
-              selectedFolder === folder.name ? "ring-2 ring-blue-500" : ""
-            }`}
+            className={`cursor-pointer border border-gray-200 shadow-sm bg-white rounded-xl flex flex-col justify-between
+                transition hover:shadow-md hover:border-blue-400 p-4
+                ${
+                  selectedFolder === folder.name ? "ring-2 ring-blue-500" : ""
+                }`}
           >
-            <div className="flex justify-between items-start px-4 pt-3">
-              <div className="flex gap-2 items-center">
-                <FaFolder className="text-blue-600" />
-                <span className="font-semibold text-gray-800 text-sm truncate max-w-[120px]">
+            <div className="flex justify-between items-start">
+              <div className="flex gap-2 items-center min-w-0">
+                <FaFolder className="text-blue-600 flex-shrink-0" />
+                <span className="font-semibold text-gray-800 text-sm truncate">
                   {folder.name}
                 </span>
               </div>
               <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <MoreHorizontal className="w-5 h-5 text-gray-500 cursor-pointer" />
+                <DropdownMenuTrigger asChild>
+                  <button onClick={(e) => e.stopPropagation()}>
+                    <MoreHorizontal className="w-5 h-5 text-gray-500" />
+                  </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
@@ -282,9 +288,7 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
                     Edit
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
+                    onClick={(e) => e.stopPropagation()}
                     className="text-red-600"
                   >
                     Delete
@@ -292,8 +296,8 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            <hr className="my-2 border-t border-gray-200" />
-            <div className="flex justify-between items-center text-xs text-gray-600 px-4 pb-2">
+
+            <div className="flex justify-between items-center text-xs text-gray-600 mt-3">
               <span>{folder.qrCount} QR Codes</span>
               <span>{folder.createdAt}</span>
             </div>

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaGoogle } from "react-icons/fa";
 import { supabase } from "@/lib/superbase";
 import { toast } from "react-hot-toast";
+import BackArrow from "@/components/BackArrow";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -19,6 +20,18 @@ export default function SignUpPage() {
 
   const [loading, setLoading] = useState(false);
 
+  // ✅ Redirect if already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        router.replace("/dashboard");
+      }
+    };
+    checkSession();
+  }, [router]);
+
+  // ✅ Form input handler
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -27,6 +40,7 @@ export default function SignUpPage() {
     }));
   };
 
+  // ✅ Email/password sign-up
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -58,11 +72,12 @@ export default function SignUpPage() {
     setLoading(false);
   };
 
+  // ✅ Google sign-up
   const handleGoogleSignup = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
+        redirectTo: `${window.location.origin}/dashboard`,
       },
     });
 
@@ -71,8 +86,15 @@ export default function SignUpPage() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4">
+      {/* Background */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-200 via-white to-blue-300 opacity-90 backdrop-blur-md" />
 
+      {/* Back button */}
+      <div className="absolute top-6 left-6">
+        <BackArrow />
+      </div>
+
+      {/* Logo */}
       <div className="mb-6">
         <Image
           src="/logos/qrlogo.svg"
@@ -83,9 +105,11 @@ export default function SignUpPage() {
         />
       </div>
 
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 md:p-8 space-y-1.5">
+      {/* Sign-up card */}
+      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6 md:p-8 space-y-6">
         <h2 className="text-xl font-semibold text-gray-800 text-left">Sign Up</h2>
 
+        {/* Google signup */}
         <button
           onClick={handleGoogleSignup}
           className="w-full flex items-center justify-center gap-2 border border-gray-300 py-2 rounded-md hover:bg-gray-50 transition"
@@ -94,16 +118,21 @@ export default function SignUpPage() {
           <span>Sign up with Google</span>
         </button>
 
+        {/* Divider */}
         <div className="flex items-center gap-4">
           <hr className="flex-grow border-gray-300" />
           <span className="text-sm text-gray-500">or</span>
           <hr className="flex-grow border-gray-300" />
         </div>
 
+        {/* Form */}
         <form onSubmit={handleSignUp} className="space-y-4 text-sm">
           {/* Full Name */}
           <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="fullName"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Full Name
             </label>
             <input
@@ -119,7 +148,10 @@ export default function SignUpPage() {
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Email
             </label>
             <input
@@ -135,7 +167,10 @@ export default function SignUpPage() {
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Password
             </label>
             <input
@@ -149,7 +184,7 @@ export default function SignUpPage() {
             />
           </div>
 
-          {/* Terms Agreement */}
+          {/* Terms */}
           <div className="flex items-start text-sm">
             <input
               id="terms"
@@ -166,7 +201,7 @@ export default function SignUpPage() {
             </label>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
@@ -176,6 +211,7 @@ export default function SignUpPage() {
           </button>
         </form>
 
+        {/* Login link */}
         <p className="text-sm text-center text-gray-600">
           Already have an account?{" "}
           <a href="/login" className="text-blue-600 hover:underline">

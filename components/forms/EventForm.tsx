@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Calendar, Clock, MapPin, FileText } from "lucide-react";
 import type { FormProps, EventFormData } from "@/types/qr-generator";
 import { Label } from "@/components/ui/label";
 import { ErrorText } from "@/components/ui/error-text";
-import { inputBase} from "@/constants/styles";
+import { inputBase } from "@/constants/styles";
 import { cn } from "@/lib/utils";
 
 export const EventForm: React.FC<FormProps<EventFormData>> = ({
@@ -13,7 +13,13 @@ export const EventForm: React.FC<FormProps<EventFormData>> = ({
   onChange,
   errors,
 }) => {
-  // Memoized validation state (safe against undefined)
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const markTouched = (field: keyof EventFormData) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+  };
+
+  // Validation state
   const isValid = useMemo(() => {
     const title = formData?.eventTitle?.trim?.() ?? "";
     const start = formData?.eventStart?.trim?.() ?? "";
@@ -48,37 +54,40 @@ export const EventForm: React.FC<FormProps<EventFormData>> = ({
       <div className="space-y-4">
         <EventTitleInput
           title={formData?.eventTitle ?? ""}
-          error={errors?.eventTitle}
+          error={touched.eventTitle ? errors?.eventTitle : undefined}
           onChange={handleChange("eventTitle")}
+          onBlur={() => markTouched("eventTitle")}
         />
 
         <DateTimeSection
           startDate={formData?.eventStart ?? ""}
           endDate={formData?.eventEnd ?? ""}
-          startError={errors?.eventStart}
-          endError={errors?.eventEnd}
+          startError={touched.eventStart ? errors?.eventStart : undefined}
+          endError={touched.eventEnd ? errors?.eventEnd : undefined}
           onStartChange={handleChange("eventStart")}
           onEndChange={handleChange("eventEnd")}
+          onStartBlur={() => markTouched("eventStart")}
+          onEndBlur={() => markTouched("eventEnd")}
         />
 
         <LocationInput
           location={formData?.eventLocation ?? ""}
-          error={errors?.eventLocation}
+          error={touched.eventLocation ? errors?.eventLocation : undefined}
           onChange={handleChange("eventLocation")}
+          onBlur={() => markTouched("eventLocation")}
         />
 
         <DescriptionInput
           description={formData?.eventDesc ?? ""}
-          error={errors?.eventDesc}
+          error={touched.eventDesc ? errors?.eventDesc : undefined}
           onChange={handleChange("eventDesc")}
+          onBlur={() => markTouched("eventDesc")}
         />
       </div>
 
       {isValid && (
         <EventPreview formData={formData} formatDate={formatDateForDisplay} />
       )}
-
-      {/* <EventTips /> */}
     </div>
   );
 };
@@ -89,10 +98,12 @@ function EventTitleInput({
   title,
   error,
   onChange,
+  onBlur,
 }: {
   title: string;
   error?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: () => void;
 }) {
   return (
     <div>
@@ -102,13 +113,14 @@ function EventTitleInput({
         id="eventTitle"
         value={title}
         onChange={onChange}
+        onBlur={onBlur}
         placeholder="Annual Conference 2024"
-        className={cn(inputBase, error && "border-gray-300 bg-white")}
+        className={cn(inputBase, error && "border-red-500")}
         aria-invalid={!!error}
         aria-describedby={error ? "eventTitle-error" : undefined}
         required
       />
-      {error && <ErrorText>{error}</ErrorText>}
+      {error && <ErrorText id="eventTitle-error">{error}</ErrorText>}
     </div>
   );
 }
@@ -120,6 +132,8 @@ function DateTimeSection({
   endError,
   onStartChange,
   onEndChange,
+  onStartBlur,
+  onEndBlur,
 }: {
   startDate: string;
   endDate: string;
@@ -127,6 +141,8 @@ function DateTimeSection({
   endError?: string;
   onStartChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onEndChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onStartBlur: () => void;
+  onEndBlur: () => void;
 }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -140,12 +156,13 @@ function DateTimeSection({
           id="eventStart"
           value={startDate}
           onChange={onStartChange}
-          className={cn(inputBase, startError && "border-gray-300 bg-white")}
+          onBlur={onStartBlur}
+          className={cn(inputBase, startError && "border-red-500")}
           aria-invalid={!!startError}
           aria-describedby={startError ? "eventStart-error" : undefined}
           required
         />
-        {startError && <ErrorText>{startError}</ErrorText>}
+        {startError && <ErrorText id="eventStart-error">{startError}</ErrorText>}
       </div>
 
       <div>
@@ -158,11 +175,12 @@ function DateTimeSection({
           id="eventEnd"
           value={endDate}
           onChange={onEndChange}
-          className={cn(inputBase, endError && "border-gray-300 bg-white")}
+          onBlur={onEndBlur}
+          className={cn(inputBase, endError && "border-red-500")}
           aria-invalid={!!endError}
           aria-describedby={endError ? "eventEnd-error" : undefined}
         />
-        {endError && <ErrorText>{endError}</ErrorText>}
+        {endError && <ErrorText id="eventEnd-error">{endError}</ErrorText>}
       </div>
     </div>
   );
@@ -172,10 +190,12 @@ function LocationInput({
   location,
   error,
   onChange,
+  onBlur,
 }: {
   location: string;
   error?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: () => void;
 }) {
   return (
     <div>
@@ -188,12 +208,13 @@ function LocationInput({
         id="eventLocation"
         value={location}
         onChange={onChange}
+        onBlur={onBlur}
         placeholder="123 Main St, City, State or Virtual Meeting"
-        className={cn(inputBase, error && "border-gray-300 bg-white")}
+        className={cn(inputBase, error && "border-red-500")}
         aria-invalid={!!error}
         aria-describedby={error ? "eventLocation-error" : undefined}
       />
-      {error && <ErrorText>{error}</ErrorText>}
+      {error && <ErrorText id="eventLocation-error">{error}</ErrorText>}
     </div>
   );
 }
@@ -202,10 +223,12 @@ function DescriptionInput({
   description,
   error,
   onChange,
+  onBlur,
 }: {
   description: string;
   error?: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur: () => void;
 }) {
   return (
     <div>
@@ -217,13 +240,14 @@ function DescriptionInput({
         id="eventDesc"
         value={description}
         onChange={onChange}
+        onBlur={onBlur}
         placeholder="Event details, agenda, special instructions..."
         rows={4}
-        className={cn(inputBase, error && "border-gray-300 bg-white")}
+        className={cn(inputBase, error && "border-red-500")}
         aria-invalid={!!error}
         aria-describedby={error ? "eventDesc-error" : undefined}
       />
-      {error && <ErrorText>{error}</ErrorText>}
+      {error && <ErrorText id="eventDesc-error">{error}</ErrorText>}
       <p className="mt-1 text-xs text-gray-500 ">
         {description.length}/500 characters
       </p>
@@ -276,20 +300,3 @@ function EventPreview({
     </div>
   );
 }
-
-// function EventTips() {
-//   return (
-//     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-//       <h4 className="text-sm font-medium text-blue-900 mb-2">
-//         Calendar Event Tips
-//       </h4>
-//       <ul className="text-sm text-blue-700 space-y-1">
-//         <li>• QR code will generate a calendar event (.ics file)</li>
-//         <li>• Works with most calendar apps (Google, Outlook, Apple)</li>
-//         <li>• Include timezone-specific times for accuracy</li>
-//         <li>• Virtual events: add meeting links in description</li>
-//         <li>• Physical events: include full address for GPS</li>
-//       </ul>
-//     </div>
-//   );
-

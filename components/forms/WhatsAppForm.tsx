@@ -52,7 +52,7 @@ export const WhatsAppForm: React.FC<FormProps<WhatsAppFormData>> = ({
           aria-invalid={!!errors.waBody}
           aria-describedby={errors.waBody ? "waBody-error" : undefined}
         />
-        {errors.waBody && <ErrorText>{errors.waBody}</ErrorText>}
+        {errors.waBody && <ErrorText id="waBody-error">{errors.waBody}</ErrorText>}
         
         {/* Optional: Character counter for very long messages */}
         {formData.waBody && formData.waBody.length > 0 && (

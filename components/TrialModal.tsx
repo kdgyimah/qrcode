@@ -40,11 +40,14 @@ export default function TrialModal() {
 
   return (
     <Dialog open={open}>
-      <DialogContent className="w-[449px] h-[574px] rounded-xl shadow-lg">
-        <div className="text-center space-y-6 px-4 pt-6">
-          <h2 className="text-xl font-semibold text-gray-800">Your trial Plan will expire in</h2>
+      <DialogContent className="w-full max-w-[95vw] sm:max-w-md md:max-w-lg max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-4 sm:p-6">
+        <div className="text-center space-y-4 sm:space-y-6">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800">
+            Your trial Plan will expire in
+          </h2>
 
-          <div className="flex justify-center gap-3">
+          {/* Countdown */}
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3">
             {[
               { label: "Days", value: timeLeft.days },
               { label: "Hours", value: timeLeft.hours },
@@ -52,39 +55,50 @@ export default function TrialModal() {
             ].map((item, i) => (
               <div
                 key={i}
-                className="bg-blue-100 w-[93px] h-[93px] flex flex-col items-center justify-center rounded-md"
+                className="bg-blue-100 w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center rounded-md"
               >
-                <span className="text-3xl text-blue-600 font-bold">{item.value}</span>
-                <span className="text-sm font-medium text-blue-600">{item.label}</span>
+                <span className="text-lg sm:text-2xl text-blue-600 font-bold">
+                  {item.value}
+                </span>
+                <span className="text-xs sm:text-sm font-medium text-blue-600">
+                  {item.label}
+                </span>
               </div>
             ))}
           </div>
 
-          <p className="text-sm text-gray-600">You will lose access to these features after:</p>
+          <p className="text-sm text-gray-600">
+            You will lose access to these features after:
+          </p>
 
-          <ul className="text-left text-sm text-gray-700 space-y-3 px-6">
+          {/* Features List */}
+          <ul className="text-left text-sm text-gray-700 space-y-2 sm:space-y-3">
             <li className="flex items-center gap-2">
-              <CheckCircle className="text-blue-600 w-4 h-4" />
+              <CheckCircle className="text-blue-600 w-4 h-4 shrink-0" />
               Create editable dynamic QR codes
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle className="text-blue-600 w-4 h-4" />
+              <CheckCircle className="text-blue-600 w-4 h-4 shrink-0" />
               Track scans with analytics
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle className="text-blue-600 w-4 h-4" />
+              <CheckCircle className="text-blue-600 w-4 h-4 shrink-0" />
               Customize designs without limits
             </li>
-            <li className="flex items-center gap-2">
-              <CheckCircle className="text-blue-600 w-4 h-4" />
-              SVG, PDF, EPS Download and <a href="/features" className="underline">more</a>
+            <li className="flex items-center gap-2 flex-wrap">
+              <CheckCircle className="text-blue-600 w-4 h-4 shrink-0" />
+              SVG, PDF, EPS Download and{" "}
+              <a href="/features" className="underline ml-1">
+                more
+              </a>
             </li>
           </ul>
 
-          <div className="flex justify-end gap-4 px-4 mt-6">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 mt-4 sm:mt-6">
             <button
               onClick={() => setOpen(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 w-full sm:w-auto"
             >
               Cancel
             </button>
@@ -92,7 +106,7 @@ export default function TrialModal() {
               onClick={() => {
                 window.location.href = "/pricing";
               }}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 w-full sm:w-auto"
             >
               Upgrade
             </button>

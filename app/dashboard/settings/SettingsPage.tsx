@@ -16,22 +16,27 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("account");
 
   return (
-    <div className="p-8 w-full">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4 sm:p-6 lg:p-8 w-full">
+      {/* Header */}
+      <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <div>
-          <h2 className="text-2xl font-semibold">Settings</h2>
-          <p className="text-gray-400 text-sm">Tailor Your Experience</p>
+          <h2 className="text-xl sm:text-2xl font-semibold">Settings</h2>
+          <p className="text-gray-500 text-sm">Tailor Your Experience</p>
         </div>
-        <button className="btn-primary px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+        <button className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm sm:text-base">
           Continue
         </button>
       </div>
+
+      {/* Tabs */}
       <SettingsTabs
         tabs={TABS}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
-      <div className="mt-8">
+
+      {/* Tab content */}
+      <div className="mt-6 sm:mt-8">
         {activeTab === "account" && <AccountSettings />}
         {activeTab === "plans" && <PlansBillingSettings />}
         {activeTab === "notifications" && <NotificationPreferenceSettings />}

@@ -11,6 +11,7 @@ interface PhoneInputProps {
   onChange: (val: string) => void;
   error?: string;
   label?: string;
+  onBlur?: () => void;
 }
 
 export const PhoneInput: React.FC<PhoneInputProps> = ({
@@ -123,7 +124,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
         </p>
       )}
 
-      {error && <ErrorText>{error}</ErrorText>}
+      {error && <ErrorText id={`${name}-error`}>{error}</ErrorText>}
 
       {showDropdown && (
         <div

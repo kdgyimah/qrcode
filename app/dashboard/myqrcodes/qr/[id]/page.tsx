@@ -30,6 +30,22 @@ export default async function QrDetailPage({
 }) {
   const { id } = await params;
   const qr = allQrData.find((q) => q.id === id);
-  if (!qr) return <div className="p-8 text-red-500">QR Code not found.</div>;
-  return <QrDetail qr={qr} onClose={() => {}} />;
+
+  if (!qr) {
+    return (
+      <div className="flex items-center justify-center min-h-screen p-6">
+        <p className="text-red-500 text-lg font-medium">
+          QR Code not found.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-center items-start min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-10">
+      <div className="w-full max-w-4xl bg-white rounded-lg shadow-md overflow-hidden">
+        <QrDetail qr={qr} onClose={() => {}} />
+      </div>
+    </div>
+  );
 }

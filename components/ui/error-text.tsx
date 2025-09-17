@@ -1,9 +1,16 @@
+// ErrorText.tsx
 import React from "react";
 
 interface ErrorTextProps {
-  children: string;
+  children: React.ReactNode; 
+  id:string ; 
 }
 
-export const ErrorText: React.FC<ErrorTextProps> = ({ children }) => (
-  <p className="text-xs text-red-600 mt-1">{children}</p>
-);
+export const ErrorText: React.FC<ErrorTextProps> = ({ children }) => {
+  if (!children) return null; 
+  return (
+    <p className="mt-1 text-sm text-red-600">
+      {children}
+    </p>
+  );
+};

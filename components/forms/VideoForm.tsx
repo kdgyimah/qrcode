@@ -108,7 +108,7 @@ function VideoUrlInput({ videoUrl, error, onChange }: VideoUrlInputProps) {
           required
         />
       </div>
-      {error && <ErrorText>{error}</ErrorText>}
+      {error && <ErrorText id="videoUrl-error">{error}</ErrorText>}
       <p className="mt-2 text-xs text-gray-500">
         Supports YouTube, Vimeo, and other video platforms
       </p>

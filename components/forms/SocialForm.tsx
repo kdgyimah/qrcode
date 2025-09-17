@@ -159,7 +159,7 @@ export const SocialForm: React.FC<FormProps<SocialFormData>> = ({
         aria-describedby={errors.socialUrl ? "socialUrl-error" : undefined}
       />
       {errors.socialUrl && (
-        <ErrorText>{errors.socialUrl}</ErrorText>
+        <ErrorText id="socialUrl-error">{errors.socialUrl}</ErrorText>
       )}
     </>
   );

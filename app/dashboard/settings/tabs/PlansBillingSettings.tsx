@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import CountryFlag from "react-country-flag";
 import { CheckCircleIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Switch } from "@headlessui/react";
-import { useEffect as reactUseEffect } from "react";
 
-// Demo countries, add more as needed
 const countries = [
   { code: "GB", label: "United Kingdom" },
   { code: "US", label: "United States" },
@@ -18,10 +16,8 @@ export default function PlansBillingSettings() {
   const [countryDropdownOpen, setCountryDropdownOpen] = useState(false);
   const [autoPayout, setAutoPayout] = useState(true);
 
-  // For clicking outside of dropdown
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on click outside
   useEffect(() => {
     function handleClick(event: MouseEvent) {
       if (
@@ -55,10 +51,11 @@ export default function PlansBillingSettings() {
                 <span className="font-medium">Plan:</span> Pro Tier (Monthly)
               </div>
               <div className="text-xs text-gray-500">
-                Renewal Date: <span className="font-semibold">Sept 30, 2025</span>
+                Renewal Date:{" "}
+                <span className="font-semibold">Sept 30, 2025</span>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-5 py-2 text-sm font-medium transition-colors flex items-center gap-2">
                 Upgrade
                 <CheckCircleIcon className="w-5 h-5 ml-1" />
@@ -75,11 +72,14 @@ export default function PlansBillingSettings() {
       <div className="md:flex md:items-start gap-8">
         <div className="min-w-[180px] md:w-1/4 mb-4 md:mb-0">
           <div className="font-semibold text-base">Payment Method</div>
-          <div className="text-gray-400 text-sm">Update your payment details.</div>
+          <div className="text-gray-400 text-sm">
+            Update your payment details.
+          </div>
         </div>
         <div className="flex-1">
           <section className="bg-white rounded-xl shadow p-6">
             <form className="space-y-4">
+              {/* Card Number */}
               <div>
                 <label className="block text-xs mb-1 font-medium text-gray-500">
                   Credit Card
@@ -94,6 +94,8 @@ export default function PlansBillingSettings() {
                   </span>
                 </div>
               </div>
+
+              {/* Card Holder */}
               <div>
                 <label className="block text-xs mb-1 font-medium text-gray-500">
                   Card Holder Name
@@ -103,6 +105,8 @@ export default function PlansBillingSettings() {
                   defaultValue="Azusa Nakano"
                 />
               </div>
+
+              {/* Country */}
               <div>
                 <label className="block text-xs mb-1 font-medium text-gray-500">
                   Country
@@ -153,6 +157,8 @@ export default function PlansBillingSettings() {
                   )}
                 </div>
               </div>
+
+              {/* Auto Payout Switch */}
               <div className="flex items-center justify-between mt-2">
                 <div>
                   <div className="text-sm font-medium text-gray-900">
@@ -176,6 +182,8 @@ export default function PlansBillingSettings() {
                   />
                 </Switch>
               </div>
+
+              {/* Save Button */}
               <div className="pt-2">
                 <button
                   className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-8 py-2 text-sm font-medium transition flex items-center gap-2"
@@ -191,9 +199,4 @@ export default function PlansBillingSettings() {
       </div>
     </div>
   );
-}
-
-// Provide a correct useEffect implementation for this file
-function useEffect(effect: () => void | (() => void), deps?: unknown[]) {
-  return reactUseEffect(effect, deps);
 }

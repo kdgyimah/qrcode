@@ -15,14 +15,26 @@ export default function DateSelector() {
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="flex items-center justify-between text-sm text-gray-700 border-gray-300"
+          className="w-full sm:w-auto flex items-center justify-between 
+                     text-sm text-gray-700 border-gray-300 px-3 py-2"
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : "Select Date"}
+          <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+          <span className="truncate">
+            {date ? format(date, "PPP") : "Select Date"}
+          </span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="end">
-        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+      <PopoverContent
+        className="w-full sm:w-auto p-0"
+        align="start"
+        sideOffset={8}
+      >
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          initialFocus
+        />
       </PopoverContent>
     </Popover>
   );

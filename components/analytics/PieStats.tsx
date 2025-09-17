@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { PieChart, Pie, Cell } from "recharts";
-import { ChartData } from "@/types/qr-generator"; // ✅ Import ChartData type
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { ChartData } from "@/types/qr-generator";
 
 // Palette for each donut
 const pieColors = [
@@ -11,7 +11,7 @@ const pieColors = [
   ["#ff9500", "#34c759", "#007aff", "#a2845e"], // Device Type
 ];
 
-// Custom legend with two columns and percentage
+// Custom legend with responsive layout
 function CustomLegend({
   data,
   colors,
@@ -19,38 +19,18 @@ function CustomLegend({
   data: ChartData[];
   colors: string[];
 }) {
-  const mid = Math.ceil(data.length / 2);
-  const firstCol = data.slice(0, mid);
-  const secondCol = data.slice(mid);
-
   return (
-    <div className="flex w-full justify-center mt-2 gap-8">
-      <div className="flex flex-col">
-        {firstCol.map((entry, idx) => (
-          <div key={entry.name} className="flex items-center mb-1">
-            <span
-              className="inline-block w-3 h-3 mr-2 rounded"
-              style={{ backgroundColor: colors[idx % colors.length] }}
-            />
-            <span className="text-xs font-medium">{entry.name}</span>
-            <span className="ml-2 text-xs text-gray-400">{entry.value}%</span>
-          </div>
-        ))}
-      </div>
-      <div className="flex flex-col">
-        {secondCol.map((entry, idx) => (
-          <div key={entry.name} className="flex items-center mb-1">
-            <span
-              className="inline-block w-3 h-3 mr-2 rounded"
-              style={{
-                backgroundColor: colors[(mid + idx) % colors.length],
-              }}
-            />
-            <span className="text-xs font-medium">{entry.name}</span>
-            <span className="ml-2 text-xs text-gray-400">{entry.value}%</span>
-          </div>
-        ))}
-      </div>
+    <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-3 w-full sm:max-w-xs">
+      {data.map((entry, idx) => (
+        <div key={entry.name} className="flex items-center">
+          <span
+            className="inline-block w-3 h-3 mr-2 rounded"
+            style={{ backgroundColor: colors[idx % colors.length] }}
+          />
+          <span className="text-xs font-medium truncate">{entry.name}</span>
+          <span className="ml-1 text-xs text-gray-400">{entry.value}%</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -65,34 +45,40 @@ function DonutChart({
   label: string;
 }) {
   return (
-    <div className="bg-white rounded-xl shadow p-4 flex flex-col items-center w-full max-w-xs mx-auto">
-      <span className="font-semibold mb-2">{label}</span>
-      <PieChart width={160} height={160}>
-        <Pie
-          data={data}
-          cx="50%"
-          cy="50%"
-          innerRadius={40}
-          outerRadius={60}
-          fill="#8884d8"
-          dataKey="value"
-          stroke="#fff"
-          strokeWidth={5}
-        >
-          {data.map((entry, idx) => (
-            <Cell
-              key={`cell-${label}-${idx}`}
-              fill={colors[idx % colors.length]}
-            />
-          ))}
-        </Pie>
-      </PieChart>
+    <div className="bg-white rounded-xl shadow p-4 flex flex-col items-center w-full h-full">
+      <span className="font-semibold text-center mb-3 text-sm sm:text-base">
+        {label}
+      </span>
+      <div className="w-full h-40 sm:h-48">
+        <ResponsiveContainer>
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius="45%"
+              outerRadius="70%"
+              fill="#8884d8"
+              dataKey="value"
+              stroke="#fff"
+              strokeWidth={4}
+            >
+              {data.map((entry, idx) => (
+                <Cell
+                  key={`cell-${label}-${idx}`}
+                  fill={colors[idx % colors.length]}
+                />
+              ))}
+            </Pie>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
       <CustomLegend data={data} colors={colors} />
     </div>
   );
 }
 
-// ✅ Fix: Accept props
+// ✅ Main component
 export default function PieStats({
   osData,
   countryData,
@@ -103,7 +89,7 @@ export default function PieStats({
   deviceTypeData: ChartData[];
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
       <DonutChart
         data={osData}
         colors={pieColors[0]}

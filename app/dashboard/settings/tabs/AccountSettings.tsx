@@ -86,101 +86,103 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-10">
+    <div className="max-w-5xl mx-auto space-y-12 px-4 sm:px-6 lg:px-8">
       {/* Personal Info Section */}
       <div className="md:flex md:items-start gap-8">
-        <div className="min-w-[180px] md:w-1/4 mb-4 md:mb-0">
-          <div className="font-semibold text-base">Personal Info</div>
-          <div className="text-gray-400 text-sm">
-            You can change your personal information settings here.
-          </div>
+        <div className="md:w-1/4 mb-4 md:mb-0 md:sticky md:top-24">
+          <h3 className="font-semibold text-base">Personal Info</h3>
+          <p className="text-gray-400 text-sm">
+            You can change your personal information here.
+          </p>
         </div>
         <div className="flex-1">
-          <section className="bg-white rounded-xl shadow p-6">
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-xs mb-1 font-medium">Full Name</label>
-                <input
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+          <section className="bg-white rounded-xl shadow p-6 space-y-4">
+            <div>
+              <label className="block text-xs mb-1 font-medium">Full Name</label>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-200"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs mb-1 font-medium">Email</label>
+              <input
+                type="email"
+                value={email}
+                disabled
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50"
+              />
+            </div>
+            <div>
+              <label className="block text-xs mb-1 font-medium">Change Avatar</label>
+              <div className="flex items-center gap-3">
+                <Image
+                  src={user?.user_metadata?.avatar_url || "/images/img1.jpg"}
+                  alt="avatar"
+                  width={48}
+                  height={48}
+                  className="rounded-full border"
                 />
-              </div>
-              <div>
-                <label className="block text-xs mb-1 font-medium">Email Address</label>
-                <input
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-                  value={email}
-                  disabled
-                  type="email"
-                />
-              </div>
-              <div>
-                <label className="block text-xs mb-1 font-medium">Change Avatar</label>
-                <div className="flex items-center gap-3">
-                  <Image
-                    src={user?.user_metadata?.avatar_url || "/images/img1.jpg"}
-                    alt="avatar"
-                    width={48}
-                    height={48}
-                    className="rounded-full border"
-                  />
-                  <button
-                    type="button"
-                    className="flex items-center gap-1 bg-blue-600 text-white px-4 py-1.5 text-xs rounded-md font-medium transition hover:bg-blue-700"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <PencilSquareIcon className="w-4 h-4" />
-                    Edit
-                  </button>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    onChange={handleAvatarUpload}
-                    className="hidden"
-                  />
-                </div>
-              </div>
-              <div>
                 <button
-                  onClick={handleSaveProfile}
-                  className="mt-2 bg-blue-600 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-blue-700 transition flex items-center gap-2"
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-1 bg-blue-600 text-white px-4 py-1.5 text-xs rounded-md font-medium hover:bg-blue-700"
                 >
-                  Save
-                  <CheckCircleIcon className="w-5 h-5 ml-2" />
+                  <PencilSquareIcon className="w-4 h-4" />
+                  Edit
                 </button>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                />
               </div>
             </div>
+            <button
+              onClick={handleSaveProfile}
+              className="w-full sm:w-auto mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2"
+            >
+              Save
+              <CheckCircleIcon className="w-5 h-5" />
+            </button>
           </section>
         </div>
       </div>
 
       {/* Password Section */}
       <div className="md:flex md:items-start gap-8">
-        <div className="min-w-[180px] md:w-1/4 mb-4 md:mb-0">
-          <div className="font-semibold text-base">Password</div>
-          <div className="text-gray-400 text-sm">You can change your password here.</div>
+        <div className="md:w-1/4 mb-4 md:mb-0 md:sticky md:top-24">
+          <h3 className="font-semibold text-base">Password</h3>
+          <p className="text-gray-400 text-sm">
+            You can change your password here.
+          </p>
         </div>
         <div className="flex-1">
           <section className="bg-white rounded-xl shadow p-6">
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="block text-xs mb-1 font-medium">New Password</label>
                 <div className="relative">
                   <input
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
                     type={showNewPassword ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm focus:ring-2 focus:ring-blue-200"
                   />
                   <button
                     type="button"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600"
-                    onClick={() => setShowNewPassword((v) => !v)}
                     tabIndex={-1}
+                    onClick={() => setShowNewPassword((v) => !v)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600"
                   >
-                    {showNewPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+                    {showNewPassword ? (
+                      <EyeSlashIcon className="w-5 h-5" />
+                    ) : (
+                      <EyeIcon className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -188,25 +190,29 @@ export default function AccountSettings() {
                 <label className="block text-xs mb-1 font-medium">Confirm Password</label>
                 <div className="relative">
                   <input
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 pr-10 text-sm focus:ring-2 focus:ring-blue-200"
                   />
                   <button
                     type="button"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600"
-                    onClick={() => setShowConfirmPassword((v) => !v)}
                     tabIndex={-1}
+                    onClick={() => setShowConfirmPassword((v) => !v)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600"
                   >
-                    {showConfirmPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+                    {showConfirmPassword ? (
+                      <EyeSlashIcon className="w-5 h-5" />
+                    ) : (
+                      <EyeIcon className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
             </div>
             <button
               onClick={handlePasswordChange}
-              className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-blue-700 transition"
+              className="w-full sm:w-auto mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-blue-700 transition"
             >
               Save
             </button>
@@ -216,15 +222,17 @@ export default function AccountSettings() {
 
       {/* Deactivate Section */}
       <div className="md:flex md:items-start gap-8">
-        <div className="min-w-[180px] md:w-1/4 mb-4 md:mb-0">
-          <div className="font-semibold text-base text-red-500">Deactivate Account</div>
-          <div className="text-gray-400 text-sm">
-            This will shut down your account and you may cry, lol
-          </div>
+        <div className="md:w-1/4 mb-4 md:mb-0 md:sticky md:top-24">
+          <h3 className="font-semibold text-base text-red-500">
+            Deactivate Account
+          </h3>
+          <p className="text-gray-400 text-sm">
+            This will shut down your account permanently.
+          </p>
         </div>
         <div className="flex-1">
           <section className="bg-white rounded-xl shadow p-6">
-            <button className="bg-red-500 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-red-600 transition">
+            <button className="w-full sm:w-auto bg-red-500 text-white px-6 py-2 rounded-lg font-medium text-sm hover:bg-red-600 transition">
               Deactivate
             </button>
           </section>

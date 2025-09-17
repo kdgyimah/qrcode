@@ -15,7 +15,8 @@ export default function Hero() {
         initial={{ opacity: 0, x: 100 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1 }}
-        className="absolute top-24 right-[-80px] md:top-10 md:right-[-60px] max-w-none hidden md:block"
+        // ADDED pointer-events-none here so this absolute wrapper doesn't intercept clicks
+        className="absolute top-24 right-[-80px] md:top-10 md:right-[-60px] max-w-none hidden md:block pointer-events-none"
       >
         <Image
           src="/images/rightheroimg.png"
@@ -27,8 +28,7 @@ export default function Hero() {
       </motion.div>
 
       {/* Text Content */}
-      <div className="relative z-10 flex flex-col items-start justify-start mb-10 pt-12 md:justify-center min-h-[95vh] px-2 md:px-12"> {/* Adjusted padding here */}
-
+      <div className="relative z-10 flex flex-col items-start justify-start mb-10 pt-12 md:justify-center min-h-[95vh] px-2 md:px-12">
         <div className="max-w-2xl p-12 mb-16">
           <motion.h4
             initial={{ opacity: 0, y: 20 }}
@@ -67,17 +67,19 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="flex flex-row  sm:flex-row gap-4 mt-10"
+            className="flex flex-row sm:flex-row gap-4 mt-10"
           >
             <Link
               href="/signup"
-              className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-blue-700 transition"
+              // ADDED inline-flex, relative z-20, focus ring, active scale and transition
+              className="inline-flex items-center justify-center relative z-20 bg-blue-600 text-white font-semibold px-6 py-3 rounded-md hover:bg-blue-700 active:scale-95 cursor-pointer transition-transform duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Get Started
             </Link>
+
             <Link
               href="/featurepage"
-              className="border border-blue-600 font-semibold text-black px-6 py-3 rounded-md hover:bg-white transition"
+              className="inline-flex items-center justify-center relative z-20 border border-blue-600 font-semibold text-black px-6 py-3 rounded-md hover:bg-blue-50 active:scale-95 cursor-pointer transition-transform duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Learn More
             </Link>
@@ -89,7 +91,8 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="block md:hidden mt-10 px-4 w-full flex justify-center overflow-x-visible"
+          // also make mobile wrapper non-interactive so it can't accidentally block taps
+          className="block md:hidden mt-10 px-4 w-full flex justify-center overflow-x-visible pointer-events-none"
         >
           <div className="relative h-[500px] w-full max-w-[400px] drop-shadow-2xl scale-[2.2] origin-center -translate-x-20">
             <Image

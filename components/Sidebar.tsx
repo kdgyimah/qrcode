@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   QrCode,
@@ -15,11 +15,13 @@ import {
 import SidebarItem from "./SidebarItem";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { cn } from "@/lib/utils"; // helper for classNames
 
 type SidebarProps = {
   open: boolean;
   setOpen: (value: boolean) => void;
   onNavigate: (view: string) => void;
+  activeView: string;
 };
 
 const menuItemsTop = [
@@ -35,17 +37,18 @@ const menuItemsBottom = [
   { icon: <HelpCircle size={18} />, label: "Support", view: "support" },
 ];
 
-export default function Sidebar({ open, setOpen, onNavigate }: SidebarProps) {
+export default function Sidebar({ open, setOpen, onNavigate, activeView }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
+
+  const handleClick = (view: string) => {
+    onNavigate(view);
+    setOpen(false); // auto-close mobile sidebar
+  };
 
   const SidebarContent = (
     <>
@@ -71,25 +74,28 @@ export default function Sidebar({ open, setOpen, onNavigate }: SidebarProps) {
 
       {/* Menu Items */}
       <nav className="px-4 pb-20 overflow-y-auto">
-        {menuItemsTop.map((item) => (
-          <button
-            key={item.label}
-            onClick={() => onNavigate(item.view)}
-            className="w-full text-left"
-          >
-            <SidebarItem icon={item.icon} label={item.label} href="#" collapsed={collapsed} />
-          </button>
-        ))}
-        <hr className="my-10 border-gray-200" />
-        {menuItemsBottom.map((item) => (
-          <button
-            key={item.label}
-            onClick={() => onNavigate(item.view)}
-            className="w-full text-left"
-          >
-            <SidebarItem icon={item.icon} label={item.label} href="#" collapsed={collapsed} />
-          </button>
-        ))}
+        {[...menuItemsTop, ...menuItemsBottom].map((item) => {
+          const isActive = activeView === item.view;
+          return (
+            <button
+              key={item.view}
+              onClick={() => handleClick(item.view)}
+              className={cn(
+                "w-full text-left rounded-md transition-colors flex items-center",
+                isActive
+                  ? "bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-600 pl-2"
+                  : "text-gray-700 hover:bg-gray-100 border-l-4 border-transparent pl-2"
+              )}
+            >
+              <SidebarItem
+                icon={item.icon}
+                label={item.label}
+                href="#"
+                collapsed={collapsed}
+              />
+            </button>
+          );
+        })}
       </nav>
     </>
   );
@@ -98,9 +104,10 @@ export default function Sidebar({ open, setOpen, onNavigate }: SidebarProps) {
     <>
       {/* Desktop Sidebar */}
       <aside
-        className={`bg-white h-screen md:flex flex-col shadow-2xs border-r border-gray-300 justify-between hidden transition-all duration-300 ${
+        className={cn(
+          "bg-white h-screen md:flex flex-col shadow-2xs border-r border-gray-300 justify-between hidden transition-all duration-300",
           collapsed ? "w-15" : "w-60"
-        }`}
+        )}
       >
         {SidebarContent}
       </aside>
@@ -108,16 +115,17 @@ export default function Sidebar({ open, setOpen, onNavigate }: SidebarProps) {
       {/* Mobile Overlay */}
       {open && (
         <div
-          className="fixed inset-0 bg-white bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden transition-opacity"
           onClick={() => setOpen(false)}
         />
       )}
 
       {/* Mobile Sidebar Drawer */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r transform transition-transform duration-300 md:hidden ${
+        className={cn(
+          "fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r transform transition-transform duration-300 ease-in-out md:hidden",
           open ? "translate-x-0" : "-translate-x-full"
-        }`}
+        )}
       >
         <div className="flex justify-between items-center p-4 border-b">
           <Image src="/logos/logod.svg" alt="Logo" width={28} height={28} />
