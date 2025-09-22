@@ -29,6 +29,7 @@ export default function DashboardPage() {
   const [detailQr, setDetailQr] = useState<QrData | null>(null);
   const [editQr, setEditQr] = useState<QrData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const user = useUser();
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export default function DashboardPage() {
   }, [router]);
 
   const handleLogout = async () => {
+    setLogoutLoading(true);
     await supabase.auth.signOut();
     router.push("/");
   };
@@ -136,10 +138,12 @@ export default function DashboardPage() {
     }
   };
 
-  if (loading || !user) {
+  if (loading || !user || logoutLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-lg text-gray-600">Loading dashboard...</p>
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <p className="text-lg text-gray-600">
+          {logoutLoading ? "Logging out..." : "Loading your dashboard..."}
+        </p>
       </div>
     );
   }
@@ -153,7 +157,7 @@ export default function DashboardPage() {
             open
             setOpen={setSidebarOpen}
             onNavigate={setActiveView}
-            activeView={activeView} // ✅ Pass activeView here
+            activeView={activeView}
           />
         </div>
 
@@ -164,7 +168,7 @@ export default function DashboardPage() {
               open={sidebarOpen}
               setOpen={setSidebarOpen}
               onNavigate={setActiveView}
-              activeView={activeView} //
+              activeView={activeView}
             />
           </div>
         )}
