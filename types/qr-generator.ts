@@ -63,9 +63,9 @@ export interface ContactFormData {
 }
 export interface PdfFormData { uploadType?: "url" | "file"; pdfUrl?: string; file?: File; }
 
-// ===================
+
 // Map category to its form data
-// ===================
+
 export interface QRFormDataByCategory {
   link: LinkFormData;
   call: CallFormData;

@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Folder {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  qrcodes   QrCode[]
+}
+
+model QrCode {
+  id           Int       @id @default(autoincrement())
+  name         String
+  type         String
+  category     String?
+  link         String?
+  folder       Folder?   @relation(fields: [folderId], references: [id])
+  folderId     Int?
+  created      DateTime  @default(now())
+  lastModified DateTime  @updatedAt
+  scans        Int       @default(0)
+  lastScan     DateTime?
+  visits       Int       @default(0)
+  status       String    @default("Active")
+  description  String?
+  tags         String[]  // maps to TEXT[] in Postgres
+  qrImage      String?
+  qrCodeUrl    String?
+}

@@ -14,5 +14,5 @@ export const qrCategories = [
   { key: 'app', name: 'App', icon: FaAppStoreIos },
   { key: 'wifi', name: 'Wi-Fi', icon: FaWifi },
   { key: 'pdf', name: 'PDF', icon: FaFilePdf },
-  { key: 'social', name: 'Social Media', icon: SiFacebook }, // You can enhance this later
+  { key: 'social', name: 'Social Media', icon: SiFacebook },
 ];
