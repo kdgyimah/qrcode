@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { QRCategory, AnyQRFormData, QRCodeStyle } from '@/types/qr-generator';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Loader2 } from 'lucide-react';
-import { QRFormField } from './QRFormField';
-import { QRStyleCustomizer } from './QRStyleCustomizer';
-import { QRPreview } from './QRPreview';
+import { useState } from "react";
+import { QRCategory, AnyQRFormData, QRCodeStyle } from "@/types/qr-generator";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { QRFormField } from "./QRFormField";
+import { QRStyleCustomizer } from "./QRStyleCustomizer";
+import { QRPreview } from "./QRPreview";
 import { supabase } from "@/lib/supabase";
 
 interface Folder {
@@ -22,23 +22,32 @@ interface QRFormProps {
   onGenerate: (data: AnyQRFormData, style: QRCodeStyle) => void;
 }
 
-export function QRForm({ category, folders, isGenerating, onBack, onGenerate }: QRFormProps) {
+export function QRForm({
+  category,
+  folders,
+  isGenerating,
+  onBack,
+  onGenerate,
+}: QRFormProps) {
   const [formData, setFormData] = useState<AnyQRFormData>({});
   const [style, setStyle] = useState<QRCodeStyle>({
-    shape: 'square',
-    backgroundColor: '#FFFFFF',
-    foregroundColor: '#000000',
+    shape: "square",
+    backgroundColor: "#FFFFFF",
+    foregroundColor: "#000000",
     logo: null,
     logoSize: 20,
   });
-  const [selectedFolderId, setSelectedFolderId] = useState<string>('');
+  const [selectedFolderId, setSelectedFolderId] = useState<string>("");
 
-  const handleInputChange = (field: string, value: string | boolean | File | null) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: string,
+    value: string | boolean | File | null
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleStyleChange = (field: keyof QRCodeStyle, value: unknown) => {
-    setStyle(prev => ({ ...prev, [field]: value }));
+    setStyle((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -62,14 +71,17 @@ export function QRForm({ category, folders, isGenerating, onBack, onGenerate }: 
       }
 
       // Get user session
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
       if (authError) {
         console.error("Auth error:", authError);
         alert("Authentication error. Please log in again.");
         return;
       }
-      
+
       if (!user) {
         alert("You must be logged in to save QR codes.");
         return;
@@ -81,7 +93,7 @@ export function QRForm({ category, folders, isGenerating, onBack, onGenerate }: 
         type: category.id,
         hasFormData: !!formData,
         hasStyle: !!style,
-        hasQrImageUrl: !!qrImageUrl
+        hasQrImageUrl: !!qrImageUrl,
       });
 
       const { data, error } = await supabase.from("qr_codes").insert([
@@ -101,7 +113,7 @@ export function QRForm({ category, folders, isGenerating, onBack, onGenerate }: 
           message: error.message,
           details: error.details,
           hint: error.hint,
-          code: error.code
+          code: error.code,
         });
         throw new Error(error.message || "Database error");
       }
@@ -109,18 +121,18 @@ export function QRForm({ category, folders, isGenerating, onBack, onGenerate }: 
       console.log("QR code saved successfully:", data);
       alert("QR code saved successfully!");
     } catch (error: unknown) {
-  if (error instanceof Error) {
-    console.error("Error saving QR code:", {
-      message: error.message,
-      stack: error.stack,
-      error
-    });
-    alert(`Failed to save QR code: ${error.message}`);
-  } else {
-    console.error("Unknown error:", error);
-    alert("An unknown error occurred. Please check the console.");
-  }
-}
+      if (error instanceof Error) {
+        console.error("Error saving QR code:", {
+          message: error.message,
+          stack: error.stack,
+          error,
+        });
+        alert(`Failed to save QR code: ${error.message}`);
+      } else {
+        console.error("Unknown error:", error);
+        alert("An unknown error occurred. Please check the console.");
+      }
+    }
   };
 
   return (
@@ -143,8 +155,8 @@ export function QRForm({ category, folders, isGenerating, onBack, onGenerate }: 
             <p className="text-muted-foreground">Create all QR Codes</p>
           </div>
         </div>
-        
-        <Button 
+
+        <Button
           className="bg-blue-600 hover:bg-blue-700"
           disabled={isGenerating}
           onClick={handleSubmit}
@@ -155,7 +167,7 @@ export function QRForm({ category, folders, isGenerating, onBack, onGenerate }: 
               Generating...
             </>
           ) : (
-            'Continue →'
+            "Continue →"
           )}
         </Button>
       </div>
@@ -192,14 +204,13 @@ export function QRForm({ category, folders, isGenerating, onBack, onGenerate }: 
         {/* Preview Section */}
         <div className="lg:col-span-1">
           <div className="bg-white border rounded-lg p-4 sticky top-6">
-            <QRPreview 
+            <QRPreview
               category={category}
               formData={formData}
               style={style}
-              isGenerating={isGenerating}
               onDownload={handleDownload}
-              onSave={handleSaveQRCode}
               selectedFolderId={selectedFolderId}
+              onSave={handleSaveQRCode}
             />
           </div>
         </div>

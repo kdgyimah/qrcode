@@ -13,6 +13,8 @@ interface QRPreviewProps {
   formData: AnyQRFormData;
   style: QRCodeStyle;
   onDownload: () => void;
+  selectedFolderId: string;
+  onSave: (qrImageUrl: string) => void;
 }
 
 export function QRPreview({ category, formData, style, onDownload }: QRPreviewProps) {

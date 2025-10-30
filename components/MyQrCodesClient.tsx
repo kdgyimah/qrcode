@@ -207,7 +207,6 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
     dateRange,
   ]);
 
-
   // Calculate QR count per folder
   const getFolderQRCount = (folderId: string) => {
     return qrCodes.filter((qr) => qr.folder_id === folderId).length;
@@ -651,6 +650,7 @@ const MyQrCodesClient: React.FC<MyQrCodesClientProps> = ({
       {editQr && (
         <div className="mt-10">
           <QrEditView
+            id={editQr.id}
             qr={editQr}
             availableFolders={folders} // ✅ Pass full folder objects
             onClose={() => setEditQr(null)}

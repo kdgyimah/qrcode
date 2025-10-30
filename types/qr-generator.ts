@@ -64,6 +64,12 @@ export interface ContactFormData {
 }
 export interface PdfFormData { uploadType?: "url" | "file"; pdfUrl?: string; file?: File; }
 
+export interface Folder {
+  id: string;
+  name: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 // Map category to its form data
 

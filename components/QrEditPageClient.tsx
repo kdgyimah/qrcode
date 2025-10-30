@@ -388,6 +388,7 @@ export default function QrEditPageClient({
 
             {/* Embedded edit form */}
             <QrEditView
+               id=""
               qr={qr}
               availableFolders={folders}
               onSaved={handleQrSaved}

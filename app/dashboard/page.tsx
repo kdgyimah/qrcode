@@ -88,6 +88,7 @@ export default function DashboardPage() {
     if (editQr) {
       return (
         <QrEditView
+          id={editQr.id}
           qr={editQr}
           onClose={handleCloseEdit}
           onSaved={handleEditSaved}
@@ -154,7 +155,7 @@ export default function DashboardPage() {
     <>
       <div className="flex h-screen w-full overflow-hidden">
         {/* Sidebar for large screens */}
-        <div 
+        <div
           className={cn(
             "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 lg:transition-all lg:duration-300",
             sidebarCollapsed ? "lg:w-20" : "lg:w-64"
@@ -182,7 +183,7 @@ export default function DashboardPage() {
         )}
 
         {/* Main content area */}
-        <div 
+        <div
           className={cn(
             "flex flex-1 min-w-0 flex-col w-full lg:transition-all lg:duration-300",
             sidebarCollapsed ? "lg:ml-20" : "lg:ml-64"

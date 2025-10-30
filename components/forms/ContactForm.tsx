@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { ErrorText } from "@/components/ui/error-text";
 import { inputBase } from "@/constants/styles";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp, Plus } from "lucide-react";
+import { ChevronUp, Plus } from "lucide-react";
 
 export const ContactForm: React.FC<FormProps<ContactFormData>> = ({
   formData,
@@ -57,18 +57,15 @@ export const ContactForm: React.FC<FormProps<ContactFormData>> = ({
   const handlePhoneChangeWrapper = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      onPhoneChange?.("phone", value) || onChange("phone", value);
+    if (onPhoneChange) {
+  onPhoneChange("phone", value);
+} else {
+  onChange("phone", value);
+}
     },
     [onChange, onPhoneChange]
   );
 
-  const handleMobileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      onPhoneChange?.("mobile", value) || onChange("mobile", value);
-    },
-    [onChange, onPhoneChange]
-  );
 
   return (
     <div className="space-y-6">
