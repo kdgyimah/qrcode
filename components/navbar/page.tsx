@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { FiChevronDown, FiMenu, FiX } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/superbase";
+import { supabase } from "@/lib/supabase";
 import { User } from "@supabase/supabase-js";
 
 export default function Navbar() {

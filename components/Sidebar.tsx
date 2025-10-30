@@ -22,6 +22,7 @@ type SidebarProps = {
   setOpen: (value: boolean) => void;
   onNavigate: (view: string) => void;
   activeView: string;
+  onCollapse?: (collapsed: boolean) => void;
 };
 
 const menuItemsTop = [
@@ -37,7 +38,7 @@ const menuItemsBottom = [
   { icon: <HelpCircle size={18} />, label: "Support", view: "support" },
 ];
 
-export default function Sidebar({ open, setOpen, onNavigate, activeView }: SidebarProps) {
+export default function Sidebar({ open, setOpen, onNavigate, activeView, onCollapse }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
 
   // Prevent body scroll when mobile menu is open
@@ -45,9 +46,20 @@ export default function Sidebar({ open, setOpen, onNavigate, activeView }: Sideb
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
+  // Notify parent component of collapse state changes
+  useEffect(() => {
+    if (onCollapse) {
+      onCollapse(collapsed);
+    }
+  }, [collapsed, onCollapse]);
+
   const handleClick = (view: string) => {
     onNavigate(view);
     setOpen(false); // auto-close mobile sidebar
+  };
+
+  const toggleCollapse = () => {
+    setCollapsed(!collapsed);
   };
 
   const SidebarContent = (
@@ -55,20 +67,24 @@ export default function Sidebar({ open, setOpen, onNavigate, activeView }: Sideb
       {/* Collapse Button & Logo */}
       <div className="relative">
         <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="absolute -right-3 top-6 z-10 bg-white border border-gray-300 rounded-l-full shadow p-1 hover:bg-gray-100 hidden md:block"
+          onClick={toggleCollapse}
+          className="absolute -right-3 top-6 z-10 bg-white border border-gray-300 rounded-full shadow p-1 hover:bg-gray-100 hidden lg:block"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
 
-        <div className="p-6 flex items-center text-indigo-600 text-xl font-bold gap-2">
+        <div className={cn(
+          "p-6 flex items-center text-indigo-600 text-xl font-bold transition-all duration-300",
+          collapsed ? "gap-0 justify-center" : "gap-2"
+        )}>
           <Image
             src="/logos/logod.svg"
             alt="Logo"
             width={collapsed ? 24 : 28}
             height={collapsed ? 24 : 28}
           />
-          {!collapsed && "QR GEN"}
+          {!collapsed && <span>QR GEN</span>}
         </div>
       </div>
 
@@ -84,8 +100,10 @@ export default function Sidebar({ open, setOpen, onNavigate, activeView }: Sideb
                 "w-full text-left rounded-md transition-colors flex items-center",
                 isActive
                   ? "bg-blue-50 text-blue-600 font-medium border-l-4 border-blue-600 pl-2"
-                  : "text-gray-700 hover:bg-gray-100 border-l-4 border-transparent pl-2"
+                  : "text-gray-700 hover:bg-gray-100 border-l-4 border-transparent pl-2",
+                collapsed && "justify-center pl-0 border-l-0"
               )}
+              title={collapsed ? item.label : undefined}
             >
               <SidebarItem
                 icon={item.icon}
@@ -105,8 +123,8 @@ export default function Sidebar({ open, setOpen, onNavigate, activeView }: Sideb
       {/* Desktop Sidebar */}
       <aside
         className={cn(
-          "bg-white h-screen md:flex flex-col shadow-2xs border-r border-gray-300 justify-between hidden transition-all duration-300",
-          collapsed ? "w-15" : "w-60"
+          "bg-white h-screen lg:flex flex-col shadow-2xs border-r border-gray-300 justify-between hidden transition-all duration-300",
+          collapsed ? "w-20" : "w-64"
         )}
       >
         {SidebarContent}
@@ -115,7 +133,7 @@ export default function Sidebar({ open, setOpen, onNavigate, activeView }: Sideb
       {/* Mobile Overlay */}
       {open && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden transition-opacity"
+          className="fixed inset-0 bg-white bg-opacity-80 z-40 lg:hidden transition-opacity"
           onClick={() => setOpen(false)}
         />
       )}
@@ -123,7 +141,7 @@ export default function Sidebar({ open, setOpen, onNavigate, activeView }: Sideb
       {/* Mobile Sidebar Drawer */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r transform transition-transform duration-300 ease-in-out md:hidden",
+          "fixed top-0 left-0 z-50 h-screen w-64 bg-white border-r transform transition-transform duration-300 ease-in-out lg:hidden",
           open ? "translate-x-0" : "-translate-x-full"
         )}
       >

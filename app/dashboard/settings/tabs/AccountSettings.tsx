@@ -9,7 +9,7 @@ import {
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useUser } from "@/hooks/useUser";
-import { supabase } from "@/lib/superbase";
+import { supabase } from "@/lib/supabase";
 import { toast } from "react-hot-toast";
 
 export default function AccountSettings() {

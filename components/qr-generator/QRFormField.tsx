@@ -12,11 +12,15 @@ import {
 } from '@/components/ui/select';
 import { QRCategory, AnyQRFormData } from '@/types/qr-generator';
 
+
 interface QRFormFieldProps {
   category: QRCategory;
   formData: AnyQRFormData;
+  folders: { id: string; name: string }[]; 
   onInputChange: (field: string, value: string | boolean | File | null) => void;
 }
+
+
 
 // --- Helper components ---
 const TextInput = ({
@@ -117,6 +121,7 @@ export function QRFormField({
   category,
   formData,
   onInputChange,
+
 }: QRFormFieldProps) {
   const { id } = category;
 

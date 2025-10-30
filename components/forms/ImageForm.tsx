@@ -2,7 +2,7 @@
 
 import { useState, ChangeEvent, FocusEvent } from "react";
 import { uploadImageAndGetURL } from "@/lib/uploadImage";
-import { supabase } from "@/lib/superbase";
+import { supabase } from "@/lib/supabase";
 import {
   Box,
   TextField,

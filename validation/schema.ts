@@ -10,8 +10,8 @@ export const baseSchemas: Record<Category, z.ZodTypeAny> = {
     message: z.string().min(1, "Message required"),
   }),
   sms: z.object({
-    smsPhone: z.string().min(1, "Phone required"),
-    smsBody: z.string().min(1, "Message required"),
+    phone: z.string().min(1, "Phone required"),
+    message: z.string().min(1, "Message required"),
   }),
   whatsapp: z.object({
     waPhone: z.string().min(1, "WhatsApp number required"),
@@ -29,7 +29,9 @@ export const baseSchemas: Record<Category, z.ZodTypeAny> = {
   }),
   image: z.object({ imageUrl: z.string().url("Invalid image URL") }),
   video: z.object({ videoUrl: z.string().url("Invalid video URL") }),
-  bulkqr: z.object({ bulkList: z.string().min(1, "Bulk list cannot be empty") }),
+  bulkqr: z.object({
+    bulkList: z.string().min(1, "Bulk list cannot be empty"),
+  }),
   app: z.object({ appUrl: z.string().url("Invalid app URL") }),
   social: z.object({ socialUrl: z.string().url("Invalid social URL") }),
   event: z.object({
@@ -40,12 +42,61 @@ export const baseSchemas: Record<Category, z.ZodTypeAny> = {
     eventDesc: z.string().optional(),
   }),
   barcode2d: z.object({ barcodeValue: z.string().min(1, "Value is required") }),
+
+  // ✅ Updated Contact Schema
   contact: z.object({
-    name: z.string().min(1, "Name required"),
-    phone: z.string().min(1, "Phone required"),
-    email: z.string().optional(),
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    organization: z.string().optional(),
+    jobTitle: z.string().optional(),
+
+    phone: z
+      .string()
+      .min(1, "Phone is required")
+      .regex(/^\+?\d{7,}$/, "Invalid phone number"),
+
+    mobile: z
+      .string()
+      .regex(/^\+?\d{7,}$/, "Invalid mobile number")
+      .optional()
+      .or(z.literal("").optional()),
+
+    email: z
+      .string()
+      .email("Invalid email address")
+      .optional()
+      .or(z.literal("").optional()),
+
+    website: z
+      .string()
+      .url("Invalid website URL")
+      .optional()
+      .or(z.literal("").optional()),
+
+    address: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    zip: z.string().optional(),
+    country: z.string().optional(),
   }),
-  pdf: z.object({ pdfUrl: z.string().url("Invalid PDF URL") }),
+
+  pdf: z
+    .object({
+      uploadType: z.enum(["url", "file"]).default("url"),
+      pdfUrl: z.string().url("Invalid PDF URL").optional(),
+      file: z
+        .instanceof(File, { message: "Please upload a valid PDF file" })
+        .optional(),
+    })
+    .refine(
+      (data) =>
+        (data.uploadType === "url" && !!data.pdfUrl) ||
+        (data.uploadType === "file" && !!data.file),
+      {
+        message: "Please provide either a PDF URL or upload a file",
+        path: ["pdfUrl"], // general error field
+      }
+    ),
 };
 
 export const getSchemaFor = (category: Category) => baseSchemas[category];

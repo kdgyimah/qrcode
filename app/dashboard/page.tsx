@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/superbase";
+import { supabase } from "@/lib/supabase";
 
 import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
@@ -21,10 +21,12 @@ import QRGeneratorPage from "@/components/qr-generator/QRGeneratorPage";
 import type { QrData } from "@/types/qr-generator";
 import { useUser } from "@/hooks/useUser";
 import TrialModal from "@/components/TrialModal";
+import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeView, setActiveView] = useState("my-qrs");
   const [detailQr, setDetailQr] = useState<QrData | null>(null);
   const [editQr, setEditQr] = useState<QrData | null>(null);
@@ -152,12 +154,18 @@ export default function DashboardPage() {
     <>
       <div className="flex h-screen w-full overflow-hidden">
         {/* Sidebar for large screens */}
-        <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
+        <div 
+          className={cn(
+            "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 lg:transition-all lg:duration-300",
+            sidebarCollapsed ? "lg:w-20" : "lg:w-64"
+          )}
+        >
           <Sidebar
             open
             setOpen={setSidebarOpen}
             onNavigate={setActiveView}
             activeView={activeView}
+            onCollapse={setSidebarCollapsed}
           />
         </div>
 
@@ -174,7 +182,12 @@ export default function DashboardPage() {
         )}
 
         {/* Main content area */}
-        <div className="flex flex-1 min-w-0 flex-col lg:pl-64">
+        <div 
+          className={cn(
+            "flex flex-1 min-w-0 flex-col w-full lg:transition-all lg:duration-300",
+            sidebarCollapsed ? "lg:ml-20" : "lg:ml-64"
+          )}
+        >
           <Header setSidebarOpen={setSidebarOpen} onLogout={handleLogout} />
           <main className="flex-1 overflow-y-auto px-2 py-2 sm:px-4 sm:py-6 bg-gray-100 relative text-sm sm:text-base">
             {renderMainContent()}

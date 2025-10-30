@@ -8,7 +8,9 @@ import { ErrorText } from "@/components/ui/error-text";
 import { inputBase } from "@/constants/styles";
 import { cn } from "@/lib/utils";
 
-// small hook for touched/error
+// --------------------------
+// Small Hook for Error Tracking
+// --------------------------
 const useFieldError = () => {
   const [touched, setTouched] = React.useState(false);
   const handleBlur = () => setTouched(true);
@@ -16,7 +18,9 @@ const useFieldError = () => {
   return { handleBlur, shouldShow };
 };
 
-// utils
+// --------------------------
+// Utility: Ensure https:// prefix for URLs
+// --------------------------
 const sanitizeUrl = (value: string): string => {
   if (!value) return "";
   if (!/^https?:\/\//i.test(value)) {
@@ -25,21 +29,25 @@ const sanitizeUrl = (value: string): string => {
   return value;
 };
 
-// --------------------------------------------------
+// --------------------------
 // Main PdfForm Component
-// --------------------------------------------------
+// --------------------------
 export const PdfForm: React.FC<FormProps<PdfFormData>> = ({
   formData,
   onChange,
   errors,
 }) => {
-  const isValid = useMemo(() => {
-    if (formData.uploadType === "url") {
-      return !!formData.pdfUrl?.trim();
-    }
-    return formData.file instanceof File;
-  }, [formData.uploadType, formData.pdfUrl, formData.file]);
+  const uploadType = formData.uploadType || "url";
 
+  // validate overall form
+  const isValid = useMemo(() => {
+    if (uploadType === "url") return !!formData.pdfUrl?.trim();
+    return formData.file instanceof File;
+  }, [uploadType, formData.pdfUrl, formData.file]);
+
+  // --------------------------
+  // Handlers
+  // --------------------------
   const handleUploadTypeChange = useCallback(
     (type: "url" | "file") => {
       onChange("uploadType", type);
@@ -54,15 +62,13 @@ export const PdfForm: React.FC<FormProps<PdfFormData>> = ({
 
   const handleUrlChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange("pdfUrl", e.target.value); // raw while typing
+      onChange("pdfUrl", e.target.value);
     },
     [onChange]
   );
 
   const handleUrlBlur = useCallback(() => {
-    if (formData.pdfUrl) {
-      onChange("pdfUrl", sanitizeUrl(formData.pdfUrl));
-    }
+    if (formData.pdfUrl) onChange("pdfUrl", sanitizeUrl(formData.pdfUrl));
   }, [formData.pdfUrl, onChange]);
 
   const handleFileChange = useCallback(
@@ -73,8 +79,9 @@ export const PdfForm: React.FC<FormProps<PdfFormData>> = ({
     [onChange]
   );
 
-  const uploadType = formData.uploadType || "url";
-
+  // --------------------------
+  // Render
+  // --------------------------
   return (
     <div className="space-y-6">
       <UploadTypeSelector
@@ -104,9 +111,9 @@ export const PdfForm: React.FC<FormProps<PdfFormData>> = ({
   );
 };
 
-// --------------------------------------------------
-// Helper Components
-// --------------------------------------------------
+// --------------------------
+// Subcomponents
+// --------------------------
 interface UploadTypeSelectorProps {
   selectedType: "url" | "file";
   onTypeChange: (type: "url" | "file") => void;
@@ -117,7 +124,7 @@ function UploadTypeSelector({ selectedType, onTypeChange }: UploadTypeSelectorPr
     <div>
       <Label>PDF Source *</Label>
       <div className="flex gap-4 mt-2">
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label className="flex items-center gap-2 cursor-pointer text-sm">
           <input
             type="radio"
             name="uploadType"
@@ -125,10 +132,10 @@ function UploadTypeSelector({ selectedType, onTypeChange }: UploadTypeSelectorPr
             checked={selectedType === "url"}
             onChange={() => onTypeChange("url")}
           />
-          <Link className="w-4 h-4" />
-          <span className="text-sm">PDF URL</span>
+          <Link className="w-4 h-4 text-blue-500" />
+          <span>Use PDF URL</span>
         </label>
-        <label className="flex items-center gap-2 cursor-pointer">
+        <label className="flex items-center gap-2 cursor-pointer text-sm">
           <input
             type="radio"
             name="uploadType"
@@ -136,8 +143,8 @@ function UploadTypeSelector({ selectedType, onTypeChange }: UploadTypeSelectorPr
             checked={selectedType === "file"}
             onChange={() => onTypeChange("file")}
           />
-          <Upload className="w-4 h-4" />
-          <span className="text-sm">Upload File</span>
+          <Upload className="w-4 h-4 text-blue-500" />
+          <span>Upload File</span>
         </label>
       </div>
     </div>
@@ -168,7 +175,7 @@ function UrlInput({ url, error, onChange, onBlur }: UrlInputProps) {
           onBlur();
         }}
         placeholder="https://example.com/document.pdf"
-        className={cn(inputBase, showError && "border-red-500")}
+        className={cn(inputBase, showError && "border-red-500 bg-red-50")}
         aria-invalid={!!showError}
         aria-describedby={showError ? "pdfUrl-error" : undefined}
       />
@@ -193,7 +200,9 @@ function FileInput({ file, error, onChange }: FileInputProps) {
       <div
         className={cn(
           "border-2 border-dashed rounded-lg p-6 text-center transition-colors",
-          showError ? "border-red-300 bg-red-50" : "border-gray-300 hover:border-gray-400"
+          showError
+            ? "border-red-400 bg-red-50"
+            : "border-gray-300 hover:border-gray-400"
         )}
       >
         <input
@@ -204,12 +213,17 @@ function FileInput({ file, error, onChange }: FileInputProps) {
           onBlur={handleBlur}
           className="hidden"
         />
-        <label htmlFor="pdfFile" className="cursor-pointer flex flex-col items-center space-y-2">
+        <label
+          htmlFor="pdfFile"
+          className="cursor-pointer flex flex-col items-center space-y-2"
+        >
           <Upload className="w-8 h-8 text-gray-400" />
           {file ? (
             <div className="space-y-1">
               <p className="text-sm font-medium text-gray-900">{file.name}</p>
-              <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+              <p className="text-xs text-gray-500">
+                {(file.size / 1024 / 1024).toFixed(2)} MB
+              </p>
             </div>
           ) : (
             <div className="space-y-1">

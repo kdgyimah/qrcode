@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaGoogle } from "react-icons/fa";
-import { supabase } from "@/lib/superbase";
+import { supabase } from "@/lib/supabase";
 import { toast } from "react-hot-toast";
 import BackArrow from "@/components/BackArrow";
 

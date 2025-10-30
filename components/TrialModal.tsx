@@ -18,6 +18,10 @@ export default function TrialModal() {
   useEffect(() => {
     if (!user) return;
 
+    // Check if modal has already been shown in this session
+    const modalShown = sessionStorage.getItem("trialModalShown");
+    if (modalShown === "true") return;
+
     const trialStart = dayjs(user.user_metadata?.trial_started_at);
     const trialEnd = trialStart.add(trialDays, "day");
 
@@ -29,13 +33,24 @@ export default function TrialModal() {
         hours: diff.hours(),
         minutes: diff.minutes(),
       });
-
-      setOpen(true);
     };
 
+    // Update countdown immediately
     updateCountdown();
+
+    // Show modal after 2 minutes (120000ms)
+    const showTimer = setTimeout(() => {
+      setOpen(true);
+      sessionStorage.setItem("trialModalShown", "true");
+    }, 120000);
+
+    // Update countdown every minute
     const interval = setInterval(updateCountdown, 60000);
-    return () => clearInterval(interval);
+
+    return () => {
+      clearTimeout(showTimer);
+      clearInterval(interval);
+    };
   }, [user]);
 
   return (

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { supabase } from '@/lib/superbase'; // Adjust path as needed
+import { supabase } from '@/lib/supabase'; // Adjust path as needed
 
 export default function ContactForm() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });

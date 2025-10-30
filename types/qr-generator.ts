@@ -1,4 +1,5 @@
 import type { DotTypes, Gradient } from "qr-code-styling";
+import { unknown } from "zod";
 
 
 // ===================
@@ -119,6 +120,7 @@ export interface QrData {
   category: Category;
   link: string;
   folder: string;
+  folderId?: string;
   created: string;
   lastModified: string;
   scans: number;

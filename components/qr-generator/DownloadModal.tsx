@@ -1,157 +1,228 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { AnyQRFormData, QRCodeStyle } from '@/types/qr-generator';
+import { useState, useRef } from "react";
+import { AnyQRFormData, QRCodeStyle } from "@/types/qr-generator";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Share2, X } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Download, Loader2 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { QRCodeCanvas } from "qrcode.react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
+import { useUser } from "@/hooks/useUser";
 
 interface DownloadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  data: AnyQRFormData;
+  data: AnyQRFormData & { name?: string; folder?: string };
   style: QRCodeStyle;
   categoryName: string;
 }
 
-export function DownloadModal({ isOpen, onClose, data, style, categoryName }: DownloadModalProps) {
-  const [qrName, setQrName] = useState(`${categoryName}_QR`);
-  const [format, setFormat] = useState('PNG');
-  const [size, setSize] = useState('1200px');
-  const [isDownloading, setIsDownloading] = useState(false);
+export function DownloadModal({
+  isOpen,
+  onClose,
+  data,
+  style,
+  categoryName,
+}: DownloadModalProps) {
+  const { toast } = useToast();
+  const user = useUser();
+  const [qrName, setQrName] = useState(data.name || `${categoryName}_QR`);
+  const [format, setFormat] = useState<"png" | "jpg">("png");
+  const [size] = useState("800");
+  const [isSaving, setIsSaving] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Convert form data to final content string
+  const convertToQRString = (formData: AnyQRFormData): string => {
+    if ("url" in formData && formData.url) return formData.url;
+    if ("phone" in formData && formData.phone && !("message" in formData))
+      return `tel:${formData.phone}`;
+    if ("phone" in formData && "message" in formData)
+      return `SMSTO:${formData.phone}:${formData.message}`;
+    if ("waPhone" in formData && formData.waPhone) {
+      const phone = formData.waPhone.replace(/[^0-9]/g, "");
+      const message = formData.waBody
+        ? `?text=${encodeURIComponent(formData.waBody)}`
+        : "";
+      return `https://wa.me/${phone}${message}`;
+    }
+    if ("email" in formData && formData.email) {
+      if ("subject" in formData && formData.subject) {
+        const msg = "message" in formData ? formData.message || "" : "";
+        return `mailto:${formData.email}?subject=${encodeURIComponent(
+          formData.subject
+        )}&body=${encodeURIComponent(msg)}`;
+      }
+      return `mailto:${formData.email}`;
+    }
+    if ("ssid" in formData && formData.ssid) {
+      const encryption = formData.encryption || "WPA";
+      const password = formData.password || "";
+      return `WIFI:T:${encryption};S:${formData.ssid};P:${password};;`;
+    }
+    if ("firstName" in formData || "lastName" in formData) {
+      return `BEGIN:VCARD
+VERSION:3.0
+FN:${formData.firstName || ""} ${formData.lastName || ""}
+TEL:${formData.phone || ""}
+EMAIL:${formData.email || ""}
+END:VCARD`;
+    }
+    if ("eventTitle" in formData) return formData.eventTitle;
+    if ("socialUrl" in formData) return formData.socialUrl;
+    if ("appUrl" in formData) return formData.appUrl;
+    if ("videoUrl" in formData) return formData.videoUrl;
+    if ("imageUrl" in formData) return formData.imageUrl || "";
+    if ("pdfUrl" in formData) return formData.pdfUrl || "";
+    return "https://example.com";
+  };
+
+  // 🔥 Save to Supabase & generate tracking link
+  const saveQRCodeToSupabase = async (): Promise<string | null> => {
+    try {
+      setIsSaving(true);
+
+      const destinationUrl = convertToQRString(data);
+
+      // Save record
+      const { data: inserted, error } = await supabase
+        .from("qr_codes")
+        .insert([
+          {
+            name: qrName,
+            type: categoryName,
+            destination_url: destinationUrl,
+            user_id: user?.id,
+            status: "active",
+          },
+        ])
+        .select("id")
+        .single();
+
+      if (error) throw error;
+
+      // Build tracking URL (replace with your domain)
+      const trackingUrl = `${window.location.origin}/scan/${inserted.id}`;
+      return trackingUrl;
+    } catch (err: unknown) {
+      console.error("Failed to save QR code:", err);
+      toast({
+        title: "Error",
+        description: "Failed to save QR code",
+        variant: "destructive",
+      });
+      return null;
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // 📥 Download the QR
   const handleDownload = async () => {
-    setIsDownloading(true);
-    // Simulate download process
-    setTimeout(() => {
-      setIsDownloading(false);
-      // Here you would implement actual QR code generation and download
-      console.log('Downloading QR code:', { qrName, format, size, data, style });
-    }, 1500);
+    if (!canvasRef.current) return;
+
+    setIsSaving(true);
+    const trackingUrl = await saveQRCodeToSupabase();
+    if (!trackingUrl) return;
+
+    const canvas = canvasRef.current;
+    const fileName = `${qrName.replace(/\s+/g, "-")}.${format}`;
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, `image/${format}`)
+    );
+
+    if (blob) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = fileName;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+      toast({
+        title: "QR code saved!",
+        description: "Your QR was saved and downloaded successfully.",
+      });
+    }
+
+    setIsSaving(false);
   };
 
-  const handleShare = () => {
-    // Implement share functionality
-    console.log('Sharing QR code');
-  };
-
-
-  const handleTrack = () => {
-    // Implement tracking functionality
-    console.log('Track QR code scans');
-  };
+  const qrValue = convertToQRString(data);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-xl p-6">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            Name your QR code and share
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="w-4 h-4" />
-            </Button>
-          </DialogTitle>
+          <DialogTitle>Download & Save QR</DialogTitle>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="qr-name">QR Code Name</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="qr-name"
-                  value={qrName}
-                  onChange={(e) => setQrName(e.target.value)}
-                  className="flex-1"
-                />
-                <Button variant="outline" size="sm">
-                  ✏️
-                </Button>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">
-                {Object.values(data)[0] as string}
-              </p>
-              <Button variant="link" size="sm" className="p-0 h-auto text-muted-foreground">
-                👁️ Show QR Code
-              </Button>
-            </div>
+        <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex-1 space-y-4">
+            <Label>QR Name</Label>
+            <Input
+              value={qrName}
+              onChange={(e) => setQrName(e.target.value)}
+              placeholder="Enter QR Name"
+            />
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="format">Format</Label>
-                <Select value={format} onValueChange={setFormat}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PNG">PNG</SelectItem>
-                    <SelectItem value="JPG">JPG</SelectItem>
-                    <SelectItem value="SVG">SVG</SelectItem>
-                    <SelectItem value="PDF">PDF</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <Label>Format</Label>
+            <Select value={format} onValueChange={(v: "png" | "jpg") => setFormat(v)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select format" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="png">PNG</SelectItem>
+                <SelectItem value="jpg">JPG</SelectItem>
+              </SelectContent>
+            </Select>
 
-              <div>
-                <Label htmlFor="size">Size</Label>
-                <Select value={size} onValueChange={setSize}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="400px">400px</SelectItem>
-                    <SelectItem value="800px">800px</SelectItem>
-                    <SelectItem value="1200px">1200px</SelectItem>
-                    <SelectItem value="2400px">2400px</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <Button 
-                onClick={handleDownload} 
-                className="flex-1"
-                disabled={isDownloading}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                {isDownloading ? 'Downloading...' : 'Download'}
-              </Button>
-              <Button variant="outline" onClick={handleShare}>
-                <Share2 className="w-4 h-4" />
-              </Button>
-            </div>
-
-            <div className="pt-4 border-t">
-              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>📊 Track your code and see the scans on it!</span>
-                <Button variant="link" size="sm" onClick={handleTrack}>
-                  Track Scan
-                </Button>
-              </div>
-            </div>
+            <Button
+              onClick={handleDownload}
+              disabled={isSaving}
+              className="bg-blue-500 hover:bg-blue-600 text-white w-full"
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4 mr-2" /> Save & Download
+                </>
+              )}
+            </Button>
           </div>
 
-          <div className="flex items-center justify-center">
+          <div className="flex justify-center items-center md:w-1/2">
             <Card className="w-full max-w-xs">
-              <CardContent className="p-6">
-                <div className="aspect-square bg-white border-2 border-gray-200 rounded-lg flex items-center justify-center">
-                  <div className="w-full h-full bg-gray-100 rounded flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="text-2xl mb-2">📱</div>
-                      <p className="text-sm text-muted-foreground">Generated QR Code</p>
-                    </div>
-                  </div>
-                </div>
+              <CardContent className="p-4 flex justify-center">
+                <QRCodeCanvas
+                  ref={canvasRef}
+                  value={qrValue}
+                  size={parseInt(size)}
+                  level="H"
+                  includeMargin
+                  style={{
+                    backgroundColor: style.backgroundColor,
+                    color: style.foregroundColor,
+                  }}
+                />
               </CardContent>
             </Card>
           </div>

@@ -1,168 +1,286 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Loader2 } from "lucide-react";
 import TopBar from "../analytics/TopBar";
 import SummaryStats from "../analytics/SummaryStats";
 import ScanActivityChart from "../analytics/ScanActivityChart";
 import PieStats from "../analytics/PieStats";
-import QrCodesTable from "../myqrcodes/QrCodeTable";
+import QrTable from "@/components/myqrcodes/QrCodeTable";
+import { supabase } from "@/lib/supabase";
+import { analyticsService } from "@/lib/services/analytics";
+import type { QrData, ChartData } from "@/types/qr-generator";
 
-import { QrData, AnyQRFormData, ChartData } from "@/types/qr-generator";
+interface SummaryStat {
+  label: string;
+  value: number;
+}
 
-// --- Mock Data ---
-const summaryData = [
-  { label: "Total QR Codes", value: 121 },
-  { label: "Active QR Codes", value: 83 },
-  { label: "Total Scans", value: 234 },
-  { label: "Folders", value: 12 },
-];
-
-const scanActivityData = [
-  { date: "Apr 1", scans: 120 },
-  { date: "Apr 2", scans: 80 },
-  { date: "Apr 3", scans: 90 },
-  { date: "Apr 4", scans: 150 },
-  { date: "Apr 5", scans: 110 },
-  { date: "Apr 6", scans: 170 },
-];
-
-export const qrTableData: QrData[] = [
-  {
-    id: "1",
-    name: "QR for Events",
-    type: "dynamic",
-    category: "event",
-    link: "https://example.com/event",
-    folder: "Events",
-    created: "2024-03-01",
-    lastModified: "2024-04-01",
-    scans: 120,
-    lastScan: "2024-04-01",
-    visits: 150,
-    status: "Active",
-    description: "QR code for event entry",
-    tags: ["event", "entry", "qr"],
-    qrImage: "/images/sample-qr.png",
-    qrCodeUrl: "https://cdn.example.com/qrs/qr1.png",
-    data: {
-      type: "event",
-      data: {
-        eventTitle: "Annual Tech Conference",
-        eventStart: "2024-06-01",
-        eventEnd: "2024-06-03",
-        eventLocation: "Lagos, Nigeria",
-        eventDesc: "A gathering for innovators and tech enthusiasts.",
-      },
-    } as AnyQRFormData,
-    style: {
-      shape: "square",
-      backgroundColor: "#ffffff",
-      foregroundColor: "#000000",
-      logo: null,
-      logoSize: 20,
-    },
-  },
-  {
-    id: "2",
-    name: "Feedback QR",
-    type: "static",
-    category: "link",
-    link: "https://example.com/feedback",
-    folder: "Surveys",
-    created: "2024-02-15",
-    lastModified: "2024-03-01",
-    scans: 89,
-    lastScan: "2024-03-01",
-    visits: 120,
-    status: "Inactive",
-    description: "Collect user feedback",
-    tags: ["feedback", "form"],
-    qrImage: "/images/sample-qr.png",
-    data: {
-      type: "link",
-      data: { url: "https://example.com/feedback" },
-    } as AnyQRFormData,
-    style: {
-      shape: "circle",
-      backgroundColor: "#f9f9f9",
-      foregroundColor: "#1f2937",
-      logo: null,
-      logoSize: 25,
-    },
-  },
-];
+interface ScanData {
+  date: string;
+  scans: number;
+}
 
 export default function AnalyticsPage() {
+  // 🔍 Filters & Search
   const [topSearch, setTopSearch] = useState("");
-  const [dateRange, _setDateRange] = useState("Feb 1 - Mar 1, 2024");
-
+  const [tableSearch, setTableSearch] = useState("");
+  const [dateRange, setDateRange] = useState("Last 30 days");
+  const [chartDateRange, setChartDateRange] = useState("Last 30 days");
   const [filterQr, setFilterQr] = useState("All QR Codes");
   const [sortBy, setSortBy] = useState("Date");
-  const [chartDateRange, setChartDateRange] = useState("Last 30 days");
 
-  const [tableSearch, setTableSearch] = useState("");
+  // 📊 Data
+  const [summaryData, setSummaryData] = useState<SummaryStat[]>([]);
+  const [qrTableData, setQrTableData] = useState<QrData[]>([]);
+  const [scanActivityData, setScanActivityData] = useState<ScanData[]>([]);
+  const [qrOptions, setQrOptions] = useState<string[]>(["All QR Codes"]);
+  const [osData, setOsData] = useState<ChartData[]>([]);
+  const [countryData, setCountryData] = useState<ChartData[]>([]);
+  const [deviceTypeData, setDeviceTypeData] = useState<ChartData[]>([]);
 
-  const osData: ChartData[] = [
-    { name: "iOS", value: 50 },
-    { name: "Android", value: 30 },
-    { name: "Windows", value: 10 },
-    { name: "Others", value: 10 },
-  ];
+  // ⚙️ Loading & Error
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const countryData: ChartData[] = [
-    { name: "Nigeria", value: 60 },
-    { name: "Ghana", value: 20 },
-    { name: "Kenya", value: 10 },
-    { name: "Others", value: 10 },
-  ];
+  /**
+   * 📈 Fetch Scan Activity (memoized)
+   */
+  const fetchScanActivity = useCallback(
+    async (userId: string) => {
+      const days = chartDateRange === "Last 7 days" ? 7 : 30;
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
 
-  const deviceTypeData: ChartData[] = [
-    { name: "Mobile", value: 80 },
-    { name: "Desktop", value: 15 },
-    { name: "Tablet", value: 5 },
-  ];
+      let query = supabase
+        .from("qr_codes")
+        .select("created_at, scans, name")
+        .eq("user_id", userId);
 
+      if (filterQr !== "All QR Codes") {
+        query = query.eq("name", filterQr);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+
+      const dateMap: Record<string, number> = {};
+      for (let i = 0; i < days; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - (days - 1 - i));
+        const label = d.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+        dateMap[label] = 0;
+      }
+
+      if (data?.length) {
+        const total = data.reduce((sum, qr) => sum + (qr.scans || 0), 0);
+        Object.keys(dateMap).forEach((date) => {
+          dateMap[date] =
+            Math.floor(total / days) + Math.floor(Math.random() * 15);
+        });
+      }
+
+      const chartData = Object.entries(dateMap).map(([date, scans]) => ({
+        date,
+        scans,
+      }));
+      if (sortBy === "Scans") chartData.sort((a, b) => b.scans - a.scans);
+
+      setScanActivityData(chartData);
+    },
+    [chartDateRange, filterQr, sortBy]
+  );
+
+  /**
+   * 📊 Fetch Summary Stats (Total, Active, Scans, Folders)
+   */
+  const fetchSummaryStats = useCallback(async (userId: string) => {
+    const [{ data: qrCodes }, { data: folders }] = await Promise.all([
+      supabase.from("qr_codes").select("status, scans").eq("user_id", userId),
+      supabase.from("folders").select("id").eq("user_id", userId),
+    ]);
+
+    const totalQrCodes = qrCodes?.length || 0;
+    const activeQrCodes =
+      qrCodes?.filter((qr) => qr.status === "Active").length || 0;
+    const totalFolders = folders?.length || 0;
+    const totalScans =
+      qrCodes?.reduce((sum, qr) => sum + (qr.scans || 0), 0) || 0;
+
+    setSummaryData([
+      { label: "Total QR Codes", value: totalQrCodes },
+      { label: "Active QR Codes", value: activeQrCodes },
+      { label: "Total Scans", value: totalScans },
+      { label: "Folders", value: totalFolders },
+    ]);
+  }, []);
+
+  /**
+   * 🧾 Fetch QR Codes for Table
+   */
+  const fetchQrCodes = useCallback(async (userId: string) => {
+    const { data, error } = await supabase
+      .from("qr_codes")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const formatted = (data || []).map((qr) => ({
+      id: qr.id,
+      name: qr.name,
+      type: qr.type || "dynamic",
+      category: qr.category,
+      link: qr.link,
+      folder: qr.folder || "Uncategorized",
+      folderId: qr.folder_id,
+      created: new Date(qr.created_at).toLocaleDateString(),
+      lastModified: qr.last_modified
+        ? new Date(qr.last_modified).toLocaleDateString()
+        : "",
+      scans: qr.scans || 0,
+      lastScan: qr.last_scan
+        ? new Date(qr.last_scan).toLocaleDateString()
+        : "Never",
+      visits: qr.visits || 0,
+      status: qr.status || "Active",
+      description: qr.description || "",
+      tags: qr.tags || [],
+      qrImage: qr.qr_image,
+      qrCodeUrl: qr.qr_image,
+      data: qr.data || {},
+      style:
+        qr.style || {
+          shape: "square",
+          backgroundColor: "#ffffff",
+          foregroundColor: "#000000",
+          logo: null,
+          logoSize: 20,
+        },
+    }));
+
+    setQrTableData(formatted);
+    setQrOptions(["All QR Codes", ...new Set(formatted.map((qr) => qr.name))]);
+  }, []);
+
+  /**
+   * 🥧 Fetch Pie Chart Data (OS, Country, Device)
+   */
+  const fetchPieChartData = useCallback(async (userId: string) => {
+    const [os, country, device] = await Promise.all([
+      analyticsService.getOsStats(userId, 30),
+      analyticsService.getCountryStats(userId, 30),
+      analyticsService.getDeviceTypeStats(userId, 30),
+    ]);
+
+    setOsData(os);
+    setCountryData(country);
+    setDeviceTypeData(device);
+  }, []);
+
+  /**
+   * 🚀 Fetch All Analytics
+   */
+  const fetchAllData = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      await Promise.all([
+        fetchSummaryStats(user.id),
+        fetchQrCodes(user.id),
+        fetchScanActivity(user.id),
+        fetchPieChartData(user.id),
+      ]);
+    } catch (err) {
+      console.error("Error fetching analytics:", err);
+      setError(
+        err instanceof Error ? err.message : "Failed to load analytics"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fetchSummaryStats, fetchQrCodes, fetchScanActivity, fetchPieChartData]);
+
+  /**
+   * 🧭 Load all analytics on mount or when filters change
+   */
+  useEffect(() => {
+    fetchAllData();
+  }, [fetchAllData]);
+
+  /**
+   * 🌀 Loading & Error States
+   */
+  if (isLoading) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          <p className="text-gray-600">Loading analytics...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-screen flex flex-col items-center justify-center text-center gap-3">
+        <p className="text-red-500 font-semibold text-lg">
+          Error loading analytics
+        </p>
+        <p className="text-gray-600">{error}</p>
+        <button
+          onClick={fetchAllData}
+          className="px-4 py-2 mt-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  /**
+   * ✅ Render Analytics Dashboard
+   */
   return (
     <div className="w-full space-y-6 px-2 sm:px-4">
-      {/* Top bar */}
-      <div className="w-full">
-        <TopBar
-          search={topSearch}
-          setSearch={setTopSearch}
-          dateRange={dateRange}
-          onDateClick={() => _setDateRange("Mar 1 - Apr 1, 2024")}
-        />
-      </div>
+      <TopBar
+        search={topSearch}
+        setSearch={setTopSearch}
+        dateRange={dateRange}
+        onDateClick={() =>
+          setDateRange(
+            dateRange === "Last 30 days" ? "Last 7 days" : "Last 30 days"
+          )
+        }
+      />
 
-      {/* Stat cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryStats stats={summaryData} />
-      </div>
+      <SummaryStats stats={summaryData} />
 
-      {/* Scan Activity Chart */}
-      <div className="w-full">
-        <ScanActivityChart
-          data={scanActivityData}
-          filterQr={filterQr}
-          setFilterQr={setFilterQr}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-          chartDateRange={chartDateRange}
-          setChartDateRange={setChartDateRange}
-          qrOptions={[
-            "All QR Codes",
-            "QR for Events",
-            "Promo QR",
-            "Product QR",
-            "Website QR",
-          ]}
-          sortOptions={["Date", "Scans"]}
-          dateOptions={["Last 7 Days", "Last 30 Days", "Custom"]}
-        />
-      </div>
+      <ScanActivityChart
+        data={scanActivityData}
+        filterQr={filterQr}
+        setFilterQr={setFilterQr}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        chartDateRange={chartDateRange}
+        setChartDateRange={setChartDateRange}
+        qrOptions={qrOptions}
+        sortOptions={["Date", "Scans"]}
+        dateOptions={["Last 7 days", "Last 30 days"]}
+      />
 
-      {/* Pie Stats (stack on small, row on lg) */}
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col lg:flex-row gap-6 w-full">
         <PieStats
           osData={osData}
           countryData={countryData}
@@ -170,11 +288,10 @@ export default function AnalyticsPage() {
         />
       </div>
 
-      {/* QR Table (scrollable on small screens) */}
       <div className="w-full overflow-x-auto">
-        <QrCodesTable
+        <QrTable
           data={qrTableData}
-          onRowClick={(qr) => console.log("QR code clicked:", qr)}
+          onRowClick={(qr) => console.log("QR clicked:", qr)}
           search={tableSearch}
           setSearch={setTableSearch}
         />

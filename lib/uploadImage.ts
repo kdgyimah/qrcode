@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/superbase';
+import { supabase } from '@/lib/supabase';
 
 export const uploadImageAndGetURL = async (file: File): Promise<string> => {
   const fileExt = file.name.split('.').pop();

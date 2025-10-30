@@ -1,31 +1,37 @@
 // app/dashboard/components/QrTabs.tsx
 
-"use client";
+export type QrTabType = "all" | "static" | "dynamic" | "scheduled";
 
-import { useState } from "react";
+interface QrTabsProps {
+  selectedTab: QrTabType;
+  onTabChange: (tab: QrTabType) => void;
+}
 
-const tabs = ["All QRs", "Static", "Dynamic", "Scheduled"];
+const tabConfig: { key: QrTabType; label: string }[] = [
+  { key: "all", label: "All QRs" },
+  { key: "static", label: "Static" },
+  { key: "dynamic", label: "Dynamic" },
+  { key: "scheduled", label: "Scheduled" },
+];
 
-export default function QrTabs() {
-  const [active, setActive] = useState("All QRs");
-
+export default function QrTabs({ selectedTab, onTabChange }: QrTabsProps) {
   return (
-    <div className="bg-white border rounded-2xl">
+    <div className="bg-white border rounded-2xl p-2 sm:p-1">
       <div className="flex flex-wrap gap-2">
-      {tabs.map((tab) => (
-        <button
-          key={tab}
-          onClick={() => setActive(tab)}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-            active === tab
-              ? ""
-              : "bg-white text-gray-700 hover:bg-gray-100"
-          }`}
-        >
-          {tab}
-        </button>
-      ))}
-    </div>
+        {tabConfig.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => onTabChange(tab.key)}
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+              selectedTab === tab.key
+                ? "bg-blue-50 text-blue-700 border border-blue-200 shadow-sm"
+                : "bg-white text-gray-700 hover:bg-gray-100 border border-transparent"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
