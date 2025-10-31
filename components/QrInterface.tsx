@@ -1,3 +1,4 @@
+// FILE 1: Updated QrInterface.tsx
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -15,12 +16,13 @@ import QRDesignPanel from "./QRDesignPanel";
 import SearchBar from "./SearchBar";
 
 interface DesignConfig {
-  frame: string;
+  frame: string; 
+  shape: "square" | "circle" | "rounded"; 
   color: string;
   logo: File | null;
+  logoSize?: number;
 }
 
-// Properly typed initial form data matching your interfaces
 const initialFormData: QRFormDataByCategory = {
   link: { url: "" },
   call: { phone: "" },
@@ -59,7 +61,6 @@ const initialFormData: QRFormDataByCategory = {
   pdf: { uploadType: "url", pdfUrl: "", file: undefined },
 };
 
-// Category definitions with full QRCategory interface
 const qrCategories: QRCategory[] = [
   { id: "link", name: "Website URL", description: "Share any website link", icon: "Link", color: "bg-blue-600" },
   { id: "call", name: "Call", description: "Make a phone call", icon: "Phone", color: "bg-green-600" },
@@ -79,40 +80,37 @@ const qrCategories: QRCategory[] = [
 ];
 
 const initialDesign: DesignConfig = {
-  frame: "Frame 1",
+  frame: "square",
+  shape: "square",
   color: "#000000",
   logo: null,
+  logoSize: 50,
 };
 
 export default function QrInterface() {
   const [selectedCategory, setSelectedCategory] = useState<QRCategory>(qrCategories[0]);
-  const [formData, setFormData] = useState<AnyQRFormData>(
-    initialFormData.link
-  );
+  const [formData, setFormData] = useState<AnyQRFormData>(initialFormData.link);
   const [formReady, setFormReady] = useState(false);
   const [design, setDesign] = useState<DesignConfig>(initialDesign);
   const [, setValidationErrors] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Create category lookup map
   const categoryMap = useMemo(() => {
     return new Map(qrCategories.map(cat => [cat.id as Category, cat]));
   }, []);
 
-  // Compute suggestions based on query
-const suggestions = useMemo(() => {
-  if (!searchQuery.trim()) return [];
-  const norm = searchQuery.toLowerCase();
-  return qrCategories
-    .filter((c) =>
-      c.id.toLowerCase().includes(norm) ||
-      c.name.toLowerCase().includes(norm) ||
-      c.description.toLowerCase().includes(norm)
-    )
-    .map((c) => c.name); // only show names in suggestions
-}, [searchQuery]);
+  const suggestions = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const norm = searchQuery.toLowerCase();
+    return qrCategories
+      .filter((c) =>
+        c.id.toLowerCase().includes(norm) ||
+        c.name.toLowerCase().includes(norm) ||
+        c.description.toLowerCase().includes(norm)
+      )
+      .map((c) => c.name);
+  }, [searchQuery]);
 
-  // Filter categories based on search query
   const filteredCategories = useMemo(() => {
     if (!searchQuery.trim()) {
       return qrCategories;
@@ -126,32 +124,26 @@ const suggestions = useMemo(() => {
     );
   }, [searchQuery]);
 
-  const handleSearch = useCallback(
-    (q: string) => {
-      setSearchQuery(q);
-      
-      const norm = q.trim().toLowerCase();
-      if (!norm) return;
-      
-      // First try exact match
-      let found = qrCategories.find((c) => c.id.toLowerCase() === norm);
-      
-      // Then try partial match on name or id
-      if (!found) {
-        found = qrCategories.find((c) => 
-          c.id.toLowerCase().includes(norm) || 
-          c.name.toLowerCase().includes(norm)
-        );
-      }
-      
-      if (found) {
-        setSelectedCategory(found);
-      }
-    },
-    []
-  );
+  const handleSearch = useCallback((q: string) => {
+    setSearchQuery(q);
+    
+    const norm = q.trim().toLowerCase();
+    if (!norm) return;
+    
+    let found = qrCategories.find((c) => c.id.toLowerCase() === norm);
+    
+    if (!found) {
+      found = qrCategories.find((c) => 
+        c.id.toLowerCase().includes(norm) || 
+        c.name.toLowerCase().includes(norm)
+      );
+    }
+    
+    if (found) {
+      setSelectedCategory(found);
+    }
+  }, []);
 
-  // Handle category selection
   const handleCategorySelect = useCallback((categoryId: Category) => {
     const category = categoryMap.get(categoryId);
     if (category) {
@@ -159,7 +151,6 @@ const suggestions = useMemo(() => {
     }
   }, [categoryMap]);
 
-  // Reset form data when category changes
   useEffect(() => {
     const categoryId = selectedCategory.id as keyof QRFormDataByCategory;
     setFormData(initialFormData[categoryId]);
@@ -171,20 +162,16 @@ const suggestions = useMemo(() => {
     setFormReady(valid);
   }, []);
 
-  // Convert design config to QRCodeStyle
   const qrStyle: QRCodeStyle = useMemo(() => ({
-    shape: "square",
+    shape: design.shape,
     backgroundColor: "#ffffff",
     foregroundColor: design.color,
     logo: design.logo,
-    logoSize: 20,
+    logoSize: design.logoSize ?? 20,
   }), [design]);
 
   return (
-    <div
-      id="qr-interface"
-      className="bg-slate-100 px-4 md:px-8 scroll-mt-20 py-8"
-    >
+    <div id="qr-interface" className="bg-slate-100 px-4 md:px-8 scroll-mt-20 py-8">
       <div className="py-1 flex justify-center ml-4 md:justify-start md:pl-8">
         <SearchBar
           onSearch={handleSearch}
@@ -194,7 +181,6 @@ const suggestions = useMemo(() => {
       </div>
 
       <div className="flex flex-col md:flex-row h-full">
-        {/* Left Panel */}
         <div className="w-full md:w-4/5 shadow-md p-6 md:ml-12 my-10 bg-gray-50 rounded-lg">
           <CategorySelector 
             selected={selectedCategory.id as Category} 
@@ -212,13 +198,15 @@ const suggestions = useMemo(() => {
           <QRDesignPanel design={design} setDesign={setDesign} />
         </div>
 
-        {/* Right Panel */}
         <div className="w-full md:w-1/4 bg-white mx-4 my-10 md:mr-24 shadow-sm rounded-lg">
           <QrPreview
             category={selectedCategory}
             formData={formData}
             ready={formReady}
-            design={design}
+            design={{
+              ...design,
+              logoSize: design.logoSize ?? 50
+            }}
             style={qrStyle}
           />
         </div>

@@ -6,13 +6,13 @@ export const uploadImageAndGetURL = async (file: File): Promise<string> => {
   const filePath = `uploads/${fileName}`;
 
   const { error: uploadError } = await supabase.storage
-    .from('your-bucket-name') // replace this
+    .from('qr-images') 
     .upload(filePath, file);
 
   if (uploadError) throw uploadError;
 
   const { data: publicUrlData } = supabase.storage
-    .from('your-bucket-name')
+    .from('qr-images')
     .getPublicUrl(filePath);
 
   return publicUrlData.publicUrl;

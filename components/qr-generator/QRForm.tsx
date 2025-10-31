@@ -63,40 +63,60 @@ export function QRForm({
     }
   };
 
-  const handleSaveQRCode = async (qrImageUrl: string) => {
+  // ✅ NEW: Helper to convert base64 to Blob
+  function base64ToBlob(base64: string) {
+    const byteCharacters = atob(base64.split(",")[1]);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: "image/png" });
+  }
+
+  // ✅ UPDATED: Save QR Code to Supabase
+  const handleSaveQRCode = async (qrBase64: string) => {
     try {
       if (!selectedFolderId) {
         alert("Please select a folder before saving the QR code.");
         return;
       }
 
-      // Get user session
+      // 1️⃣ Get authenticated user
       const {
         data: { user },
         error: authError,
       } = await supabase.auth.getUser();
 
-      if (authError) {
+      if (authError || !user) {
         console.error("Auth error:", authError);
-        alert("Authentication error. Please log in again.");
-        return;
-      }
-
-      if (!user) {
         alert("You must be logged in to save QR codes.");
         return;
       }
 
-      console.log("Saving QR code with data:", {
-        user_id: user.id,
-        folder_id: selectedFolderId,
-        type: category.id,
-        hasFormData: !!formData,
-        hasStyle: !!style,
-        hasQrImageUrl: !!qrImageUrl,
-      });
+      // 2️⃣ Convert QR base64 to blob
+      const blob = base64ToBlob(qrBase64);
 
-      const { data, error } = await supabase.from("qr_codes").insert([
+      // 3️⃣ Generate a unique file path
+      const filePath = `qr-images/${user.id}/${crypto.randomUUID()}.png`;
+
+      // 4️⃣ Upload to Supabase storage bucket (must exist: "qr-images")
+      const { error: uploadError } = await supabase.storage
+        .from("qr-images")
+        .upload(filePath, blob, { contentType: "image/png" });
+
+      if (uploadError) throw uploadError;
+
+      // 5️⃣ Get the public URL of the uploaded file
+      const { data: publicData } = supabase.storage
+        .from("qr-images")
+        .getPublicUrl(filePath);
+
+      const publicUrl = publicData?.publicUrl;
+      if (!publicUrl) throw new Error("Failed to retrieve public URL.");
+
+      // 6️⃣ Insert into the qr_codes table
+      const { error: insertError } = await supabase.from("qr_codes").insert([
         {
           user_id: user.id,
           folder_id: selectedFolderId,
@@ -104,34 +124,23 @@ export function QRForm({
           type: category.id,
           data: formData,
           design: style,
-          qr_image_url: qrImageUrl,
+          qr_image_url: publicUrl,
+          status: "Active",
         },
       ]);
 
-      if (error) {
-        console.error("Supabase insert error:", {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code,
-        });
-        throw new Error(error.message || "Database error");
-      }
+      if (insertError) throw insertError;
 
-      console.log("QR code saved successfully:", data);
+      console.log("✅ QR code saved successfully:", publicUrl);
       alert("QR code saved successfully!");
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Error saving QR code:", {
-          message: error.message,
-          stack: error.stack,
-          error,
-        });
-        alert(`Failed to save QR code: ${error.message}`);
-      } else {
-        console.error("Unknown error:", error);
-        alert("An unknown error occurred. Please check the console.");
-      }
+    } catch (error: unknown  ) {
+      console.error("❌ Error saving QR:", {
+        message: error,
+        details: error,
+        hint: error,
+        code: error,
+      });
+      alert(`Failed to save QR: ${error}`);
     }
   };
 
@@ -210,7 +219,7 @@ export function QRForm({
               style={style}
               onDownload={handleDownload}
               selectedFolderId={selectedFolderId}
-              onSave={handleSaveQRCode}
+              onSave={handleSaveQRCode} // ✅ Updated handler
             />
           </div>
         </div>

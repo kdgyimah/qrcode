@@ -75,7 +75,6 @@ export default function QrTable({
 
   const clearSelection = () => setSelected([]);
 
-  
   const filteredData = useMemo(() => {
     if (!search) return data;
     const term = search.toLowerCase();
@@ -101,16 +100,14 @@ export default function QrTable({
 
   return (
     <div className="relative">
-      {/* Desktop info */}
+      {/* Info bar (visible everywhere) */}
       {setSearch && (
-        <div className="hidden md:block mb-4">
-          <div className="text-sm text-gray-600 mb-2">
-            {totalItems} QR code{totalItems !== 1 ? "s" : ""} found
-          </div>
+        <div className="mb-4 text-sm text-gray-600">
+          {totalItems} QR code{totalItems !== 1 ? "s" : ""} found
         </div>
       )}
 
-      {/* === DESKTOP TABLE === */}
+      {/* === DESKTOP TABLE VIEW === */}
       <div className="hidden lg:block overflow-x-auto">
         <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden">
           <thead className="bg-gray-50 text-sm text-gray-600">
@@ -207,6 +204,56 @@ export default function QrTable({
         </table>
       </div>
 
+      {/* === MOBILE CARD VIEW === */}
+      <div className="block lg:hidden space-y-4">
+        {paginatedData.map((qr) => (
+          <div
+            key={qr.id}
+            onClick={() => onRowClick(qr)}
+            className="border rounded-lg p-4 bg-white shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between hover:bg-blue-50 transition"
+          >
+            <div className="flex items-center gap-4">
+              <Image
+                src={qr.qrImage}
+                alt={qr.name}
+                width={64}
+                height={64}
+                className="rounded-md border border-gray-200"
+              />
+              <div>
+                <div className="font-semibold text-gray-800">{qr.name}</div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {qr.type} • {qr.folder}
+                </div>
+                <div className="mt-1">{getCategoryLabel(qr)}</div>
+              </div>
+            </div>
+            <div className="mt-3 sm:mt-0 flex items-center justify-between sm:justify-end gap-3">
+              <span
+                className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                  qr.status === "Active"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {qr.status}
+              </span>
+              {onRowEdit && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRowEdit(qr);
+                  }}
+                  className="text-blue-600 text-xs font-medium underline"
+                >
+                  Edit
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
       {/* === EMPTY STATE === */}
       {filteredData.length === 0 && (
         <div className="text-center py-12">
@@ -219,7 +266,7 @@ export default function QrTable({
         </div>
       )}
 
-      {/* ✅ DESKTOP FLOATING ACTION TOOLBAR (Right Side Popup) */}
+      {/* === FLOATING TOOLBAR (Desktop only) === */}
       {selected.length > 0 && (
         <div className="hidden md:block fixed right-4 top-1/4 z-50">
           <div className="flex flex-col gap-2 rounded-xl shadow-lg bg-white border border-gray-200 p-2 transition-all">

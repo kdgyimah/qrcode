@@ -16,7 +16,7 @@ export default function Hero() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1 }}
         // ADDED pointer-events-none here so this absolute wrapper doesn't intercept clicks
-        className="absolute top-24 right-[-80px] md:top-10 md:right-[-60px] max-w-none hidden md:block pointer-events-none"
+        className="absolute top-24 right-[-80px] md:top-10 md:right-[-30px] max-w-none hidden md:block pointer-events-none"
       >
         <Image
           src="/images/rightheroimg.png"
@@ -94,7 +94,7 @@ export default function Hero() {
           // also make mobile wrapper non-interactive so it can't accidentally block taps
           className="block md:hidden mt-10 px-4 w-full flex justify-center overflow-x-visible pointer-events-none"
         >
-          <div className="relative h-[500px] w-full max-w-[400px] drop-shadow-2xl scale-[2.2] origin-center -translate-x-20">
+          <div className="relative h-[500px] w-full max-w-[350px] drop-shadow-2xl scale-[2.1] origin-center -translate-x-15">
             <Image
               src="/images/rightheroimg.png"
               alt="Mobile Hero QR Image"

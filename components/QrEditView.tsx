@@ -9,71 +9,60 @@ import { folderService } from "@/lib/services/folders";
 import type { QrData } from "@/types/qr-generator";
 import type { Folder } from "@/types/database";
 
-// Type definitions for QR data
-interface LinkFormData {
-  url: string;
-  [key: string]: unknown;
-}
+/* ----------------------- Types ----------------------- */
 
-interface CallFormData {
-  phone: string;
-  [key: string]: unknown;
-}
-
-interface MailFormData {
-  email: string;
-  subject?: string;
-  message?: string;
-  [key: string]: unknown;
-}
-
-interface SmsFormData {
-  phone: string;
-  message: string;
-  [key: string]: unknown;
-}
-
-interface WhatsAppFormData {
-  waPhone: string;
-  waBody?: string;
-  [key: string]: unknown;
-}
-
-interface WifiFormData {
-  ssid: string;
-  password?: string;
-  encryption?: string;
-  [key: string]: unknown;
-}
-
-interface EventFormData {
-  eventStart: string;
-  eventEnd?: string;
-  eventTitle: string;
-  eventLocation?: string;
-  eventDesc?: string;
-  [key: string]: unknown;
-}
-
-interface ContactFormData {
-  firstName?: string;
-  lastName?: string;
-  organization?: string;
-  jobTitle?: string;
-  phone?: string;
-  email?: string;
-  address?: string;
-  [key: string]: unknown;
-}
+interface LinkFormData { url: string; [key: string]: unknown; }
+interface CallFormData { phone: string; [key: string]: unknown; }
+interface MailFormData { email: string; subject?: string; message?: string; [key: string]: unknown; }
+interface SmsFormData { phone: string; message: string; [key: string]: unknown; }
+interface WhatsAppFormData { waPhone: string; waBody?: string; [key: string]: unknown; }
+interface WifiFormData { ssid: string; password?: string; encryption?: string; [key: string]: unknown; }
+interface EventFormData { eventStart: string; eventEnd?: string; eventTitle: string; eventLocation?: string; eventDesc?: string; [key: string]: unknown; }
+interface ContactFormData { firstName?: string; lastName?: string; organization?: string; jobTitle?: string; phone?: string; email?: string; address?: string; [key: string]: unknown; }
 
 interface QrEditViewProps {
-  id: string;
+  id?: string;
   qr: QrData;
   availableFolders?: Folder[];
   onClose?: () => void;
   onSaved?: (updatedQr: QrData) => void;
   onDeleted?: () => void;
 }
+
+/* ----------------------- Constants ----------------------- */
+
+const BUCKET_NAME = "qr-images";
+
+/* ----------------------- Helper Functions ----------------------- */
+
+function parseSupabasePublicUrl(url: string) {
+  try {
+    const u = new URL(url);
+    const pathParts = u.pathname.split("/").filter(Boolean);
+    const objectIndex = pathParts.findIndex(p => p === "object");
+    
+    if (objectIndex !== -1 && pathParts[objectIndex + 1] === "public") {
+      const bucket = pathParts[objectIndex + 2];
+      const objectPath = pathParts.slice(objectIndex + 3).join("/");
+      if (bucket && objectPath) return { bucket, path: objectPath };
+    }
+
+    const storageIndex = pathParts.findIndex(p => p === "storage");
+    if (storageIndex !== -1) {
+      const objIdx = pathParts.findIndex(p => p === "object");
+      if (objIdx !== -1 && pathParts[objIdx + 1] === "public") {
+        const bucket = pathParts[objIdx + 2];
+        const objectPath = pathParts.slice(objIdx + 3).join("/");
+        if (bucket && objectPath) return { bucket, path: objectPath };
+      }
+    }
+  } catch (e) {
+    console.error("Failed to parse Supabase URL:", e);
+  }
+  return null;
+}
+
+/* ----------------------- Main Component ----------------------- */
 
 export default function QrEditView({
   qr,
@@ -82,6 +71,7 @@ export default function QrEditView({
   onDeleted,
   onClose,
 }: QrEditViewProps) {
+  // State
   const [name, setName] = useState(qr.name);
   const [link, setLink] = useState(qr.link);
   const [folderId, setFolderId] = useState(qr.folderId || "");
@@ -90,97 +80,64 @@ export default function QrEditView({
   const [isDeleting, setIsDeleting] = useState(false);
   const [folders, setFolders] = useState<Folder[]>(availableFolders || []);
   const [isFetchingFolders, setIsFetchingFolders] = useState(false);
-  const [previewQrUrl, setPreviewQrUrl] = useState(qr.qrImage);
-  const qrCodeRef = useRef<QRCodeStyling | null>(null);
-  const canvasRef = useRef<HTMLDivElement>(null);
+  const [previewQrUrl, setPreviewQrUrl] = useState<string | null>(qr.qrImage || null);
 
+  // Refs
+  const qrCodeRef = useRef<QRCodeStyling | null>(null);
+  const canvasRef = useRef<HTMLDivElement | null>(null);
+
+  /* ----------------------- Effects ----------------------- */
+
+  // Sync with prop changes
   useEffect(() => {
     setName(qr.name);
     setLink(qr.link);
     setFolderId(qr.folderId || "");
     setQrData(qr.data as Record<string, unknown> || {});
-    setPreviewQrUrl(qr.qrImage);
+    setPreviewQrUrl(qr.qrImage || null);
   }, [qr]);
 
-  // Fetch folders from Supabase if not provided
+  // Fetch folders if not provided
   useEffect(() => {
     if (!availableFolders || availableFolders.length === 0) {
       fetchFolders();
     }
-  
   }, [availableFolders]);
 
-  // Initialize QR code styling
+  // Initialize QR Code
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const style = qr.style;
-      const dotType = style?.shape === "square" ? "square" : style?.shape === "circle" ? "dots" : "rounded";
-      
-      qrCodeRef.current = new QRCodeStyling({
-        width: 300,
-        height: 300,
-        data: qr.link,
-        margin: 10,
-        qrOptions: { typeNumber: 0, mode: "Byte", errorCorrectionLevel: "Q" },
-        imageOptions: { 
-          hideBackgroundDots: true, 
-          imageSize: style?.logoSize || 0.4, 
-          margin: 0 
-        },
-        dotsOptions: {
-          type: dotType,
-          color: style?.foregroundColor || "#000000",
-        },
-        backgroundOptions: {
-          color: style?.backgroundColor || "#ffffff",
-        },
-        cornersSquareOptions: {
-          type: dotType === "square" ? "square" : "extra-rounded",
-          color: style?.foregroundColor || "#000000",
-        },
-        cornersDotOptions: {
-          type: dotType === "square" ? "square" : "dot",
-          color: style?.foregroundColor || "#000000",
-        },
-        image: typeof style?.logo === "string" ? style.logo : undefined,
-      });
-    }
-  }, [qr.link, qr.style]);
+    if (typeof window === "undefined") return;
+    
+    initializeQRCode();
 
-  // Type guards
-  const isLinkData = useCallback((data: Record<string, unknown>): data is LinkFormData => {
-    return typeof data.url === "string";
+    return () => {
+      qrCodeRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const isCallData = useCallback((data: Record<string, unknown>): data is CallFormData => {
-    return typeof data.phone === "string";
-  }, []);
 
-  const isMailData = useCallback((data: Record<string, unknown>): data is MailFormData => {
-    return typeof data.email === "string";
-  }, []);
+  /* ----------------------- Type Guards ----------------------- */
 
-  const isSmsData = useCallback((data: Record<string, unknown>): data is SmsFormData => {
-    return typeof data.phone === "string";
-  }, []);
+  const isLinkData = useCallback((data: Record<string, unknown>): data is LinkFormData => 
+    typeof data.url === "string", []);
+  const isCallData = useCallback((data: Record<string, unknown>): data is CallFormData => 
+    typeof data.phone === "string", []);
+  const isMailData = useCallback((data: Record<string, unknown>): data is MailFormData => 
+    typeof data.email === "string", []);
+  const isSmsData = useCallback((data: Record<string, unknown>): data is SmsFormData => 
+    typeof data.phone === "string", []);
+  const isWhatsAppData = useCallback((data: Record<string, unknown>): data is WhatsAppFormData => 
+    typeof data.waPhone === "string", []);
+  const isWifiData = useCallback((data: Record<string, unknown>): data is WifiFormData => 
+    typeof data.ssid === "string", []);
+  const isEventData = useCallback((data: Record<string, unknown>): data is EventFormData => 
+    typeof data.eventStart === "string" && typeof data.eventTitle === "string", []);
+  const isContactData = useCallback((data: Record<string, unknown>): data is ContactFormData => 
+    typeof data.firstName === "string" || typeof data.lastName === "string", []);
 
-  const isWhatsAppData = useCallback((data: Record<string, unknown>): data is WhatsAppFormData => {
-    return typeof data.waPhone === "string";
-  }, []);
+  /* ----------------------- QR Generation ----------------------- */
 
-  const isWifiData = useCallback((data: Record<string, unknown>): data is WifiFormData => {
-    return typeof data.ssid === "string";
-  }, []);
-
-  const isEventData = useCallback((data: Record<string, unknown>): data is EventFormData => {
-    return typeof data.eventStart === "string" && typeof data.eventTitle === "string";
-  }, []);
-
-  const isContactData = useCallback((data: Record<string, unknown>): data is ContactFormData => {
-    return typeof data.firstName === "string" || typeof data.lastName === "string";
-  }, []);
-
-  // Generate link based on QR category and data
   const generateLinkFromData = useCallback((): string => {
     switch (qr.category) {
       case "link":
@@ -192,7 +149,7 @@ export default function QrEditView({
       case "mail":
         if (isMailData(qrData)) {
           let mailUrl = `mailto:${qrData.email}`;
-          const params = [];
+          const params: string[] = [];
           if (qrData.subject) params.push(`subject=${encodeURIComponent(qrData.subject)}`);
           if (qrData.message) params.push(`body=${encodeURIComponent(qrData.message)}`);
           if (params.length) mailUrl += `?${params.join("&")}`;
@@ -219,16 +176,16 @@ export default function QrEditView({
         return link;
       
       case "video":
-        return (qrData.videoUrl as string | undefined) || link;
+        return (qrData.videoUrl as string) || link;
       
       case "image":
-        return (qrData.imageUrl as string | undefined) || link;
+        return (qrData.imageUrl as string) || link;
       
       case "app":
-        return (qrData.appUrl as string | undefined) || link;
+        return (qrData.appUrl as string) || link;
       
       case "social":
-        return (qrData.socialUrl as string | undefined) || link;
+        return (qrData.socialUrl as string) || link;
       
       case "event":
         if (isEventData(qrData)) {
@@ -264,160 +221,184 @@ END:VCARD`;
     }
   }, [qr.category, qrData, link, isLinkData, isCallData, isMailData, isSmsData, isWhatsAppData, isWifiData, isEventData, isContactData]);
 
-  const regenerateQRCode = useCallback(async () => {
-    if (!qrCodeRef.current || !canvasRef.current) return;
+  const initializeQRCode = async () => {
+    const style = qr.style;
+    const dotType = style?.shape === "square" ? "square" : style?.shape === "circle" ? "dots" : "rounded";
 
-    try {
-      const generatedLink = generateLinkFromData();
-      
-      qrCodeRef.current.update({
-        data: generatedLink,
-      });
+    qrCodeRef.current = new QRCodeStyling({
+      width: 300,
+      height: 300,
+      data: qr.link || generateLinkFromData(),
+      margin: 10,
+      qrOptions: { typeNumber: 0, mode: "Byte", errorCorrectionLevel: "Q" },
+      imageOptions: { hideBackgroundDots: true, imageSize: style?.logoSize || 0.4, margin: 0 },
+      dotsOptions: { type: dotType, color: style?.foregroundColor || "#000000" },
+      backgroundOptions: { color: style?.backgroundColor || "#ffffff" },
+      cornersSquareOptions: { type: dotType === "square" ? "square" : "extra-rounded", color: style?.foregroundColor || "#000000" },
+      cornersDotOptions: { type: dotType === "square" ? "square" : "dot", color: style?.foregroundColor || "#000000" },
+      image: typeof style?.logo === "string" ? style.logo : undefined,
+    });
 
+    if (qrCodeRef.current && canvasRef.current) {
       canvasRef.current.innerHTML = "";
-      
       await qrCodeRef.current.append(canvasRef.current);
+      const raw = await qrCodeRef.current.getRawData("png");
+      if (raw instanceof Blob) {
+        setPreviewQrUrl(URL.createObjectURL(raw));
+      }
+    }
+  };
 
-      const rawData = await qrCodeRef.current.getRawData("png");
-      if (rawData instanceof Blob) {
-        const url = URL.createObjectURL(rawData);
-        setPreviewQrUrl(url);
+  /* ----------------------- Storage Operations ----------------------- */
+
+  const removeOldImage = async (imageUrl: string | null) => {
+    if (!imageUrl || imageUrl.startsWith('data:')) {
+      return; // Skip base64 images
+    }
+    
+    try {
+      const parsed = parseSupabasePublicUrl(imageUrl);
+      if (!parsed) {
+        console.warn("Could not parse Supabase storage path from URL:", imageUrl);
+        return;
+      }
+
+      const { error } = await supabase.storage
+        .from(parsed.bucket)
+        .remove([parsed.path]);
+
+      if (error) {
+        console.error("Error removing image:", error);
       }
     } catch (error) {
-      console.error("Error regenerating QR code:", error);
+      console.error("Error in removeOldImage:", error);
     }
-  }, [generateLinkFromData]);
+  };
 
-  // Regenerate QR code when data changes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      regenerateQRCode();
-    }, 500);
+  const uploadNewQRImage = async (blob: Blob): Promise<string | null> => {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
+      if (!user) throw new Error("Not authenticated");
 
-    return () => clearTimeout(timer);
-  }, [qrData, name, regenerateQRCode]);
+      const fileName = `${user.id}/${Date.now()}.png`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(fileName, blob, { contentType: "image/png" });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from(BUCKET_NAME)
+        .getPublicUrl(fileName);
+
+      return publicUrl;
+    } catch (error) {
+      console.error("Error uploading QR image:", error);
+      return null;
+    }
+  };
+
+  /* ----------------------- API Operations ----------------------- */
 
   async function fetchFolders() {
     setIsFetchingFolders(true);
     try {
       const folderData = await folderService.getFolders();
       setFolders(folderData);
-    } catch (error) {
-      console.error("Error fetching folders:", error);
+    } catch (err) {
+      console.error("Error fetching folders:", err);
     } finally {
       setIsFetchingFolders(false);
     }
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("saving");
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
+      if (!user) throw new Error("Not authenticated");
+
+      // Generate new QR image and upload
+      let newQrImageUrl = qr.qrImage;
       
-      if (!user) {
-        throw new Error("Not authenticated");
-      }
-
-      const generatedLink = generateLinkFromData();
-
-      let qrImageUrl = qr.qrImage;
       if (qrCodeRef.current) {
-        const blob = await qrCodeRef.current.getRawData("png");
-        if (blob) {
-          const fileName = `${qr.id}_${Date.now()}.png`;
-          const filePath = `${user.id}/${fileName}`;
-
-          if (qr.qrImage) {
-            const urlParts = qr.qrImage.split('/');
-            const storageIndex = urlParts.findIndex(part => part === 'storage');
-            if (storageIndex !== -1) {
-              const pathAfterBucket = urlParts.slice(storageIndex + 3).join('/');
-              await supabase.storage.from("qr-codes").remove([pathAfterBucket]);
+        const raw = await qrCodeRef.current.getRawData("png");
+        if (raw instanceof Blob) {
+          const uploadedUrl = await uploadNewQRImage(raw);
+          if (uploadedUrl) {
+            // Remove old image before updating
+            if (qr.qrImage) {
+              await removeOldImage(qr.qrImage);
             }
+            newQrImageUrl = uploadedUrl;
           }
-
-          const { error: uploadError } = await supabase.storage
-            .from("qr-codes")
-            .upload(filePath, blob, { contentType: "image/png" });
-
-          if (uploadError) throw uploadError;
-
-          const { data: urlData } = supabase.storage
-            .from("qr-codes")
-            .getPublicUrl(filePath);
-
-          qrImageUrl = urlData.publicUrl;
         }
       }
 
-      const selectedFolder = folders.find(f => f.id === folderId);
-
-      const { data, error } = await supabase
+      // Prepare update data
+      const generatedLink = generateLinkFromData();
+      
+      const { error } = await supabase
         .from("qr_codes")
         .update({
-          name,
-          link: generatedLink,
-          folder_id: folderId,
-          folder: selectedFolder?.name || "",
+          name: name,
           data: qrData,
-          qr_image: qrImageUrl,
+          destination_url: generatedLink,
+          qr_image_url: newQrImageUrl,
+          folder_id: folderId || null,
           last_modified: new Date().toISOString(),
         })
         .eq("id", qr.id)
-        .eq("user_id", user.id)
-        .select()
-        .single();
+        .eq("user_id", user.id);
 
       if (error) throw error;
 
-      const updatedQr: QrData = {
+      setStatus("success");
+      
+      // Call callback with updated data
+      onSaved?.({
         ...qr,
         name,
-        link: data.link,
-        folderId: data.folder_id,
-        folder: data.folder,
-        data: data.data,
-        qrImage: data.qr_image,
-        lastModified: data.last_modified,
-      };
+        link: generatedLink,
+        data: qrData,
+        qrImage: newQrImageUrl,
+        folderId: folderId || undefined,
+        lastModified: new Date().toISOString(),
+      });
 
-      onSaved?.(updatedQr);
-      setStatus("success");
-      setTimeout(() => setStatus("idle"), 1500);
-    } catch (error) {
+      setTimeout(() => setStatus("idle"), 2000);
+    } catch (error: unknown) {
       console.error("Error updating QR:", error);
       setStatus("error");
-      setTimeout(() => setStatus("idle"), 2000);
+      alert(error || "Failed to update QR code");
+      setTimeout(() => setStatus("idle"), 3000);
     }
-  }
+  };
 
   async function handleDelete() {
-    const confirmed = confirm(`Are you sure you want to delete "${qr.name}"? This action cannot be undone.`);
-    
+    const confirmed = confirm(
+      `Are you sure you want to delete "${qr.name}"? This action cannot be undone.`
+    );
     if (!confirmed) return;
 
     setIsDeleting(true);
-
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error("Not authenticated");
-      }
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
+      if (!user) throw new Error("Not authenticated");
 
+      // Remove image from storage
       if (qr.qrImage) {
-        const urlParts = qr.qrImage.split('/');
-        const storageIndex = urlParts.findIndex(part => part === 'storage');
-        if (storageIndex !== -1) {
-          const pathAfterBucket = urlParts.slice(storageIndex + 3).join('/');
-          await supabase.storage
-            .from("qr-codes")
-            .remove([pathAfterBucket]);
-        }
+        await removeOldImage(qr.qrImage);
       }
 
+      // Delete from database
       const { error } = await supabase
         .from("qr_codes")
         .delete()
@@ -430,26 +411,29 @@ END:VCARD`;
       onClose?.();
     } catch (error) {
       console.error("Error deleting QR:", error);
-      alert("Failed to delete QR code. Please try again.");
+      alert("Failed to delete QR code. Check console for details.");
     } finally {
       setIsDeleting(false);
     }
   }
 
+  /* ----------------------- UI Handlers ----------------------- */
+
   async function handleShare() {
-    if (navigator.share && previewQrUrl) {
+    if (!previewQrUrl) return handleCopyLink();
+    
+    if (navigator.share) {
       try {
         const response = await fetch(previewQrUrl);
         const blob = await response.blob();
         const file = new File([blob], `${name}.png`, { type: "image/png" });
-
         await navigator.share({
           title: name,
-          text: `QR Code for ${generateLinkFromData()}`,
           files: [file],
+          text: `QR for ${generateLinkFromData()}`,
         });
       } catch (error) {
-        console.error("Error sharing:", error);
+        console.error("Share failed:", error);
         handleCopyLink();
       }
     } else {
@@ -458,16 +442,49 @@ END:VCARD`;
   }
 
   function handleCopyLink() {
-    if (previewQrUrl) {
-      navigator.clipboard.writeText(previewQrUrl);
-      alert("QR code link copied to clipboard!");
+    if (!previewQrUrl) return;
+    navigator.clipboard.writeText(generateLinkFromData());
+    alert("Link copied to clipboard.");
+  }
+
+  function handleDownload() {
+    if (!previewQrUrl) return;
+    const a = document.createElement("a");
+    a.href = previewQrUrl;
+    a.download = `${(name || "qr").replace(/[^a-z0-9]/gi, "_")}.png`;
+    a.click();
+  }
+
+  async function handleFolderChange(value: string) {
+    if (value === "__new__") {
+      const newName = prompt("Enter new folder name:", "");
+      if (newName && newName.trim()) {
+        try {
+          const { data: userData } = await supabase.auth.getUser();
+          const user = userData?.user;
+          if (!user) throw new Error("User not authenticated");
+          
+          const newFolder = await folderService.createFolder({
+            name: newName.trim(),
+            color: "#3B82F6",
+            user_id: user.id,
+          });
+          
+          setFolders(prev => [newFolder, ...prev]);
+          setFolderId(newFolder.id);
+        } catch (error) {
+          console.error("Error creating folder:", error);
+          alert("Failed to create folder. See console for details.");
+        }
+      }
+    } else {
+      setFolderId(value);
     }
   }
 
-  // Render dynamic form fields based on QR category
-  function renderCategoryFields() {
-    const data = qrData;
+  /* ----------------------- Form Field Renderers ----------------------- */
 
+  function renderCategoryFields() {
     switch (qr.category) {
       case "link":
         return (
@@ -480,10 +497,8 @@ END:VCARD`;
               <input
                 placeholder="your-url.com"
                 className="w-full border border-gray-200 rounded-r px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={((data.url as string) || "").replace(/^https?:\/\//, "")}
-                onChange={(e) =>
-                  setQrData({ ...data, url: "https://" + e.target.value.replace(/^https?:\/\//, "") })
-                }
+                value={((qrData.url as string) || "").replace(/^https?:\/\//, "")}
+                onChange={(e) => setQrData({ ...qrData, url: "https://" + e.target.value.replace(/^https?:\/\//, "") })}
                 required
               />
             </div>
@@ -498,8 +513,8 @@ END:VCARD`;
               type="tel"
               placeholder="+1234567890"
               className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={(data.phone as string) || ""}
-              onChange={(e) => setQrData({ ...data, phone: e.target.value })}
+              value={(qrData.phone as string) || ""}
+              onChange={(e) => setQrData({ ...qrData, phone: e.target.value })}
               required
             />
           </div>
@@ -514,8 +529,8 @@ END:VCARD`;
                 type="email"
                 placeholder="email@example.com"
                 className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={(data.email as string) || ""}
-                onChange={(e) => setQrData({ ...data, email: e.target.value })}
+                value={(qrData.email as string) || ""}
+                onChange={(e) => setQrData({ ...qrData, email: e.target.value })}
                 required
               />
             </div>
@@ -525,8 +540,8 @@ END:VCARD`;
                 type="text"
                 placeholder="Email subject"
                 className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={(data.subject as string) || ""}
-                onChange={(e) => setQrData({ ...data, subject: e.target.value })}
+                value={(qrData.subject as string) || ""}
+                onChange={(e) => setQrData({ ...qrData, subject: e.target.value })}
               />
             </div>
             <div>
@@ -535,8 +550,8 @@ END:VCARD`;
                 placeholder="Email message"
                 className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 rows={3}
-                value={(data.message as string) || ""}
-                onChange={(e) => setQrData({ ...data, message: e.target.value })}
+                value={(qrData.message as string) || ""}
+                onChange={(e) => setQrData({ ...qrData, message: e.target.value })}
               />
             </div>
           </>
@@ -551,8 +566,8 @@ END:VCARD`;
                 type="tel"
                 placeholder="+1234567890"
                 className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={(data.phone as string) || ""}
-                onChange={(e) => setQrData({ ...data, phone: e.target.value })}
+                value={(qrData.phone as string) || ""}
+                onChange={(e) => setQrData({ ...qrData, phone: e.target.value })}
                 required
               />
             </div>
@@ -562,8 +577,8 @@ END:VCARD`;
                 placeholder="SMS message"
                 className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 rows={3}
-                value={(data.message as string) || ""}
-                onChange={(e) => setQrData({ ...data, message: e.target.value })}
+                value={(qrData.message as string) || ""}
+                onChange={(e) => setQrData({ ...qrData, message: e.target.value })}
                 required
               />
             </div>
@@ -579,8 +594,8 @@ END:VCARD`;
                 type="tel"
                 placeholder="+1234567890"
                 className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={(data.waPhone as string) || ""}
-                onChange={(e) => setQrData({ ...data, waPhone: e.target.value })}
+                value={(qrData.waPhone as string) || ""}
+                onChange={(e) => setQrData({ ...qrData, waPhone: e.target.value })}
                 required
               />
             </div>
@@ -590,8 +605,8 @@ END:VCARD`;
                 placeholder="Pre-filled message"
                 className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 rows={3}
-                value={(data.waBody as string) || ""}
-                onChange={(e) => setQrData({ ...data, waBody: e.target.value })}
+                value={(qrData.waBody as string) || ""}
+                onChange={(e) => setQrData({ ...qrData, waBody: e.target.value })}
               />
             </div>
           </>
@@ -606,8 +621,8 @@ END:VCARD`;
                 type="text"
                 placeholder="My WiFi Network"
                 className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={(data.ssid as string) || ""}
-                onChange={(e) => setQrData({ ...data, ssid: e.target.value })}
+                value={(qrData.ssid as string) || ""}
+                onChange={(e) => setQrData({ ...qrData, ssid: e.target.value })}
                 required
               />
             </div>
@@ -617,16 +632,16 @@ END:VCARD`;
                 type="text"
                 placeholder="WiFi password"
                 className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={(data.password as string) || ""}
-                onChange={(e) => setQrData({ ...data, password: e.target.value })}
+                value={(qrData.password as string) || ""}
+                onChange={(e) => setQrData({ ...qrData, password: e.target.value })}
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Encryption</label>
               <select
                 className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={(data.encryption as string) || "WPA"}
-                onChange={(e) => setQrData({ ...data, encryption: e.target.value })}
+                value={(qrData.encryption as string) || "WPA"}
+                onChange={(e) => setQrData({ ...qrData, encryption: e.target.value })}
               >
                 <option value="WPA">WPA/WPA2</option>
                 <option value="WEP">WEP</option>
@@ -648,9 +663,7 @@ END:VCARD`;
                 placeholder="your-url.com"
                 className="w-full border border-gray-200 rounded-r px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={link.replace(/^https?:\/\//, "")}
-                onChange={(e) =>
-                  setLink("https://" + e.target.value.replace(/^https?:\/\//, ""))
-                }
+                onChange={(e) => setLink("https://" + e.target.value.replace(/^https?:\/\//, ""))}
                 required
               />
             </div>
@@ -659,57 +672,20 @@ END:VCARD`;
     }
   }
 
-  async function handleFolderChange(value: string) {
-    if (value === "__new__") {
-      const newName = prompt("Enter new folder name:", "");
-      if (newName && newName.trim()) {
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (!user) throw new Error("User not authenticated");
-          const newFolder = await folderService.createFolder({ 
-            name: newName.trim(),
-            color: "#3B82F6",
-            user_id: user.id
-          });
-          setFolders([newFolder, ...folders]);
-          setFolderId(newFolder.id);
-        } catch (error) {
-          console.error("Error creating folder:", error);
-          alert("Failed to create folder. Please try again.");
-        }
-      }
-    } else {
-      setFolderId(value);
-    }
-  }
+  /* ----------------------- Date Formatting ----------------------- */
 
-  function handleDownload() {
-    if (previewQrUrl) {
-      const link = document.createElement("a");
-      link.href = previewQrUrl;
-      link.download = `${name.replace(/[^a-z0-9]/gi, "_")}.png`;
-      link.click();
-    }
-  }
-
-  const formattedCreated = qr.created
-    ? new Date(qr.created).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-      })
+  const formattedCreated = qr.created 
+    ? new Date(qr.created).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" }) 
+    : "";
+  const formattedModified = qr.lastModified 
+    ? new Date(qr.lastModified).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" }) 
     : "";
 
-  const formattedModified = qr.lastModified
-    ? new Date(qr.lastModified).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-      })
-    : "";
+  /* ----------------------- Render ----------------------- */
 
   return (
     <div className="w-full p-2 flex flex-col gap-10">
+      {/* Header */}
       <div className="flex flex-wrap justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold mb-2">Edit QR Details</h1>
@@ -724,33 +700,17 @@ END:VCARD`;
         </div>
 
         <div className="flex gap-2 items-center">
-          <button
-            title="Delete"
-            className="rounded-full p-2 border border-gray-200 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={handleDelete}
-            disabled={isDeleting}
-          >
+          <button title="Delete" className="rounded-full p-2 border border-gray-200 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed" onClick={handleDelete} disabled={isDeleting}>
             <Trash2 size={18} className="text-red-500" />
           </button>
-          <button
-            title="Share"
-            className="rounded-full p-2 border border-gray-200 hover:bg-blue-50"
-            onClick={handleShare}
-          >
+          <button title="Share" className="rounded-full p-2 border border-gray-200 hover:bg-blue-50" onClick={handleShare}>
             <Share2 size={18} className="text-blue-500" />
           </button>
-          <button
-            title="Edit"
-            className="rounded px-4 py-2 border border-blue-200 text-blue-700 bg-white flex items-center gap-1 font-medium"
-          >
+          <button title="Edit" className="rounded px-4 py-2 border border-blue-200 text-blue-700 bg-white flex items-center gap-1 font-medium">
             <Edit2 size={18} />
             Edit
           </button>
-          <button
-            title="Download"
-            className="rounded px-5 py-2 bg-blue-600 text-white flex items-center gap-1 font-medium hover:bg-blue-700"
-            onClick={handleDownload}
-          >
+          <button title="Download" className="rounded px-5 py-2 bg-blue-600 text-white flex items-center gap-1 font-medium hover:bg-blue-700" onClick={handleDownload}>
             <ArrowDownToLine size={18} />
             Download
           </button>
@@ -758,56 +718,25 @@ END:VCARD`;
       </div>
 
       <div className="flex flex-col md:flex-row gap-14">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white rounded-lg p-8 w-full md:w-[70%] shadow flex flex-col gap-5"
-        >
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg p-8 w-full md:w-[70%] shadow flex flex-col gap-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">QR Name</label>
-            <input
-              placeholder="Enter QR name"
-              className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+            <input placeholder="Enter QR name" className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={name} onChange={(e) => setName(e.target.value)} required />
           </div>
 
           {renderCategoryFields()}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Folder</label>
-            <select
-              className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-              value={folderId}
-              onChange={(e) => handleFolderChange(e.target.value)}
-              disabled={isFetchingFolders}
-              required
-            >
-              <option value="">
-                {isFetchingFolders ? "Loading folders..." : "Select Folder"}
-              </option>
-              {folders.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.name}
-                </option>
-              ))}
+            <select className="w-full border border-gray-200 rounded px-3 py-2 text-gray-700 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50" value={folderId} onChange={(e) => handleFolderChange(e.target.value)} disabled={isFetchingFolders} required>
+              <option value="">{isFetchingFolders ? "Loading folders..." : "Select Folder"}</option>
+              {folders.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
               <option value="__new__">+ New Folder</option>
             </select>
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-2 mt-2 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={status === "saving"}
-          >
-            {status === "saving"
-              ? "Saving..."
-              : status === "success"
-              ? "Saved!"
-              : status === "error"
-              ? "Error! Try Again"
-              : "Save Changes"}
+          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-2 mt-2 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed" disabled={status === "saving"}>
+            {status === "saving" ? "Saving..." : status === "success" ? "Saved!" : status === "error" ? "Error! Try Again" : "Save Changes"}
           </button>
         </form>
 
@@ -815,30 +744,16 @@ END:VCARD`;
           <div className="bg-white rounded-lg shadow p-8 flex flex-col items-center">
             <div className="relative w-48 h-48 mb-6">
               {previewQrUrl ? (
-                <Image
-                  src={previewQrUrl}
-                  alt="QR Code Preview"
-                  width={192}
-                  height={192}
-                  className="w-48 h-48 object-contain"
-                  unoptimized
-                />
+                <Image src={previewQrUrl} alt="QR Code Preview" width={192} height={192} className="w-48 h-48 object-contain" unoptimized />
               ) : (
-                <div className="w-48 h-48 bg-gray-100 flex items-center justify-center rounded text-gray-400">
-                  Generating...
-                </div>
+                <div className="w-48 h-48 bg-gray-100 flex items-center justify-center rounded text-gray-400">Generating...</div>
               )}
-              {/* Hidden canvas for QR generation */}
               <div ref={canvasRef} className="hidden" />
             </div>
             <div className="w-full text-center mb-4">
               <p className="text-xs text-gray-500">Preview updates as you edit</p>
             </div>
-            <button
-              type="button"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-2 flex items-center justify-center gap-2 font-medium transition"
-              onClick={handleDownload}
-            >
+            <button type="button" className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded px-3 py-2 flex items-center justify-center gap-2 font-medium transition" onClick={handleDownload}>
               <ArrowDownToLine size={18} />
               Download
             </button>

@@ -94,7 +94,7 @@ export const baseSchemas: Record<Category, z.ZodTypeAny> = {
         (data.uploadType === "file" && !!data.file),
       {
         message: "Please provide either a PDF URL or upload a file",
-        path: ["pdfUrl"], // general error field
+        path: ["pdfUrl"],
       }
     ),
 };
